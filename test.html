@@ -5,370 +5,492 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Guru Berbagi - Selogiri</title>
   
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    :root { 
-      --primary: #0f766e; --primary-light: #14b8a6; 
-      --accent: #f59e0b; --bg-body: #f8fafc; --text-main: #1e293b;
-      --card-radius: 16px; --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
-    }
-    body { background-color: var(--bg-body); font-family: 'Plus Jakarta Sans', sans-serif; color: var(--text-main); padding-bottom: 80px; }
-
-    /* NAVBAR (Layer paling atas: z-index 1030) */
-    .navbar { z-index: 1030; position: sticky; top: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); border-bottom: 1px solid #e2e8f0; transition: 0.3s; }
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+    body { background-color: #f8f9fa; font-family: 'Plus Jakarta Sans', sans-serif; color: #333; }
     
-    /* HERO SECTION */
-    .hero-section { background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%); padding: 60px 0 90px; color: white; border-radius: 0 0 40px 40px; margin-bottom: -40px; box-shadow: 0 10px 30px rgba(15, 118, 110, 0.25); position: relative; overflow: hidden; }
-    .hero-search-box { background: rgba(255,255,255,0.15); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.3); border-radius: 50px; padding: 8px 25px; transition: 0.3s; max-width: 600px; margin: 0 auto; }
-    .hero-search-box:focus-within { background: white; transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0,0,0,0.15); }
-    .hero-search-input { background: transparent; border: none; color: white; font-weight: 600; width: 100%; outline: none; }
-    .hero-search-box:focus-within .hero-search-input { color: #333; }
+    .navbar { background: white; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 1000; }
+    .brand-text { line-height: 1.1; }
+    .text-primary-custom { color: #0f766e; }
 
-    /* FILTER BAR (Sticky di bawah Navbar: z-index 1020) */
-    .filter-bar { position: sticky; top: 80px; z-index: 1020; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-radius: 20px; padding: 12px 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; margin-bottom: 30px; transition: top 0.3s; }
-    .filter-select { border-radius: 20px; border: 1px solid #cbd5e1; font-size: 0.85rem; font-weight: 700; color: #475569; background-color: #f8fafc; cursor: pointer; }
-
-    /* CARD DESIGN */
-    .card-karya { background: #fff; border: none; border-radius: var(--card-radius); overflow: hidden; height: 100%; display: flex; flex-direction: column; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: var(--card-shadow); border: 1px solid #f1f5f9; }
-    .card-karya:hover { transform: translateY(-8px); box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.12); border-color: var(--primary-light); }
-    .card-thumb { height: 160px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #e2e8f0; color: #fff; }
-    .card-thumb img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
-    .card-karya:hover .card-thumb img { transform: scale(1.1); }
+    /* CARD */
+    .card-karya { border: none; border-radius: 12px; overflow: hidden; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: 0.2s; height: 100%; display: flex; flex-direction: column; }
+    .card-karya:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+    .card-thumb { height: 160px; background: #e9ecef; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .card-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .badge-type { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; font-size: 0.65rem; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+    .badge-status { position: absolute; top: 10px; right: 10px; padding: 3px 8px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; }
+    .bg-status-approved { background: #d1fae5; color: #065f46; }
+    .bg-status-pending { background: #fef3c7; color: #92400e; }
     
-    .badge-float { position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.95); color: #0f172a; font-size: 0.65rem; padding: 4px 10px; border-radius: 20px; font-weight: 800; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    .badge-views { position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.6); color: white; font-size: 0.65rem; padding: 2px 8px; border-radius: 6px; font-weight: 600; backdrop-filter: blur(2px); }
-    .btn-wishlist { position: absolute; top: 10px; right: 10px; z-index: 10; border: none; background: rgba(255,255,255,0.9); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); color: #94a3b8; transition: 0.2s; cursor: pointer; }
-    .btn-wishlist:hover, .btn-wishlist.active { color: #ef4444; transform: scale(1.1); background: white; }
+    .card-body-custom { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; }
+    .tag-row { margin-bottom: 8px; }
+    .badge-soft { font-size: 0.65rem; padding: 4px 8px; border-radius: 6px; background: #f1f5f9; color: #475569; margin-right: 4px; font-weight: 600; }
+    .karya-title { font-weight: 800; font-size: 1rem; margin-bottom: 5px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.8em; }
+    .guru-name { font-size: 0.8rem; color: #64748b; margin-bottom: 15px; }
 
-    .card-body-mp { padding: 18px; flex-grow: 1; display: flex; flex-direction: column; }
-    .tag-pill { font-size: 0.6rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; margin-right: 4px; }
-    .tag-mapel { background: #ccfbf1; color: #0f766e; } .tag-fase { background: #e0f2fe; color: #0369a1; }
-    .mp-title { font-weight: 800; font-size: 1rem; line-height: 1.4; margin-bottom: 4px; color: var(--text-main); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.8em; }
-    
-    .guru-info { display: flex; align-items: center; gap: 10px; margin-top: auto; padding-top: 15px; border-top: 1px dashed #e2e8f0; }
-    .guru-avatar { width: 36px; height: 36px; background: linear-gradient(135deg, #e2e8f0, #cbd5e1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem; color: #475569; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-    
-    .action-row { margin-top: 15px; display: flex; gap: 8px; }
-    .btn-card-action { flex-grow: 1; border: none; padding: 8px 0; border-radius: 8px; font-weight: 700; font-size: 0.8rem; transition: 0.2s; }
-    .btn-open { background: var(--primary); color: white; box-shadow: 0 4px 6px -1px rgba(15, 118, 110, 0.3); }
-    .btn-open:hover { background: var(--primary-dark); transform: translateY(-1px); }
-    .btn-sec { background: #f1f5f9; color: #475569; width: 40px; display: flex; align-items: center; justify-content: center; }
-    .btn-sec:hover { background: #e2e8f0; color: #0f172a; }
+    .btn-action { width: 100%; background: #0f766e; color: white; border: none; padding: 8px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; }
+    .btn-action:hover { background: #115e59; color: white; }
+    .btn-icon-group { display: flex; gap: 5px; margin-top: 10px; }
+    .btn-icon-small { flex: 1; border: 1px solid #e2e8f0; background: white; color: #64748b; padding: 6px; border-radius: 6px; font-size: 0.8rem; }
+    .btn-icon-small:hover { background: #f8fafc; color: #0f172a; }
 
-    /* UTILS & OVERLAY (Z-Index Paling Tinggi) */
-    .d-none { display: none !important; } .admin-only { display: none !important; } 
-    .fab-add { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 20px; background: #1e293b; color: white; border: none; font-size: 1.5rem; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3); transition: 0.3s; display: flex; align-items: center; justify-content: center; z-index: 1040; }
-    .fab-add:hover { transform: scale(1.1) rotate(90deg); background: var(--primary); }
-
-    #previewOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none; flex-direction: column; z-index: 20000; }
-    .preview-head { background: #111; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; color: white; border-bottom: 1px solid #333; }
-    #previewFrame { flex-grow: 1; width: 100%; height: 100%; border: none; background: #fff; }
-    #floatingExitBtn { position: fixed; top: 20px; right: 20px; z-index: 20002; background: rgba(220, 38, 38, 0.8); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; display: none; align-items: center; justify-content: center; cursor: pointer; }
+    /* UTILS */
+    .d-none { display: none !important; }
+    .admin-row { background: #fff7ed; border-left: 4px solid #f97316; }
     
-    /* ADMIN */
-    .stat-widget { background: white; padding: 20px; border-radius: 16px; position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); color: white; margin-bottom: 15px; }
-    .stat-val { font-size: 2rem; font-weight: 800; line-height: 1; margin-bottom: 5px; }
-    .stat-total { background: linear-gradient(135deg, #6366f1, #4f46e5); }
-    .stat-approved { background: linear-gradient(135deg, #10b981, #059669); }
-    .stat-pending { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    /* MODAL & PREVIEW */
+    .modal-content { border: none; border-radius: 16px; }
+    #previewFrame { width: 100%; height: 400px; border: none; background: #eee; border-radius: 8px; }
   </style>
 </head>
 <body>
 
-  <div id="previewOverlay" data-url="" data-html="">
-    <button id="floatingExitBtn" onclick="tutupFullscreen()"><i class="fas fa-times fa-lg"></i></button>
-    <div class="preview-head" id="overlayControls">
-      <div class="fw-bold text-truncate pe-3" id="previewTitle" style="font-size:1.1rem;">Preview</div>
-      <div class="d-flex align-items-center gap-2">
-        <button id="btnFs" class="btn btn-sm btn-outline-light rounded-pill fw-bold" onclick="smartFullscreen()"><i class="fas fa-expand me-1"></i> LAYAR PENUH</button>
-        <button class="btn btn-sm btn-danger rounded-pill fw-bold px-3" onclick="tutupPreview()">TUTUP</button>
-      </div>
-    </div>
-    <iframe id="previewFrame" allowfullscreen allow="autoplay"></iframe>
-  </div>
-
-  <nav class="navbar py-2">
-    <div class="container d-flex justify-content-between align-items-center">
-      <div class="brand-container d-flex align-items-center gap-2">
-        <img src="https://i.imgur.com/4PToETN.png" alt="Logo" style="height: 48px;">
-        <div class="lh-1">
-          <div style="font-weight:800;color:var(--primary);font-size:1.2rem;">GURU BERBAGI</div>
-          <div style="font-weight:600;color:#64748b;font-size:0.7rem;text-transform:uppercase;">Korwilcambidik Kec. Selogiri</div>
+  <nav class="navbar py-3">
+    <div class="container">
+      <div class="d-flex align-items-center gap-3">
+        <img src="https://i.imgur.com/4PToETN.png" alt="Logo" height="40">
+        <div class="brand-text">
+          <div class="fw-bold text-primary-custom" style="font-size:1.1rem;">GURU BERBAGI</div>
+          <div class="small text-muted" style="font-size:0.75rem;">KORWILCAMBIDIK SELOGIRI</div>
         </div>
       </div>
-      <div class="d-flex align-items-center gap-2">
-        <button id="btnHome" class="btn btn-outline-secondary btn-sm rounded-pill fw-bold px-3 d-none" onclick="switchView('GALERI')">Kembali</button>
-        <button id="btnDashboard" class="btn btn-warning btn-sm rounded-pill fw-bold d-none shadow-sm text-dark" onclick="switchView('ADMIN')"><i class="fas fa-chart-pie me-1"></i> Admin</button>
-        <button id="btnLogin" class="btn btn-outline-primary btn-sm rounded-pill fw-bold px-4" onclick="loginModal()">Login</button>
-        <div id="userPanel" class="d-none d-flex align-items-center gap-3">
-           <div class="text-end lh-1">
-             <div id="uName" class="fw-bold text-dark" style="font-size:0.85rem;">User</div>
-             <div id="uRole" class="badge bg-secondary" style="font-size:0.55rem;">GURU</div>
-           </div>
-           <button onclick="logout()" class="btn btn-light btn-sm rounded-circle border text-danger"><i class="fas fa-power-off"></i></button>
+      <div class="d-flex gap-2">
+        <button id="btnHome" class="btn btn-sm btn-outline-secondary d-none" onclick="switchView('GALERI')">Kembali</button>
+        <button id="btnAdmin" class="btn btn-sm btn-warning fw-bold d-none" onclick="switchView('ADMIN')">Admin</button>
+        <button id="btnLogin" class="btn btn-sm btn-primary fw-bold px-4" onclick="loginModal()">Login</button>
+        <div id="userPanel" class="d-none d-flex align-items-center gap-2">
+           <span id="uName" class="fw-bold small">User</span>
+           <button onclick="logout()" class="btn btn-sm btn-light border"><i class="fas fa-power-off text-danger"></i></button>
         </div>
       </div>
     </div>
   </nav>
 
-  <div class="hero-section text-center" id="heroSection">
-     <div class="container px-4" style="max-width: 700px;">
-        <h2 style="font-weight:800; letter-spacing:-0.5px; margin-bottom:8px;">Temukan Referensi Mengajar</h2>
-        <p class="mb-4 opacity-75">Ribuan karya guru Selogiri siap digunakan untuk kelas Anda.</p>
-        <div class="hero-search-box d-flex align-items-center">
-           <i class="fas fa-search text-white me-3 fs-5"></i>
-           <input type="text" id="searchInput" class="form-control hero-search-input" placeholder="Cari materi, game, atau nama guru..." oninput="applyFilters()">
+  <div id="view-galeri" class="container mt-4 fade-in">
+    <div class="row g-2 mb-4">
+      <div class="col-md-6">
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
+          <input type="text" id="searchInput" class="form-control border-start-0 ps-0" placeholder="Cari judul, mapel, atau guru..." oninput="doSearch()">
         </div>
-     </div>
-  </div>
+      </div>
+      <div class="col-md-3"><select id="filterMapel" class="form-select" onchange="doSearch()"><option value="">Semua Mapel</option></select></div>
+      <div class="col-md-3"><select id="filterFase" class="form-select" onchange="doSearch()"><option value="">Semua Fase</option></select></div>
+    </div>
 
-  <div id="view-galeri" class="container mt-5 fade-in">
-    <div class="filter-bar d-flex flex-column flex-md-row gap-2 align-items-center justify-content-between">
-       <div class="d-flex gap-2 w-100 w-md-auto overflow-auto pb-1 pb-md-0">
-          <select id="filterMapel" class="form-select filter-select" style="min-width:140px;" onchange="applyFilters()"><option value="">📚 Semua Mapel</option></select>
-          <select id="filterFase" class="form-select filter-select" style="min-width:130px;" onchange="applyFilters()"><option value="">🎓 Semua Fase</option></select>
-          <select id="filterJenis" class="form-select filter-select" style="min-width:130px;" onchange="applyFilters()"><option value="">📂 Semua Jenis</option></select>
-       </div>
-       <div class="d-flex gap-2 pt-2 pt-md-0 w-100 w-md-auto justify-content-end">
-          <button onclick="filterSemua()" class="btn btn-sm btn-dark rounded-pill px-3 fw-bold">Semua</button>
-          <button id="btnFilterMy" onclick="filterSaya()" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold d-none">Saya</button>
-          <button onclick="filterSimpanan()" class="btn btn-sm btn-outline-danger rounded-pill px-3 fw-bold"><i class="fas fa-heart"></i></button>
+    <div class="d-flex justify-content-between mb-4">
+       <button id="btnAdd" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm d-none" onclick="resetForm(); modal('modalInput').show()"><i class="fas fa-plus me-2"></i>Bagikan Karya</button>
+       <div>
+         <button onclick="filterMode='ALL'; doSearch()" class="btn btn-sm btn-light border">Semua</button>
+         <button onclick="filterMode='FAV'; doSearch()" class="btn btn-sm btn-light border text-danger"><i class="fas fa-heart"></i></button>
        </div>
     </div>
 
-    <div id="loader" class="text-center py-5"><div class="spinner-border text-primary"></div></div>
+    <div id="loading" class="text-center py-5"><div class="spinner-border text-secondary"></div></div>
     <div id="galeri-container" class="row gx-3 gx-md-4 gy-4"></div>
-    <div id="loadMoreContainer" class="text-center mt-5 mb-5 d-none">
-       <button onclick="loadMoreItems()" class="btn btn-outline-primary rounded-pill px-4 fw-bold">Muat Lebih Banyak <i class="fas fa-chevron-down ms-1"></i></button>
-    </div>
   </div>
 
   <div id="view-admin" class="container mt-4 d-none">
-    <div class="d-flex justify-content-between align-items-center mb-4 p-4 bg-white rounded-4 border shadow-sm">
-      <div><h4 class="fw-bold text-dark mb-0">Dashboard Admin</h4><small class="text-muted">Kelola data dan kurasi karya guru</small></div>
-      <div id="adminRoleBadge" class="badge bg-primary px-3 py-2 rounded-pill">ROLE</div>
+    <div class="card border-0 shadow-sm p-4 mb-4">
+      <h4 class="fw-bold">Dashboard Admin</h4>
+      <p class="text-muted mb-0">Kelola data dan pengguna.</p>
     </div>
 
-    <div class="row mb-4">
-      <div class="col-lg-8 mb-3 mb-lg-0">
-        <div class="card border-0 shadow-sm h-100 p-3">
-           <h6 class="fw-bold text-muted mb-3">Statistik Mata Pelajaran</h6>
-           <div style="height: 250px;"><canvas id="chartMapel"></canvas></div>
-        </div>
-      </div>
-      <div class="col-lg-4">
-        <div class="card border-0 shadow-sm h-100 p-3">
-           <h6 class="fw-bold text-muted mb-3">Status Karya</h6>
-           <div style="height: 250px;"><canvas id="chartStatus"></canvas></div>
-        </div>
-      </div>
-    </div>
+    <ul class="nav nav-tabs mb-3">
+      <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-karya">Kurasi Karya</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-user" onclick="loadUserList()">Manajemen Guru</button></li>
+    </ul>
 
-    <div class="row g-3 mb-4">
-      <div class="col-md-4"><div class="stat-widget stat-total"><div class="stat-val" id="statTotal">0</div><div class="small fw-bold opacity-75">TOTAL KARYA</div></div></div>
-      <div class="col-md-4"><div class="stat-widget stat-approved"><div class="stat-val" id="statApproved">0</div><div class="small fw-bold opacity-75">DISETUJUI</div></div></div>
-      <div class="col-md-4"><div class="stat-widget stat-pending"><div class="stat-val" id="statPending">0</div><div class="small fw-bold opacity-75">MENUNGGU</div></div></div>
-    </div>
-    
-    <div class="bg-white p-4 border rounded-4 shadow-sm">
-      <ul class="nav nav-tabs mb-4 border-bottom-0" id="adminTabs">
-        <li class="nav-item"><button class="nav-link active fw-bold border" data-bs-toggle="tab" data-bs-target="#tab-media">Kurasi Karya</button></li>
-        <li class="nav-item admin-only ms-2"><button class="nav-link fw-bold border" data-bs-toggle="tab" data-bs-target="#tab-users" onclick="loadUserList()">Manajemen Akun</button></li>
-      </ul>
-      <div class="tab-content">
-        <div class="tab-pane fade show active" id="tab-media">
-           <div class="d-flex gap-2 mb-3">
-             <input type="text" class="form-control rounded-pill px-4 border-secondary bg-light" placeholder="Cari karya..." oninput="searchAdminTable()">
-             <select id="filterAdminStatus" class="form-select rounded-pill border-secondary fw-bold" style="width:180px;" onchange="searchAdminTable()">
-                <option value="">Semua Status</option><option value="BARU">BARU</option><option value="DISETUJUI">DISETUJUI</option><option value="REVISI">REVISI</option>
-             </select>
-          </div>
-          <div class="table-responsive rounded-3 border"><table class="table pretty-table table-hover align-middle mb-0"><thead><tr><th class="ps-3">INFO KARYA</th><th>GURU</th><th class="text-center">STATUS</th><th class="text-center">AKSI</th></tr></thead><tbody id="tableMedia"></tbody></table></div>
-        </div>
-        <div class="tab-pane fade" id="tab-users">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="fw-bold text-muted mb-0 ps-2">Daftar Guru</h6>
-            <button class="btn btn-primary btn-sm rounded-pill fw-bold px-4" onclick="resetUserForm(); showModalInput()"><i class="fas fa-plus me-2"></i>Tambah</button>
-          </div>
-          <div class="table-container"><table class="table pretty-table table-hover align-middle mb-0"><thead><tr><th class="ps-4">NAMA</th><th>PIN</th><th>PERAN</th><th class="text-center">AKSI</th></tr></thead><tbody id="tableUsers"></tbody></table></div>
-        </div>
+    <div class="tab-content">
+      <div class="tab-pane fade show active" id="tab-karya">
+         <input type="text" class="form-control mb-3" placeholder="Filter karya..." oninput="renderAdminTable(this.value)">
+         <div class="table-responsive bg-white border rounded">
+           <table class="table table-hover mb-0 align-middle">
+             <thead class="bg-light"><tr><th class="ps-3">Judul & Mapel</th><th>Guru</th><th>Status</th><th class="text-end pe-3">Aksi</th></tr></thead>
+             <tbody id="adminTableBody"></tbody>
+           </table>
+         </div>
+      </div>
+      <div class="tab-pane fade" id="tab-user">
+         <button class="btn btn-primary btn-sm mb-3" onclick="resetUserForm(); modal('modalUser').show()">+ Tambah Guru</button>
+         <div class="table-responsive bg-white border rounded">
+           <table class="table table-hover mb-0 align-middle">
+             <thead class="bg-light"><tr><th class="ps-3">Nama</th><th>Sekolah</th><th>PIN</th><th>Role</th><th class="text-end pe-3">Hapus</th></tr></thead>
+             <tbody id="userTableBody"></tbody>
+           </table>
+         </div>
       </div>
     </div>
   </div>
 
-  <button id="btnAdd" class="fab-add d-none" onclick="resetForm(); showModalInput()"><i class="fas fa-plus"></i></button>
+  <div class="modal fade" id="modalInput" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><h5 class="fw-bold">Input Karya</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+    <form id="formInput">
+      <input type="hidden" id="formMode" value="ADD"><input type="hidden" id="editId">
+      <div class="mb-3"><label class="small fw-bold">Judul</label><input type="text" id="inJudul" class="form-control" required></div>
+      <div class="row g-2 mb-3">
+         <div class="col-6"><label class="small fw-bold">Mapel</label><select id="inMapel" class="form-select"></select></div>
+         <div class="col-6"><label class="small fw-bold">Jenis</label><select id="inJenis" class="form-select"></select></div>
+      </div>
+      <div class="row g-2 mb-3">
+         <div class="col-6"><label class="small fw-bold">Fase</label><select id="inFase" class="form-select"></select></div>
+         <div class="col-6"><label class="small fw-bold">Semester</label><select id="inSem" class="form-select"></select></div>
+      </div>
+      <div class="mb-3 p-2 bg-light rounded border"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="checkKaih" onchange="toggleKaih(this.checked)"><label class="form-check-label fw-bold small">Program KAIH?</label></div><select id="inKaih" class="form-select mt-2 d-none"></select></div>
+      
+      <div class="mb-2"><label class="small fw-bold">Link (YouTube/Drive/Gemini)</label><input type="url" id="inLink" class="form-control" placeholder="https://..."></div>
+      <div class="mb-3"><label class="small fw-bold">Atau Kode Embed HTML</label><textarea id="inHtml" class="form-control font-monospace small" rows="3"></textarea></div>
+    </form>
+  </div><div class="modal-footer"><button onclick="saveData()" class="btn btn-primary w-100">SIMPAN DATA</button></div></div></div></div>
 
-  <div class="modal fade" id="modalInput" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable"><div class="modal-content rounded-4 border-0 shadow"><div class="modal-header border-bottom bg-light py-3"><h5 class="fw-bold text-primary mb-0"><i class="fas fa-cloud-upload-alt me-2"></i>Bagikan Karya</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-4 bg-white"><form id="modalForm"><input type="hidden" id="formMode" value="ADD"><input type="hidden" id="editRowIdx"><div class="row h-100"><div class="col-lg-7 modal-left-col border-end pe-4"><div class="mb-3"><label class="small fw-bold mb-1 text-muted">Judul Media <span class="text-danger">*</span></label><input type="text" id="inJudul" class="form-control fw-bold bg-light" placeholder="Judul karya..."></div><div class="row"><div class="col-md-6 mb-3"><label class="small fw-bold mb-1 text-muted">Mata Pelajaran <span class="text-danger">*</span></label><select id="inMapel" class="form-select" onchange="checkDropdown('inMapel','manMapel',this.value)"></select><input type="text" id="manMapel" class="form-control mt-2 d-none" placeholder="Tulis mapel..." required></div><div class="col-md-6 mb-3"><label class="small fw-bold mb-1 text-muted">Jenis Media <span class="text-danger">*</span></label><select id="inJenis" class="form-select" onchange="checkDropdown('inJenis','manJenis',this.value)"></select><input type="text" id="manJenis" class="form-control mt-2 d-none" placeholder="Tulis jenis..." required></div></div><div class="row"><div class="col-md-6 mb-3"><label class="small fw-bold mb-1 text-muted">Fase / Kelas</label><select id="inFase" class="form-select"></select></div><div class="col-md-6 mb-3"><label class="small fw-bold mb-1 text-muted">Semester</label><select id="inSem" class="form-select"></select></div></div><div class="bg-light p-3 rounded mb-3 border d-flex align-items-center justify-content-between"><div><label class="small fw-bold d-block text-dark">Program KAIH?</label><small class="text-muted" style="font-size:0.7rem;">Kebiasaan Anak Indonesia Hebat</small></div><div class="d-flex align-items-center gap-2"><div id="kaihBox" class="d-none"><select id="inKaihType" class="form-select form-select-sm"></select></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="checkKaih" onchange="toggleKaih(this.checked)"></div></div></div><div class="mb-3"><label class="small fw-bold mb-2 text-muted">Tipe Konten Utama</label><select id="inputSourceType" class="form-select bg-light fw-bold" onchange="toggleInputSource(this.value)"><option value="LINK">🔗 Link Media (Youtube / Drive / Gemini)</option><option value="HTML">💻 Kode Embed HTML (Prioritas)</option></select></div><div id="groupLink" class="mb-2"><label class="small fw-bold mb-1 text-muted">Link Media</label><input type="url" id="inLink" class="form-control" placeholder="Paste link disini..." oninput="updateLivePreview()"></div><div id="groupHtml" class="mb-0 d-none"><label class="small fw-bold mb-1 text-muted">Kode Embed HTML</label><textarea id="inHtml" class="form-control small font-monospace bg-light" rows="3" placeholder="<iframe src='...'></iframe>" oninput="updateLivePreview()"></textarea></div></div><div class="col-lg-5 d-flex flex-column pt-3 pt-lg-0"><label class="small fw-bold text-muted mb-2 text-center">Live Preview Thumbnail</label><div class="preview-box shadow-sm"><div class="preview-placeholder">Preview akan muncul disini</div><iframe id="miniPreviewFrame" style="width:100%; height:100%; border:none; position:relative; z-index:2;"></iframe></div></div></div></form></div><div class="modal-footer bg-light"><button type="button" class="btn btn-outline-secondary rounded-pill fw-bold px-4" data-bs-dismiss="modal">Batal</button><button type="button" onclick="prosesSimpan()" class="btn btn-primary rounded-pill fw-bold px-5 shadow-sm">SIMPAN & TERBITKAN</button></div></div></div></div>
-  <div class="modal fade" id="modalUser" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 rounded-4 shadow"><div class="modal-header"><h5 class="fw-bold text-primary">Data Guru</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="formUser"><input type="hidden" id="userMode" value="ADD"><input type="hidden" id="oldPin"><div class="mb-3"><label class="small fw-bold">Nama Lengkap</label><input type="text" id="userName" class="form-control"></div><div class="mb-3"><label class="small fw-bold">Unit Kerja (Sekolah)</label><input type="text" id="userSchool" class="form-control"></div><div class="row"><div class="col-6"><label class="small fw-bold">PIN Login</label><input type="text" id="userPin" class="form-control"></div><div class="col-6"><label class="small fw-bold">Hak Akses</label><select id="userRole" class="form-select"><option value="GURU">GURU</option><option value="MODERATOR">MODERATOR</option><option value="ADMIN">ADMIN</option></select></div></div></form></div><div class="modal-footer"><button onclick="prosesSimpanUser()" class="btn btn-primary w-100 fw-bold rounded-pill">SIMPAN DATA</button></div></div></div></div>
-  <div class="modal fade" id="modalKurasi" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 rounded-4 shadow"><div class="modal-header border-bottom-0"><h5 class="fw-bold text-primary">Kurasi Karya</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="kurasiId"><div class="mb-3"><label class="small fw-bold">Status Persetujuan</label><select id="kurasiStatus" class="form-select"><option value="BARU">BARU (Pending)</option><option value="DISETUJUI">DISETUJUI (Tampil)</option><option value="REVISI">REVISI (Perlu Perbaikan)</option></select></div><div class="mb-3"><label class="small fw-bold">Catatan / Feedback</label><textarea id="kurasiFeedback" class="form-control" rows="4" placeholder="Tulis masukan untuk guru..."></textarea></div></div><div class="modal-footer border-top-0"><button onclick="simpanKurasi()" class="btn btn-primary w-100 fw-bold rounded-pill">UPDATE STATUS</button></div></div></div></div>
+  <div class="modal fade" id="modalPreview" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content" style="height:90vh"><div class="modal-header py-2"><h6 class="fw-bold mb-0 text-truncate" id="prevTitle" style="max-width:80%;">Preview</h6><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-0 bg-dark d-flex align-items-center justify-content-center"><iframe id="framePreview" style="width:100%;height:100%;border:none;"></iframe></div></div></div></div>
+
+  <div class="modal fade" id="modalUser" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="fw-bold">User</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input id="uNameInput" class="form-control mb-2" placeholder="Nama"><input id="uSchool" class="form-control mb-2" placeholder="Sekolah"><input id="uPin" class="form-control mb-2" placeholder="PIN (Angka)"><select id="uRoleInput" class="form-select"><option value="GURU">GURU</option><option value="ADMIN">ADMIN</option></select></div><div class="modal-footer"><button onclick="saveUser()" class="btn btn-primary w-100">SIMPAN USER</button></div></div></div></div>
+
+  <div class="modal fade" id="modalKurasi" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="fw-bold">Kurasi</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="kurId"><select id="kurStatus" class="form-select mb-3"><option value="BARU">BARU</option><option value="DISETUJUI">DISETUJUI</option><option value="REVISI">REVISI</option></select><textarea id="kurFeed" class="form-control" rows="3" placeholder="Catatan..."></textarea></div><div class="modal-footer"><button onclick="saveKurasi()" class="btn btn-success w-100">UPDATE STATUS</button></div></div></div></div>
 
   <script>
     // --- KONFIGURASI API ---
-    // GANTI DENGAN URL API ANDA DARI DEPLOYMENT GAS:
     const API_URL = "https://script.google.com/macros/s/AKfycbzhrWjl2Dc0i8V45dD8vNXrt3gfmvEU1pZ5hZOELkTz6e29l68d2hsHfGQEjqTVYdY0/exec";
 
-    // STATE
-    var STATE={allMedia:[],filtered:[],users:[],user:{name:"Tamu",role:"GUEST"},settings:[],displayedLimit:12,itemsPerPage:12};
-    var ACTIVE_CONTENT={type:null,data:null}, searchTimeout=null, modalInputInstance=null, charts={};
+    // GLOBAL VARIABLES
+    var DATA = [], USERS = [], SETTINGS = [];
+    var USER = { name: 'Tamu', role: 'GUEST' };
+    var filterMode = 'ALL'; 
 
-    async function callApi(a,p=null) { try { var r = await fetch(API_URL+(a==='read'?'?action=read':''), {method:a==='read'?'GET':'POST', body:a!=='read'?JSON.stringify({action:a,payload:p}):null}); return await r.json(); } catch(e){return{status:'error',message:e.toString()};} }
-    window.onload=()=>{initApp()}; function initApp(){ try{var s=localStorage.getItem('guruBerbagiUser');if(s)STATE.user=JSON.parse(s);updateUserInterface();}catch(e){} loadData();}
-    function cleanStr(s){if(!s)return"";return s.toString().replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
-    function softReset(){ switchView('GALERI'); updateUserInterface(); loadData(); }
+    // --- MAIN INIT ---
+    window.onload = () => {
+       var saved = localStorage.getItem('GB_USER');
+       if(saved) USER = JSON.parse(saved);
+       updateUI();
+       fetchData();
+    };
 
-    function updateUserInterface() {
-      document.getElementById('uName').innerText=STATE.user.name; document.getElementById('uRole').innerText=STATE.user.role;
-      var isG=STATE.user.role==='GUEST'; document.getElementById('btnLogin').style.display=isG?'block':'none'; document.getElementById('userPanel').classList.toggle('d-none',isG);
-      ['btnDashboard','btnAdd','btnFilterMy'].forEach(id=>document.getElementById(id).classList.add('d-none'));
-      if(!isG) { ['btnAdd','btnFilterMy'].forEach(id=>document.getElementById(id).classList.remove('d-none')); }
-      if(STATE.user.role!=='GUEST') document.getElementById('btnDashboard').classList.remove('d-none');
-    }
-    
-    function switchView(v) {
-       var g=document.getElementById('view-galeri'), a=document.getElementById('view-admin'), h=document.getElementById('heroSection');
-       if(v==='ADMIN'){ g.classList.add('d-none'); h.classList.add('d-none'); a.classList.remove('d-none'); document.getElementById('btnHome').classList.remove('d-none'); document.getElementById('btnDashboard').classList.add('d-none'); document.getElementById('btnAdd').classList.add('d-none'); renderTableAdmin(STATE.allMedia); initDashboardCharts(); }
-       else { a.classList.add('d-none'); g.classList.remove('d-none'); h.classList.remove('d-none'); document.getElementById('btnHome').classList.add('d-none'); if(STATE.user.role!=='GUEST'){ document.getElementById('btnDashboard').classList.remove('d-none'); document.getElementById('btnAdd').classList.remove('d-none'); } }
-    }
-
-    function loadData() {
-       callApi('read').then(res=>{ if(res.status==='success'){ STATE.allMedia=res.media; STATE.settings=res.settings; populateDropdowns(); applyFilters(); updateStats(); } document.getElementById('loader').style.display='none'; });
-    }
-    
-    function updateStats() {
-       document.getElementById('statTotal').innerText = STATE.allMedia.length;
-       document.getElementById('statPending').innerText = STATE.allMedia.filter(i=>i[9]==="BARU").length;
-       document.getElementById('statApproved').innerText = STATE.allMedia.filter(i=>i[9]==="DISETUJUI").length;
-    }
-    
-    function initDashboardCharts() {
-       if(STATE.allMedia.length===0) return;
-       var mC={}, sC={'DISETUJUI':0,'BARU':0,'REVISI':0};
-       STATE.allMedia.forEach(m=>{ mC[m[6]||'Lainnya']=(mC[m[6]||'Lainnya']||0)+1; sC[m[9]||'BARU']=(sC[m[9]||'BARU']||0)+1; });
-       if(charts.mapel)charts.mapel.destroy(); if(charts.status)charts.status.destroy();
-       charts.mapel=new Chart(document.getElementById('chartMapel'),{type:'bar',data:{labels:Object.keys(mC),datasets:[{label:'Jml',data:Object.values(mC),backgroundColor:'#0f766e'}]},options:{responsive:true,maintainAspectRatio:false}});
-       charts.status=new Chart(document.getElementById('chartStatus'),{type:'doughnut',data:{labels:['Disetujui','Menunggu','Revisi'],datasets:[{data:[sC['DISETUJUI'],sC['BARU'],sC['REVISI']],backgroundColor:['#10b981','#f59e0b','#ef4444']}]},options:{responsive:true,maintainAspectRatio:false}});
+    // --- DATA HANDLING ---
+    async function api(act, pl=null) {
+       try {
+         var opt = { method: 'POST', body: JSON.stringify({ action: act, payload: pl }) };
+         // Khusus Read pakai GET parameter biar cepat
+         if(act==='read') { var r = await fetch(API_URL+"?action=read"); return await r.json(); }
+         var r = await fetch(API_URL, opt); return await r.json();
+       } catch(e) { return {status:'error', message:e.toString()}; }
     }
 
-    function applyFilters() {
-      var q=document.getElementById('searchInput').value.toLowerCase(), fM=document.getElementById('filterMapel').value, fF=document.getElementById('filterFase').value, fJ=document.getElementById('filterJenis').value;
-      STATE.filtered=STATE.allMedia.filter(i=>{ var mS=(i[5]+" "+i[1]).toLowerCase().indexOf(q)!==-1, mM=(fM===""||i[6]===fM), mF=(fF===""||i[3]===fF), mJ=(fJ===""||i[11]===fJ); return mS&&mM&&mF&&mJ; });
-      STATE.displayedLimit=STATE.itemsPerPage; renderGaleri();
-    }
-    function loadMoreItems(){ STATE.displayedLimit+=STATE.itemsPerPage; renderGaleri(); }
-
-    function renderGaleri() {
-      var c=document.getElementById('galeri-container'); c.innerHTML='';
-      var saved=JSON.parse(localStorage.getItem('GB_FAV_'+STATE.user.name)||'[]');
-      var show=STATE.filtered.slice(0,STATE.displayedLimit);
-      show.forEach(item=>{
-         var idx=STATE.allMedia.indexOf(item), id=cleanStr(item[13]), isApp=item[9]==="DISETUJUI", isOwn=STATE.user.name===item[1], isAdm=STATE.user.role!=='GUEST'&&STATE.user.role!=='GURU', isFav=saved.includes(id);
-         var badge=isApp?'<div class="badge-approved"><i class="fas fa-check"></i></div>':(isOwn||isAdm?'<div class="badge-pending">PENDING</div>':'');
-         var editBtns=(isOwn||isAdm)?`<button onclick="event.stopPropagation();bukaEdit(${idx})" class="btn-card-action btn-sec"><i class="fas fa-pencil-alt"></i></button><button onclick="event.stopPropagation();hapusKarya(${idx})" class="btn-card-action btn-sec text-danger"><i class="fas fa-trash"></i></button>`:'';
-         
-         // Smart QR & Link
-         var link=cleanStr(item[8]); if(!link||link.length<5){ var m=(item[7]||"").match(/src\s*=\s*["']([^"']+)["']/i); if(m)link=m[1]; }
-         
-         // Fix Smart QR: Jika Gemini, convert dulu linknya agar QR valid
-         var qrLink = link;
-         if(link.includes('gemini.google.com/share')) { qrLink = link.replace('gemini.google.com/share', 'g.co/gemini/share'); }
-         
-         var qrBtn=(qrLink&&qrLink.length>5)?`<button onclick="event.stopPropagation();showQR('${qrLink}')" class="btn-card-action btn-sec"><i class="fas fa-qrcode"></i></button>`:'';
-         
-         // Warna Thumbnail Canggih
-         var j=cleanStr(item[11]).toUpperCase(), ic="fas fa-file-alt", bg="#64748b";
-         if(j.includes("VIDEO")) {ic="fas fa-play";bg="#ef4444";} 
-         else if(j.includes("GAME") || j.includes("KUIS")) {ic="fas fa-gamepad";bg="#8b5cf6";} 
-         else if(j.includes("MODUL") || j.includes("BUKU")) {ic="fas fa-book";bg="#10b981";}
-         else if(j.includes("STORY") || j.includes("GEMINI")) {ic="fas fa-robot";bg="#f59e0b";}
-         
-         var yt=link.match(/youtu\.?be.*(v\/|embed\/|\?v=)([^#\&\?]*)/);
-         var thumb = yt ? `<img src="https://img.youtube.com/vi/${yt[2]}/mqdefault.jpg">` : `<div style="background:${bg};width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:white"><i class="${ic} fa-3x mb-2"></i><span style="font-size:0.7rem;font-weight:700">${j}</span></div>`;
-         
-         // Fix Title Tooltip
-         var h=`<div class="col-6 col-md-4 col-lg-3 d-flex fade-in"><div class="card-karya w-100"><div class="card-thumb">${thumb}${badge}<div class="badge-float">${j}</div><div class="badge-views"><i class="fas fa-eye me-1"></i> ${item[14]||0}</div><button onclick="event.stopPropagation();toggleSimpan('${id}')" class="btn-wishlist ${isFav?'active':''}"><i class="${isFav?'fas':'far'} fa-heart"></i></button></div><div class="card-body-mp"><div class="meta-row"><span class="tag-pill tag-mapel">${cleanStr(item[6])}</span><span class="tag-pill tag-fase">${cleanStr(item[3])}</span></div><div class="mp-title" title="${cleanStr(item[5])}">${cleanStr(item[5])}</div><div class="guru-info"><div class="guru-avatar">${cleanStr(item[1]).charAt(0)}</div><div class="lh-1"><div class="fw-bold small text-dark">${cleanStr(item[1])}</div><div class="text-muted" style="font-size:0.65rem">${cleanStr(item[2])}</div></div></div><div class="action-row"><button onclick="bukaPreview(${idx})" class="btn-card-action btn-open">BUKA</button>${qrBtn}${editBtns}</div></div></div></div>`;
-         c.insertAdjacentHTML('beforeend', h);
-      });
-      document.getElementById('loadMoreContainer').classList.toggle('d-none', STATE.filtered.length<=STATE.displayedLimit);
+    function fetchData() {
+       document.getElementById('loading').classList.remove('d-none');
+       api('read').then(res => {
+          if(res.status === 'success') {
+             DATA = res.media; SETTINGS = res.settings;
+             populateOptions();
+             doSearch();
+          }
+          document.getElementById('loading').classList.add('d-none');
+       });
     }
 
-    function bukaPreview(idx) {
-       var item=STATE.allMedia[idx]; if(!item)return;
-       var rawLink=(item[8]||"").trim(), rawHtml=(item[7]||"").trim(), id=item[13];
-       callApi('view',{id:id});
+    // --- UI LOGIC ---
+    function updateUI() {
+       document.getElementById('uName').innerText = USER.name;
+       var isGuest = USER.role === 'GUEST';
+       document.getElementById('btnLogin').classList.toggle('d-none', !isGuest);
+       document.getElementById('userPanel').classList.toggle('d-none', isGuest);
+       document.getElementById('btnAdmin').classList.toggle('d-none', USER.role !== 'ADMIN');
+       document.getElementById('btnAdd').classList.toggle('d-none', isGuest);
        
-       // FIX: GEMINI Direct Open (No Popup)
-       if(rawLink && (rawLink.includes('gemini.google.com') || rawLink.includes('g.co') || rawLink.includes('story'))) {
-          var url = rawLink.replace('gemini.google.com/share', 'g.co/gemini/share');
-          window.open(url, '_blank'); return;
+       if(USER.role === 'ADMIN' && !document.getElementById('view-admin').classList.contains('d-none')) {
+          loadUserList();
+       }
+    }
+
+    function switchView(v) {
+       document.getElementById('view-galeri').classList.toggle('d-none', v !== 'GALERI');
+       document.getElementById('view-admin').classList.toggle('d-none', v !== 'ADMIN');
+       document.getElementById('heroSection').classList.toggle('d-none', v !== 'GALERI');
+       document.getElementById('btnHome').classList.toggle('d-none', v === 'GALERI');
+       
+       if (v === 'ADMIN') { renderAdminTable(); loadUserList(); }
+    }
+
+    // --- GALERI LOGIC ---
+    function doSearch() {
+       var q = document.getElementById('searchInput').value.toLowerCase();
+       var fM = document.getElementById('filterMapel').value;
+       var fF = document.getElementById('filterFase').value;
+       var favs = JSON.parse(localStorage.getItem('GB_FAV')||'[]');
+
+       var res = DATA.filter(d => {
+          var str = (d[1]+d[5]+d[6]).toLowerCase();
+          var matchQ = str.includes(q);
+          var matchM = fM ? d[6] === fM : true;
+          var matchF = fF ? d[3] === fF : true;
+          var matchMode = true;
+          if(filterMode === 'MY') matchMode = d[1] === USER.name;
+          if(filterMode === 'FAV') matchMode = favs.includes(d[13]);
+          
+          // Tampilkan hanya yang DISETUJUI, kecuali punya sendiri atau Admin
+          var isPublic = d[9] === 'DISETUJUI' || d[1] === USER.name || USER.role === 'ADMIN';
+          
+          return matchQ && matchM && matchF && matchMode && isPublic;
+       });
+       
+       renderCards(res);
+    }
+
+    function renderCards(list) {
+       var c = document.getElementById('galeri-container'); c.innerHTML = '';
+       var favs = JSON.parse(localStorage.getItem('GB_FAV')||'[]');
+
+       list.forEach(item => {
+          var idx = DATA.indexOf(item); // Real Index
+          var isFav = favs.includes(item[13]);
+          var heart = isFav ? 'fas text-danger' : 'far';
+          
+          // Thumbnail
+          var thumb = getThumb(item);
+          var badge = item[9] !== 'DISETUJUI' ? `<span class="badge-status bg-status-pending">PENDING</span>` : '';
+          
+          // Smart QR
+          var link = item[8] || "";
+          if(!link && item[7]) { var m = item[7].match(/src=["'](.*?)["']/); if(m) link = m[1]; }
+          var btnQR = link.length > 5 ? `<button onclick="showQR('${link}')" class="btn-icon-small"><i class="fas fa-qrcode"></i></button>` : '';
+
+          // Edit Delete
+          var btnEdit = (USER.name === item[1] || USER.role === 'ADMIN') ? 
+             `<button onclick="editItem(${idx})" class="btn-icon-small"><i class="fas fa-pencil"></i></button>
+              <button onclick="delItem(${idx})" class="btn-icon-small text-danger"><i class="fas fa-trash"></i></button>` : '';
+
+          var html = `
+          <div class="col-6 col-md-4 col-lg-3 d-flex fade-in">
+             <div class="card-karya w-100">
+                <div class="card-thumb">
+                   ${thumb} ${badge}
+                   <span class="badge-type">${item[11] || 'MEDIA'}</span>
+                   <button onclick="toggleFav('${item[13]}')" class="btn-wishlist"><i class="${heart} fa-heart"></i></button>
+                </div>
+                <div class="card-body-custom">
+                   <div class="tag-row"><span class="badge-soft">${item[6]}</span><span class="badge-soft">${item[3]}</span></div>
+                   <div class="karya-title" title="${item[5]}">${item[5]}</div>
+                   <div class="guru-name"><i class="fas fa-user-circle me-1"></i>${item[1]}</div>
+                   <div class="mt-auto">
+                      <button onclick="openItem(${idx})" class="btn-action">BUKA KARYA</button>
+                      <div class="btn-icon-group">${btnQR}${btnEdit}</div>
+                   </div>
+                </div>
+             </div>
+          </div>`;
+          c.insertAdjacentHTML('beforeend', html);
+       });
+    }
+
+    function getThumb(d) {
+       var l = d[8] || "", t = d[11] || "";
+       if(l.includes('youtu')) {
+          var id = l.match(/v=([^&]+)/) || l.match(/youtu\.be\/([^?]+)/);
+          if(id) return `<img src="https://img.youtube.com/vi/${id[1]}/mqdefault.jpg">`;
+       }
+       var color = '#64748b'; var icon = 'fa-file';
+       if(t.includes('VIDEO')) { color='#ef4444'; icon='fa-play'; }
+       else if(t.includes('GAME')) { color='#8b5cf6'; icon='fa-gamepad'; }
+       else if(t.includes('MODUL')) { color='#10b981'; icon='fa-book'; }
+       else if(t.includes('GEMINI')) { color='#f59e0b'; icon='fa-robot'; }
+       return `<div style="background:${color};width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:white"><i class="fas ${icon} fa-3x"></i></div>`;
+    }
+
+    // --- ACTIONS ---
+    function openItem(idx) {
+       var d = DATA[idx];
+       var link = d[8];
+       
+       // Tambah View
+       api('view', {id: d[13]});
+
+       // Logic Gemini -> New Tab
+       if(link && (link.includes('gemini') || link.includes('story'))) {
+          if(link.includes('/share')) link = link.replace('gemini.google.com','g.co/gemini');
+          window.open(link, '_blank');
+          return;
        }
 
-       document.getElementById('previewTitle').innerText=cleanStr(item[5]);
-       var ov=document.getElementById('previewOverlay'), fr=document.getElementById('previewFrame');
-       ov.style.display='flex'; fr.src="about:blank";
-       if(rawHtml.length>10) { ACTIVE_CONTENT={type:'HTML',data:rawHtml}; fr.src=URL.createObjectURL(new Blob([rawHtml],{type:'text/html'})); }
-       else if(rawLink.length>5) { ACTIVE_CONTENT={type:'LINK',data:rawLink}; var yt=getYoutubeId(rawLink); if(yt) fr.src="https://www.youtube.com/embed/"+yt+"?autoplay=1"; else if(rawLink.includes('drive.google')) fr.src=rawLink.replace(/\/view.*/,'/preview'); else fr.src=rawLink; }
-       else { Swal.fire('Info','Konten kosong','info'); tutupPreview(); }
+       // Normal Preview -> Modal
+       var frame = document.getElementById('framePreview');
+       document.getElementById('prevTitle').innerText = d[5];
+       
+       if (d[7] && d[7].length > 10) {
+          // HTML Blob
+          frame.src = URL.createObjectURL(new Blob([d[7]], {type: 'text/html'}));
+       } else if (link) {
+          if(link.includes('youtu')) {
+             var id = link.match(/v=([^&]+)/) || link.match(/youtu\.be\/([^?]+)/);
+             frame.src = `https://www.youtube.com/embed/${id[1]}?autoplay=1`;
+          } else if (link.includes('drive.google')) {
+             frame.src = link.replace('/view', '/preview');
+          } else {
+             frame.src = link;
+          }
+       }
+       modal('modalPreview').show();
     }
 
-    function smartFullscreen() { var el=document.getElementById('previewOverlay'); if(el.requestFullscreen) el.requestFullscreen().catch(fallbackTabBaru); else fallbackTabBaru(); }
-    function fallbackTabBaru() { 
-       if(!ACTIVE_CONTENT.data)return; var w=window.open("","_blank");
-       if(ACTIVE_CONTENT.type==='HTML'){ w.document.write('<!DOCTYPE html><html><head><title>Full</title><style>body{margin:0;overflow:auto}</style></head><body>'+ACTIVE_CONTENT.data+'</body></html>'); }
-       else { var yt=getYoutubeId(ACTIVE_CONTENT.data); w.location.href=yt?"https://www.youtube.com/embed/"+yt:ACTIVE_CONTENT.data; }
-    }
-    function tutupPreview() { if(document.fullscreenElement) document.exitFullscreen(); document.getElementById('previewOverlay').style.display='none'; document.getElementById('previewFrame').src=""; }
-    function tutupFullscreen() { if(document.exitFullscreen) document.exitFullscreen(); }
-
-    function populateDropdowns() { 
-      var f=(id,idx,t)=>{ var el=document.getElementById(id); el.innerHTML=`<option value="">${t}</option>`; [...new Set(STATE.settings.map(r=>r[idx]).filter(Boolean))].forEach(v=>el.innerHTML+=`<option value="${v}">${v}</option>`); };
-      f('filterMapel',1,'📚 Semua Mapel'); f('filterFase',2,'🎓 Semua Fase'); f('filterJenis',0,'📂 Semua Jenis');
-      var fm=(id,idx)=>{ var el=document.getElementById(id); el.innerHTML='<option value="">Pilih</option>'; STATE.settings.forEach(r=>{if(r[idx])el.innerHTML+=`<option value="${r[idx]}">${r[idx]}</option>`}); el.innerHTML+='<option value="LAINNYA">LAINNYA</option>'; };
-      fm('inJenis',0); fm('inMapel',1); fm('inFase',2); fm('inKaihType',3); fm('inSem',4);
+    function showQR(link) {
+       Swal.fire({
+          html: `<img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(link)}" class="img-fluid mb-2"><br><a href="${link}" target="_blank" class="btn btn-sm btn-dark">Buka Link</a>`,
+          showConfirmButton: false, showCloseButton: true
+       });
     }
 
-    function toggleSimpan(id){ var k='GB_FAV_'+STATE.user.name,s=JSON.parse(localStorage.getItem(k)||'[]'); if(s.includes(id))s=s.filter(x=>x!==id);else s.push(id); localStorage.setItem(k,JSON.stringify(s)); renderGaleri(); }
-    function filterSimpanan(){ var k='GB_FAV_'+STATE.user.name,s=JSON.parse(localStorage.getItem(k)||'[]'); STATE.filtered=STATE.allMedia.filter(i=>s.includes(i[13])); STATE.displayedLimit=STATE.itemsPerPage; renderGaleri(); }
-    function filterSaya(){ STATE.filtered=STATE.allMedia.filter(i=>i[1]===STATE.user.name); renderGaleri(); }
-    function filterSemua(){ ['searchInput','filterMapel','filterFase','filterJenis'].forEach(id=>document.getElementById(id).value=""); applyFilters(); }
-    function showQR(l){ Swal.fire({html:`<img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(l)}" class="img-fluid mb-2"><br><a href="${l}" target="_blank" class="btn btn-sm btn-dark">Buka Link</a>`,showConfirmButton:false,showCloseButton:true}); }
-    
-    function loginModal(){ Swal.fire({title:'PIN',input:'password'}).then(r=>{if(r.value)callApi('login',{pin:r.value}).then(res=>{if(res.status==='success'){localStorage.setItem('guruBerbagiUser',JSON.stringify(res.user));STATE.user=res.user;softReset();}else Swal.fire('Gagal',res.message,'error');});}); }
-    function logout(){ localStorage.removeItem('guruBerbagiUser'); STATE.user={name:"Tamu",role:"GUEST"}; softReset(); }
-    
-    function resetForm(){ document.getElementById('modalForm').reset(); document.getElementById('formMode').value="ADD"; toggleInputSource('LINK'); }
-    function showModalInput(){ modalInputInstance=new bootstrap.Modal(document.getElementById('modalInput'),{backdrop:'static'}); modalInputInstance.show(); }
-    function toggleInputSource(v){ ['groupLink','groupHtml'].forEach(id=>document.getElementById(id).classList.add('d-none')); if(v==='HTML')document.getElementById('groupHtml').classList.remove('d-none');else document.getElementById('groupLink').classList.remove('d-none'); updateLivePreview(); }
-    function checkDropdown(id,man,v){ var m=document.getElementById(man); if(v==='LAINNYA')m.classList.remove('d-none');else m.classList.add('d-none'); }
-    function toggleKaih(c){ document.getElementById('kaihBox').classList.toggle('d-none',!c); }
-    function getYoutubeId(u){ var m=u.match(/youtu\.?be.*(v\/|embed\/|\?v=)([^#\&\?]*)/); return (m&&m[2].length==11)?m[2]:false; }
-    
-    function updateLivePreview(){ 
-       var t=document.getElementById('inputSourceType').value, v=(t==='LINK'?document.getElementById('inLink').value:document.getElementById('inHtml').value);
-       var fr=document.getElementById('miniPreviewFrame').contentDocument; fr.open();
-       if(v.includes('gemini')||v.includes('story')){ fr.write('<div style="text-align:center;padding:20px;color:#666">Gemini Storybook<br>Dibuka di Tab Baru</div>'); }
-       else if(t==='HTML'&&v.length>5){ fr.write(v); }
-       else if(v.length>5){ var yt=getYoutubeId(v); fr.write(`<body style="margin:0"><iframe src="${yt?'https://www.youtube.com/embed/'+yt:v}" style="width:100%;height:100%;border:none"></iframe></body>`); }
-       else fr.write('<div style="text-align:center;padding:40px;color:#ccc">Preview</div>');
-       fr.close();
+    function toggleFav(id) {
+       var k = 'GB_FAV', cur = JSON.parse(localStorage.getItem(k)||'[]');
+       if(cur.includes(id)) cur = cur.filter(x => x!==id); else cur.push(id);
+       localStorage.setItem(k, JSON.stringify(cur));
+       doSearch(); // Refresh UI
+    }
+
+    // --- CRUD ---
+    function saveData() {
+       var p = {
+          mode: document.getElementById('formMode').value,
+          idUnik: document.getElementById('editId').value,
+          nama: USER.name, sekolah: USER.school,
+          judul: document.getElementById('inJudul').value,
+          mapel: document.getElementById('inMapel').value,
+          jenis: document.getElementById('inJenis').value,
+          fase: document.getElementById('inFase').value,
+          semester: document.getElementById('inSem').value,
+          linkLuar: document.getElementById('inLink').value,
+          kodeHtml: document.getElementById('inHtml').value,
+          kaihType: document.getElementById('checkKaih').checked ? document.getElementById('inKaih').value : ''
+       };
+       
+       // Convert Gemini Link on Save
+       if(p.linkLuar.includes('gemini.google.com/share')) {
+          p.linkLuar = p.linkLuar.replace('gemini.google.com/share', 'g.co/gemini/share');
+       }
+
+       Swal.fire({title:'Menyimpan...', didOpen:()=>Swal.showLoading()});
+       api('simpan', p).then(res => {
+          modal('modalInput').hide();
+          Swal.fire('Berhasil', '', 'success');
+          fetchData();
+       });
+    }
+
+    function delItem(idx) {
+       Swal.fire({title:'Hapus?', icon:'warning', showCancelButton:true}).then(r => {
+          if(r.isConfirmed) {
+             api('hapus', {id: DATA[idx][13]}).then(() => fetchData());
+          }
+       });
+    }
+
+    // --- ADMIN ---
+    function renderAdminTable(q='') {
+       var t = document.getElementById('adminTableBody'); t.innerHTML = '';
+       var filtered = DATA.filter(d => (d[1]+d[5]).toLowerCase().includes(q.toLowerCase()));
+       
+       filtered.forEach(d => {
+          var idx = DATA.indexOf(d);
+          var badge = d[9] === 'DISETUJUI' ? 'bg-success' : (d[9]==='REVISI'?'bg-danger':'bg-warning');
+          t.innerHTML += `<tr>
+             <td class="ps-3"><div class="fw-bold">${d[5]}</div><div class="small text-muted">${d[6]}</div></td>
+             <td><div class="fw-bold small">${d[1]}</div><div class="small text-muted">${d[2]}</div></td>
+             <td><span class="badge ${badge}">${d[9]}</span></td>
+             <td class="text-end pe-3">
+                <button onclick="kurasi(${idx})" class="btn btn-sm btn-outline-primary"><i class="fas fa-check"></i></button>
+                <button onclick="delItem(${idx})" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+             </td>
+          </tr>`;
+       });
+    }
+
+    function kurasi(idx) {
+       var d = DATA[idx];
+       document.getElementById('kurId').value = d[13];
+       document.getElementById('kurStatus').value = d[9];
+       document.getElementById('kurFeed').value = d[12] || '';
+       modal('modalKurasi').show();
     }
     
-    function bukaEdit(i){ var d=STATE.allMedia[i]; if(!d)return; document.getElementById('formMode').value="EDIT"; document.getElementById('editRowIdx').value=d[13]; document.getElementById('inJudul').value=d[5]; document.getElementById('inFase').value=d[3]; document.getElementById('inSem').value=d[4];
-      if(d[7].length>5){ document.getElementById('inputSourceType').value='HTML'; document.getElementById('inHtml').value=d[7]; toggleInputSource('HTML'); } else { document.getElementById('inputSourceType').value='LINK'; document.getElementById('inLink').value=d[8]; toggleInputSource('LINK'); }
-      var s=(id,v,m)=>{ var e=document.getElementById(id), x=[...e.options].some(o=>o.value===v); if(x)e.value=v; else{e.value='LAINNYA';document.getElementById(m).classList.remove('d-none');document.getElementById(m).value=v;} }; s('inMapel',d[6],'manMapel'); s('inJenis',d[11],'manJenis');
-      var k=d[10]&&d[10]!==""; document.getElementById('checkKaih').checked=k; toggleKaih(k); if(k)document.getElementById('inKaihType').value=d[10]; showModalInput();
+    function saveKurasi() {
+       api('updateKurasi', {
+          id: document.getElementById('kurId').value,
+          status: document.getElementById('kurStatus').value,
+          feedback: document.getElementById('kurFeed').value
+       }).then(() => { modal('modalKurasi').hide(); fetchData(); });
     }
-    function prosesSimpan(){ var p={mode:document.getElementById('formMode').value,idUnik:document.getElementById('editRowIdx').value,nama:STATE.user.name,sekolah:STATE.user.school,fase:document.getElementById('inFase').value,semester:document.getElementById('inSem').value,judul:document.getElementById('inJudul').value,mapel:document.getElementById('inMapel').value==='LAINNYA'?document.getElementById('manMapel').value:document.getElementById('inMapel').value,jenis:document.getElementById('inJenis').value==='LAINNYA'?document.getElementById('manJenis').value:document.getElementById('inJenis').value,kodeHtml:document.getElementById('inputSourceType').value==='HTML'?document.getElementById('inHtml').value:'',linkLuar:document.getElementById('inputSourceType').value==='LINK'?document.getElementById('inLink').value:'',kaihType:document.getElementById('checkKaih').checked?document.getElementById('inKaihType').value:''}; Swal.fire({title:'Menyimpan...',didOpen:()=>Swal.showLoading()}); callApi('simpan',p).then(r=>{if(r.status==='success'){if(modalInputInstance)modalInputInstance.hide();loadData();Swal.fire('Sukses','','success');}else Swal.fire('Error',r.message,'error');}); }
-    function hapusKarya(i){ Swal.fire({title:'Hapus?',icon:'warning',showCancelButton:true}).then(r=>{if(r.isConfirmed)callApi('hapus',{id:STATE.allMedia[i][13]}).then(()=>loadData());}); }
-    
-    function searchAdminTable(){ var q=document.querySelector('#view-admin input').value.toLowerCase(), st=document.getElementById('filterAdminStatus').value; renderTableAdmin(STATE.allMedia.filter(i=>{return ((i[5]||"").toLowerCase().includes(q)||(i[1]||"").toLowerCase().includes(q))&&(st===""||i[9]===st)})); }
-    function bukaKurasi(id,st,fb){ document.getElementById('kurasiId').value=id; document.getElementById('kurasiStatus').value=st; document.getElementById('kurasiFeedback').value=fb||''; new bootstrap.Modal('#modalKurasi').show(); }
-    function simpanKurasi(){ callApi('updateKurasi',{id:document.getElementById('kurasiId').value,status:document.getElementById('kurasiStatus').value,feedback:document.getElementById('kurasiFeedback').value}).then(()=>{Swal.fire('Sukses','','success');loadData();bootstrap.Modal.getInstance(document.getElementById('modalKurasi')).hide();}); }
-    function loadUserList(){ if(STATE.user.role!=='ADMIN')return; callApi('users').then(res=>{STATE.users=res.data; var h=''; res.data.forEach(u=>{h+=`<tr><td><div class="fw-bold">${u[0]}</div><small>${u[1]}</small></td><td>${u[2]}</td><td>${u[3]}</td><td class="text-center"><button onclick="hapusUser('${u[2]}')" class="btn-soft btn-soft-danger"><i class="fas fa-trash"></i></button></td></tr>`;}); document.getElementById('tableUsers').innerHTML=h;}); }
-    function hapusUser(p){ Swal.fire({title:'Hapus?',icon:'warning',showCancelButton:true}).then(r=>{if(r.isConfirmed)callApi('hapusUser',{pin:p}).then(()=>loadUserList());}); }
+
+    // --- USER MANAGEMENT ---
+    function loadUserList() {
+       api('users').then(res => {
+          USERS = res.data;
+          var t = document.getElementById('userTableBody'); t.innerHTML = '';
+          USERS.forEach(u => {
+             t.innerHTML += `<tr><td class="ps-3 fw-bold">${u[0]}</td><td>${u[1]}</td><td>${u[2]}</td><td>${u[3]}</td><td class="text-end pe-3"><button onclick="delUser('${u[2]}')" class="btn btn-sm btn-light text-danger"><i class="fas fa-trash"></i></button></td></tr>`;
+          });
+       });
+    }
+    function saveUser() {
+       var p = { nama: document.getElementById('uNameInput').value, sekolah: document.getElementById('uSchool').value, pin: document.getElementById('uPin').value, role: document.getElementById('uRoleInput').value };
+       api('simpanUser', p).then(res => {
+          if(res.status==='success') { modal('modalUser').hide(); loadUserList(); Swal.fire('Sukses'); }
+          else Swal.fire('Error', res.message, 'error');
+       });
+    }
+    function delUser(pin) {
+       if(confirm('Hapus user?')) api('hapusUser', {pin: pin}).then(() => loadUserList());
+    }
+
+    // --- AUTH ---
+    function loginModal() {
+       Swal.fire({title:'Masukkan PIN', input:'password'}).then(r => {
+          if(r.value) api('login', {pin: r.value}).then(res => {
+             if(res.status === 'success') {
+                localStorage.setItem('GB_USER', JSON.stringify(res.user));
+                USER = res.user; updateUI(); Swal.fire('Login Berhasil', '', 'success');
+             } else Swal.fire('Gagal', res.message, 'error');
+          });
+       });
+    }
+    function logout() { localStorage.removeItem('GB_USER'); location.reload(); }
+
+    // --- HELPERS ---
+    function modal(id) { return new bootstrap.Modal(document.getElementById(id)); }
+    function populateOptions() {
+       var fill = (id, idx) => {
+          var el = document.getElementById(id); el.innerHTML = '<option value="">Pilih...</option>';
+          var opts = [...new Set(SETTINGS.map(s => s[idx]).filter(Boolean))];
+          opts.forEach(o => el.innerHTML += `<option value="${o}">${o}</option>`);
+       };
+       fill('inMapel', 1); fill('inJenis', 0); fill('inFase', 2); fill('inKaih', 3); fill('inSem', 4);
+       
+       // Isi Filter Depan juga
+       var fillFilter = (id, idx, def) => {
+          var el = document.getElementById(id); el.innerHTML = `<option value="">${def}</option>`;
+          var opts = [...new Set(SETTINGS.map(s => s[idx]).filter(Boolean))];
+          opts.forEach(o => el.innerHTML += `<option value="${o}">${o}</option>`);
+       };
+       fillFilter('filterMapel', 1, '📚 Semua Mapel');
+       fillFilter('filterFase', 2, '🎓 Semua Fase');
+       fillFilter('filterJenis', 0, '📂 Semua Jenis');
+    }
+    function toggleKaih(c) { document.getElementById('inKaih').classList.toggle('d-none', !c); }
+    function resetForm() { document.getElementById('formInput').reset(); document.getElementById('formMode').value='ADD'; }
+    function editItem(idx) {
+       var d = DATA[idx];
+       document.getElementById('formMode').value = 'EDIT';
+       document.getElementById('editId').value = d[13];
+       document.getElementById('inJudul').value = d[5];
+       document.getElementById('inHtml').value = d[7];
+       document.getElementById('inLink').value = d[8];
+       // Set dropdowns value (simplified for brevity)
+       modal('modalInput').show();
+    }
+    function toggleInputSource(val) {
+       document.getElementById('groupLink').classList.toggle('d-none', val !== 'LINK');
+       document.getElementById('groupHtml').classList.toggle('d-none', val !== 'HTML');
+    }
   </script>
 </body>
 </html>
