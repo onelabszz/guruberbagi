@@ -12,103 +12,40 @@
 
   <style>
     :root { 
-      --primary: #0f766e; /* Teal Utama */
-      --primary-light: #14b8a6; 
-      --accent: #f59e0b; 
-      --bg-body: #f8fafc; 
-      --text-main: #1e293b;
-      --card-radius: 16px;
-      --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+      --primary: #0f766e; --primary-light: #14b8a6; 
+      --accent: #f59e0b; --bg-body: #f8fafc; --text-main: #1e293b;
+      --card-radius: 16px; --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
     }
-
     body { background-color: var(--bg-body); font-family: 'Plus Jakarta Sans', sans-serif; color: var(--text-main); padding-bottom: 80px; }
 
-    /* --- HERO SECTION (Bagian Atas) --- */
-    .hero-section {
-      background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
-      padding: 60px 0 90px; /* Padding bawah lebih besar untuk overlap */
-      color: white;
-      border-radius: 0 0 40px 40px;
-      margin-bottom: -40px; /* Efek overlap filter */
-      box-shadow: 0 10px 30px rgba(15, 118, 110, 0.25);
-      position: relative;
-      overflow: hidden;
-    }
-    /* Hiasan background tipis */
-    .hero-section::before { content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%; background:radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%); pointer-events:none; }
-
-    .hero-search-box {
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50px;
-      padding: 8px 25px;
-      transition: all 0.3s ease;
-      max-width: 600px;
-      margin: 0 auto;
-    }
+    /* HERO */
+    .hero-section { background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%); padding: 60px 0 90px; color: white; border-radius: 0 0 40px 40px; margin-bottom: -40px; box-shadow: 0 10px 30px rgba(15, 118, 110, 0.25); position: relative; overflow: hidden; }
+    .hero-search-box { background: rgba(255,255,255,0.15); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.3); border-radius: 50px; padding: 8px 25px; transition: 0.3s; max-width: 600px; margin: 0 auto; }
     .hero-search-box:focus-within { background: white; transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0,0,0,0.15); }
     .hero-search-input { background: transparent; border: none; color: white; font-weight: 600; width: 100%; outline: none; }
-    .hero-search-input::placeholder { color: rgba(255, 255, 255, 0.8); }
     .hero-search-box:focus-within .hero-search-input { color: #333; }
-    .hero-search-box:focus-within i { color: var(--primary); }
 
-    /* --- NAVBAR --- */
+    /* NAVBAR & FILTER */
     .navbar { z-index: 1000; position: sticky; top: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(5px); border-bottom: 1px solid #e2e8f0; }
-    
-    /* --- FILTER BAR (STICKY) --- */
-    .filter-bar {
-      position: sticky; top: 15px; z-index: 900;
-      background: white;
-      border-radius: 20px;
-      padding: 12px 20px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-      border: 1px solid #e2e8f0;
-      margin-bottom: 30px;
-    }
-    .filter-select {
-      border-radius: 20px; border: 1px solid #cbd5e1;
-      font-size: 0.85rem; font-weight: 700; color: #475569;
-      background-color: #f8fafc; cursor: pointer;
-      transition: 0.2s;
-    }
-    .filter-select:hover { border-color: var(--primary-light); background-color: white; }
+    .filter-bar { position: sticky; top: 15px; z-index: 900; background: white; border-radius: 20px; padding: 12px 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; margin-bottom: 30px; }
+    .filter-select { border-radius: 20px; border: 1px solid #cbd5e1; font-size: 0.85rem; font-weight: 700; color: #475569; background-color: #f8fafc; cursor: pointer; }
 
-    /* --- CARD KARYA --- */
-    .card-karya { 
-      background: #fff; border: none; border-radius: var(--card-radius); 
-      overflow: hidden; height: 100%; display: flex; flex-direction: column; 
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-      box-shadow: var(--card-shadow); border: 1px solid #f1f5f9;
-    }
+    /* CARD DESIGN */
+    .card-karya { background: #fff; border: none; border-radius: var(--card-radius); overflow: hidden; height: 100%; display: flex; flex-direction: column; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: var(--card-shadow); border: 1px solid #f1f5f9; }
     .card-karya:hover { transform: translateY(-8px); box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.12); border-color: var(--primary-light); }
-    
-    .card-thumb { 
-      height: 160px; position: relative; overflow: hidden; 
-      display: flex; align-items: center; justify-content: center; 
-      background: #e2e8f0; color: #fff;
-    }
+    .card-thumb { height: 160px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #e2e8f0; color: #fff; }
     .card-thumb img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
     .card-karya:hover .card-thumb img { transform: scale(1.1); }
     
-    /* Badges di Thumbnail */
     .badge-float { position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.95); color: #0f172a; font-size: 0.65rem; padding: 4px 10px; border-radius: 20px; font-weight: 800; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     .badge-views { position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.6); color: white; font-size: 0.65rem; padding: 2px 8px; border-radius: 6px; font-weight: 600; backdrop-filter: blur(2px); }
-    
-    .btn-wishlist { 
-      position: absolute; top: 10px; right: 10px; z-index: 10; 
-      border: none; background: rgba(255,255,255,0.9); width: 32px; height: 32px; border-radius: 50%; 
-      display: flex; align-items: center; justify-content: center; 
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1); color: #94a3b8; transition: 0.2s; cursor: pointer;
-    }
+    .btn-wishlist { position: absolute; top: 10px; right: 10px; z-index: 10; border: none; background: rgba(255,255,255,0.9); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); color: #94a3b8; transition: 0.2s; cursor: pointer; }
     .btn-wishlist:hover, .btn-wishlist.active { color: #ef4444; transform: scale(1.1); background: white; }
 
     .card-body-mp { padding: 18px; flex-grow: 1; display: flex; flex-direction: column; }
-    
     .tag-pill { font-size: 0.6rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; margin-right: 4px; }
-    .tag-mapel { background: #ccfbf1; color: #0f766e; } 
-    .tag-fase { background: #e0f2fe; color: #0369a1; }
-    
+    .tag-mapel { background: #ccfbf1; color: #0f766e; } .tag-fase { background: #e0f2fe; color: #0369a1; }
+    /* Fix Deskripsi Judul */
     .mp-title { font-weight: 800; font-size: 1rem; line-height: 1.4; margin-bottom: 4px; color: var(--text-main); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.8em; }
     
     .guru-info { display: flex; align-items: center; gap: 10px; margin-top: auto; padding-top: 15px; border-top: 1px dashed #e2e8f0; }
@@ -121,30 +58,20 @@
     .btn-sec { background: #f1f5f9; color: #475569; width: 40px; display: flex; align-items: center; justify-content: center; }
     .btn-sec:hover { background: #e2e8f0; color: #0f172a; }
 
-    /* ADMIN DASHBOARD */
-    .dashboard-header { background: white; padding: 25px; border-radius: 20px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; }
-    .stat-widget { background: white; padding: 20px; border-radius: 16px; position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); color: white; margin-bottom: 15px; }
-    .stat-val { font-size: 2rem; font-weight: 800; line-height: 1; margin-bottom: 5px; }
-    .stat-label { font-size: 0.7rem; font-weight: 700; opacity: 0.85; text-transform: uppercase; letter-spacing: 1px; }
-    
-    .stat-total { background: linear-gradient(135deg, #6366f1, #4f46e5); }
-    .stat-approved { background: linear-gradient(135deg, #10b981, #059669); }
-    .stat-pending { background: linear-gradient(135deg, #f59e0b, #d97706); }
-    
-    /* UTILS */
+    /* UTILS & PREVIEW */
     .d-none { display: none !important; } .admin-only { display: none !important; } 
     .fab-add { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 20px; background: #1e293b; color: white; border: none; font-size: 1.5rem; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3); transition: 0.3s; display: flex; align-items: center; justify-content: center; z-index: 1020; }
-    .fab-add:hover { transform: scale(1.1) rotate(90deg); background: var(--primary); }
-
-    /* PREVIEW OVERLAY */
     #previewOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none; flex-direction: column; z-index: 20000; }
     .preview-head { background: #111; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; color: white; border-bottom: 1px solid #333; }
     #previewFrame { flex-grow: 1; width: 100%; height: 100%; border: none; background: #fff; }
     #floatingExitBtn { position: fixed; top: 20px; right: 20px; z-index: 20002; background: rgba(220, 38, 38, 0.8); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; display: none; align-items: center; justify-content: center; cursor: pointer; }
     
-    /* MODAL */
-    .preview-box { width: 100%; height: 100%; min-height: 350px; border: 2px dashed #cbd5e1; border-radius: 12px; overflow: hidden; background: #f8fafc; position: relative; }
-    .preview-placeholder { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #94a3b8; font-weight: 700; text-align: center; }
+    /* ADMIN */
+    .stat-widget { background: white; padding: 20px; border-radius: 16px; position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); color: white; margin-bottom: 15px; }
+    .stat-val { font-size: 2rem; font-weight: 800; line-height: 1; margin-bottom: 5px; }
+    .stat-total { background: linear-gradient(135deg, #6366f1, #4f46e5); }
+    .stat-approved { background: linear-gradient(135deg, #10b981, #059669); }
+    .stat-pending { background: linear-gradient(135deg, #f59e0b, #d97706); }
   </style>
 </head>
 <body>
@@ -239,9 +166,9 @@
     </div>
 
     <div class="row g-3 mb-4">
-      <div class="col-md-4"><div class="stat-widget stat-total"><div class="stat-val" id="statTotal">0</div><div class="stat-label">TOTAL KARYA</div></div></div>
-      <div class="col-md-4"><div class="stat-widget stat-approved"><div class="stat-val" id="statApproved">0</div><div class="stat-label">DISETUJUI</div></div></div>
-      <div class="col-md-4"><div class="stat-widget stat-pending"><div class="stat-val" id="statPending">0</div><div class="stat-label">MENUNGGU</div></div></div>
+      <div class="col-md-4"><div class="stat-widget stat-total"><div class="stat-val" id="statTotal">0</div><div class="small fw-bold opacity-75">TOTAL KARYA</div></div></div>
+      <div class="col-md-4"><div class="stat-widget stat-approved"><div class="stat-val" id="statApproved">0</div><div class="small fw-bold opacity-75">DISETUJUI</div></div></div>
+      <div class="col-md-4"><div class="stat-widget stat-pending"><div class="stat-val" id="statPending">0</div><div class="small fw-bold opacity-75">MENUNGGU</div></div></div>
     </div>
     
     <div class="bg-white p-4 border rounded-4 shadow-sm">
@@ -274,38 +201,62 @@
 
   <div class="modal fade" id="modalInput" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable"><div class="modal-content rounded-4 border-0 shadow"><div class="modal-header border-bottom bg-light py-3"><h5 class="fw-bold text-primary mb-0"><i class="fas fa-cloud-upload-alt me-2"></i>Bagikan Karya</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-4 bg-white"><form id="modalForm"><input type="hidden" id="formMode" value="ADD"><input type="hidden" id="editRowIdx"><div class="row h-100"><div class="col-lg-7 modal-left-col border-end pe-4"><div class="mb-3"><label class="small fw-bold mb-1 text-muted">Judul Media <span class="text-danger">*</span></label><input type="text" id="inJudul" class="form-control fw-bold bg-light" placeholder="Judul karya..."></div><div class="row"><div class="col-md-6 mb-3"><label class="small fw-bold mb-1 text-muted">Mata Pelajaran <span class="text-danger">*</span></label><select id="inMapel" class="form-select" onchange="checkDropdown('inMapel','manMapel',this.value)"></select><input type="text" id="manMapel" class="form-control mt-2 d-none" placeholder="Tulis mapel..." required></div><div class="col-md-6 mb-3"><label class="small fw-bold mb-1 text-muted">Jenis Media <span class="text-danger">*</span></label><select id="inJenis" class="form-select" onchange="checkDropdown('inJenis','manJenis',this.value)"></select><input type="text" id="manJenis" class="form-control mt-2 d-none" placeholder="Tulis jenis..." required></div></div><div class="row"><div class="col-md-6 mb-3"><label class="small fw-bold mb-1 text-muted">Fase / Kelas</label><select id="inFase" class="form-select"></select></div><div class="col-md-6 mb-3"><label class="small fw-bold mb-1 text-muted">Semester</label><select id="inSem" class="form-select"></select></div></div><div class="bg-light p-3 rounded mb-3 border d-flex align-items-center justify-content-between"><div><label class="small fw-bold d-block text-dark">Program KAIH?</label><small class="text-muted" style="font-size:0.7rem;">Kebiasaan Anak Indonesia Hebat</small></div><div class="d-flex align-items-center gap-2"><div id="kaihBox" class="d-none"><select id="inKaihType" class="form-select form-select-sm"></select></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="checkKaih" onchange="toggleKaih(this.checked)"></div></div></div><div class="mb-3"><label class="small fw-bold mb-2 text-muted">Tipe Konten Utama</label><select id="inputSourceType" class="form-select bg-light fw-bold" onchange="toggleInputSource(this.value)"><option value="LINK">🔗 Link Media (Youtube / Drive / Gemini)</option><option value="HTML">💻 Kode Embed HTML (Prioritas)</option></select></div><div id="groupLink" class="mb-2"><label class="small fw-bold mb-1 text-muted">Link Media</label><input type="url" id="inLink" class="form-control" placeholder="Paste link disini..." oninput="updateLivePreview()"></div><div id="groupHtml" class="mb-0 d-none"><label class="small fw-bold mb-1 text-muted">Kode Embed HTML</label><textarea id="inHtml" class="form-control small font-monospace bg-light" rows="3" placeholder="<iframe src='...'></iframe>" oninput="updateLivePreview()"></textarea></div></div><div class="col-lg-5 d-flex flex-column pt-3 pt-lg-0"><label class="small fw-bold text-muted mb-2 text-center">Live Preview Thumbnail</label><div class="preview-box shadow-sm"><div class="preview-placeholder">Preview akan muncul disini</div><iframe id="miniPreviewFrame" style="width:100%; height:100%; border:none; position:relative; z-index:2;"></iframe></div></div></div></form></div><div class="modal-footer bg-light"><button type="button" class="btn btn-outline-secondary rounded-pill fw-bold px-4" data-bs-dismiss="modal">Batal</button><button type="button" onclick="prosesSimpan()" class="btn btn-primary rounded-pill fw-bold px-5 shadow-sm">SIMPAN & TERBITKAN</button></div></div></div></div>
   <div class="modal fade" id="modalUser" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 rounded-4 shadow"><div class="modal-header"><h5 class="fw-bold text-primary">Data Guru</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="formUser"><input type="hidden" id="userMode" value="ADD"><input type="hidden" id="oldPin"><div class="mb-3"><label class="small fw-bold">Nama Lengkap</label><input type="text" id="userName" class="form-control"></div><div class="mb-3"><label class="small fw-bold">Unit Kerja (Sekolah)</label><input type="text" id="userSchool" class="form-control"></div><div class="row"><div class="col-6"><label class="small fw-bold">PIN Login</label><input type="text" id="userPin" class="form-control"></div><div class="col-6"><label class="small fw-bold">Hak Akses</label><select id="userRole" class="form-select"><option value="GURU">GURU</option><option value="MODERATOR">MODERATOR</option><option value="ADMIN">ADMIN</option></select></div></div></form></div><div class="modal-footer"><button onclick="prosesSimpanUser()" class="btn btn-primary w-100 fw-bold rounded-pill">SIMPAN DATA</button></div></div></div></div>
-  <div class="modal fade" id="modalKurasi" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 rounded-4 shadow"><div class="modal-header border-bottom-0"><h5 class="fw-bold text-primary">Kurasi Karya</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="kurasiId"><div class="mb-3"><label class="small fw-bold">Status Persetujuan</label><select id="kurasiStatus" class="form-select"><option value="BARU">BARU (Pending)</option><option value="DISETUJUI">DISETUJUI (Tampil)</option><option value="REVISI">REVISI (Perlu Perbaikan)</option></select></div><div class="mb-3"><label class="small fw-bold">Catatan / Feedback</label><textarea id="kurasiFeedback" class="form-control" rows="4"></textarea></div></div><div class="modal-footer border-top-0"><button onclick="simpanKurasi()" class="btn btn-primary w-100 fw-bold rounded-pill">UPDATE STATUS</button></div></div></div></div>
+  <div class="modal fade" id="modalKurasi" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 rounded-4 shadow"><div class="modal-header border-bottom-0"><h5 class="fw-bold text-primary">Kurasi Karya</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="kurasiId"><div class="mb-3"><label class="small fw-bold">Status Persetujuan</label><select id="kurasiStatus" class="form-select"><option value="BARU">BARU (Pending)</option><option value="DISETUJUI">DISETUJUI (Tampil)</option><option value="REVISI">REVISI (Perlu Perbaikan)</option></select></div><div class="mb-3"><label class="small fw-bold">Catatan / Feedback</label><textarea id="kurasiFeedback" class="form-control" rows="4" placeholder="Tulis masukan untuk guru..."></textarea></div></div><div class="modal-footer border-top-0"><button onclick="simpanKurasi()" class="btn btn-primary w-100 fw-bold rounded-pill">UPDATE STATUS</button></div></div></div></div>
 
   <script>
-    // --- KONFIGURASI API ---
-    // GANTI DENGAN URL API ANDA DARI DEPLOYMENT GAS:
+    // MASUKKAN URL API ANDA DI SINI
     const API_URL = "https://script.google.com/macros/s/AKfycbzhrWjl2Dc0i8V45dD8vNXrt3gfmvEU1pZ5hZOELkTz6e29l68d2hsHfGQEjqTVYdY0/exec";
 
-    // STATE
-    var STATE={allMedia:[],filtered:[],users:[],user:{name:"Tamu",role:"GUEST"},settings:[],displayedLimit:12,itemsPerPage:12};
-    var ACTIVE_CONTENT={type:null,data:null}, searchTimeout=null, modalInputInstance=null, charts={};
+    var STATE = { allMedia: [], filtered: [], users: [], user: { name: "Tamu", role: "GUEST" }, settings: [], displayedLimit: 12, itemsPerPage: 12 };
+    var ACTIVE_CONTENT = { type: null, data: null };
+    var searchTimeout = null;
+    var modalInputInstance = null;
+    var charts = {};
 
-    async function callApi(a,p=null) { try { var r = await fetch(API_URL+(a==='read'?'?action=read':''), {method:a==='read'?'GET':'POST', body:a!=='read'?JSON.stringify({action:a,payload:p}):null}); return await r.json(); } catch(e){return{status:'error',message:e.toString()};} }
-    window.onload=()=>{initApp()}; function initApp(){ try{var s=localStorage.getItem('guruBerbagiUser');if(s)STATE.user=JSON.parse(s);updateUserInterface();}catch(e){} loadData();}
-    function cleanStr(s){if(!s)return"";return s.toString().replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
-    function softReset(){ switchView('GALERI'); updateUserInterface(); loadData(); }
+    async function callApi(action, payload = null) {
+      try {
+        if (action === 'read') { var r = await fetch(API_URL + "?action=read"); return await r.json(); }
+        else { var r = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: action, payload: payload }) }); return await r.json(); }
+      } catch (e) { return { status: "error", message: e.toString() }; }
+    }
+
+    window.onload = function() { initApp(); };
+    function initApp() { try { var s = localStorage.getItem('guruBerbagiUser'); if (s) { STATE.user = JSON.parse(s); updateUserInterface(); } } catch(e) {} loadData(); }
+    
+    function cleanStr(s) { if(!s) return ""; return s.toString().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+    function softReset() { switchView('GALERI'); updateUserInterface(); loadData(); }
 
     function updateUserInterface() {
-      document.getElementById('uName').innerText=STATE.user.name; document.getElementById('uRole').innerText=STATE.user.role;
-      var isG=STATE.user.role==='GUEST'; document.getElementById('btnLogin').style.display=isG?'block':'none'; document.getElementById('userPanel').classList.toggle('d-none',isG);
-      ['btnDashboard','btnAdd','btnFilterMy'].forEach(id=>document.getElementById(id).classList.add('d-none'));
-      if(!isG) { ['btnAdd','btnFilterMy'].forEach(id=>document.getElementById(id).classList.remove('d-none')); }
-      if(STATE.user.role!=='GUEST') document.getElementById('btnDashboard').classList.remove('d-none');
+      document.getElementById('uName').innerText = STATE.user.name; document.getElementById('uRole').innerText = STATE.user.role;
+      var isG = STATE.user.role === 'GUEST';
+      document.getElementById('btnLogin').style.display = isG ? 'block' : 'none';
+      document.getElementById('userPanel').classList.toggle('d-none', isG);
+      ['btnDashboard','btnAdd','btnFilterMy'].forEach(id => document.getElementById(id).classList.add('d-none'));
+      if (!isG) { ['btnAdd','btnFilterMy'].forEach(id => document.getElementById(id).classList.remove('d-none')); }
+      if (STATE.user.role !== 'GUEST') document.getElementById('btnDashboard').classList.remove('d-none');
     }
     
     function switchView(v) {
-       var g=document.getElementById('view-galeri'), a=document.getElementById('view-admin'), h=document.getElementById('heroSection');
-       if(v==='ADMIN'){ g.classList.add('d-none'); h.classList.add('d-none'); a.classList.remove('d-none'); document.getElementById('btnHome').classList.remove('d-none'); document.getElementById('btnDashboard').classList.add('d-none'); document.getElementById('btnAdd').classList.add('d-none'); renderTableAdmin(STATE.allMedia); initDashboardCharts(); }
-       else { a.classList.add('d-none'); g.classList.remove('d-none'); h.classList.remove('d-none'); document.getElementById('btnHome').classList.add('d-none'); if(STATE.user.role!=='GUEST'){ document.getElementById('btnDashboard').classList.remove('d-none'); document.getElementById('btnAdd').classList.remove('d-none'); } }
+       var g = document.getElementById('view-galeri'), a = document.getElementById('view-admin'), h = document.getElementById('heroSection');
+       if (v === 'ADMIN') {
+          g.classList.add('d-none'); h.classList.add('d-none'); a.classList.remove('d-none');
+          document.getElementById('btnHome').classList.remove('d-none'); document.getElementById('btnDashboard').classList.add('d-none'); document.getElementById('btnAdd').classList.add('d-none');
+          renderTableAdmin(STATE.allMedia); initDashboardCharts();
+       } else {
+          a.classList.add('d-none'); g.classList.remove('d-none'); h.classList.remove('d-none');
+          document.getElementById('btnHome').classList.add('d-none');
+          if(STATE.user.role !== 'GUEST') { document.getElementById('btnDashboard').classList.remove('d-none'); document.getElementById('btnAdd').classList.remove('d-none'); }
+       }
     }
 
     function loadData() {
-       callApi('read').then(res=>{ if(res.status==='success'){ STATE.allMedia=res.media; STATE.settings=res.settings; populateDropdowns(); applyFilters(); updateStats(); } document.getElementById('loader').style.display='none'; });
+       callApi('read').then(res => {
+         if(res && res.status === "success") {
+           STATE.allMedia = res.media; STATE.settings = res.settings;
+           populateDropdowns(); applyFilters(); updateStats();
+         }
+         document.getElementById('loader').style.display = 'none';
+       });
     }
     
     function updateStats() {
@@ -315,67 +266,119 @@
     }
     
     function initDashboardCharts() {
-       if(STATE.allMedia.length===0) return;
-       var mC={}, sC={'DISETUJUI':0,'BARU':0,'REVISI':0};
-       STATE.allMedia.forEach(m=>{ mC[m[6]||'Lainnya']=(mC[m[6]||'Lainnya']||0)+1; sC[m[9]||'BARU']=(sC[m[9]||'BARU']||0)+1; });
-       if(charts.mapel)charts.mapel.destroy(); if(charts.status)charts.status.destroy();
-       charts.mapel=new Chart(document.getElementById('chartMapel'),{type:'bar',data:{labels:Object.keys(mC),datasets:[{label:'Jml',data:Object.values(mC),backgroundColor:'#0f766e'}]},options:{responsive:true,maintainAspectRatio:false}});
-       charts.status=new Chart(document.getElementById('chartStatus'),{type:'doughnut',data:{labels:['Disetujui','Menunggu','Revisi'],datasets:[{data:[sC['DISETUJUI'],sC['BARU'],sC['REVISI']],backgroundColor:['#10b981','#f59e0b','#ef4444']}]},options:{responsive:true,maintainAspectRatio:false}});
+       if(STATE.allMedia.length === 0) return;
+       var mC = {}, sC = { 'DISETUJUI': 0, 'BARU': 0, 'REVISI': 0 };
+       STATE.allMedia.forEach(m => { mC[m[6]||'Lainnya'] = (mC[m[6]||'Lainnya']||0)+1; sC[m[9]||'BARU'] = (sC[m[9]||'BARU']||0)+1; });
+       if(charts.mapel) charts.mapel.destroy(); if(charts.status) charts.status.destroy();
+       charts.mapel = new Chart(document.getElementById('chartMapel'), { type: 'bar', data: { labels: Object.keys(mC), datasets: [{ label: 'Jumlah', data: Object.values(mC), backgroundColor: '#0f766e' }] }, options: { responsive: true, maintainAspectRatio: false } });
+       charts.status = new Chart(document.getElementById('chartStatus'), { type: 'doughnut', data: { labels: ['Disetujui', 'Menunggu', 'Revisi'], datasets: [{ data: [sC['DISETUJUI'],sC['BARU'],sC['REVISI']], backgroundColor: ['#10b981','#f59e0b','#ef4444'] }] }, options: { responsive: true, maintainAspectRatio: false } });
     }
 
     function applyFilters() {
-      var q=document.getElementById('searchInput').value.toLowerCase(), fM=document.getElementById('filterMapel').value, fF=document.getElementById('filterFase').value, fJ=document.getElementById('filterJenis').value;
-      STATE.filtered=STATE.allMedia.filter(i=>{ var mS=(i[5]+" "+i[1]).toLowerCase().indexOf(q)!==-1, mM=(fM===""||i[6]===fM), mF=(fF===""||i[3]===fF), mJ=(fJ===""||i[11]===fJ); return mS&&mM&&mF&&mJ; });
-      STATE.displayedLimit=STATE.itemsPerPage; renderGaleri();
+      var q = document.getElementById('searchInput').value.toLowerCase(), fM = document.getElementById('filterMapel').value, fF = document.getElementById('filterFase').value, fJ = document.getElementById('filterJenis').value;
+      STATE.filtered = STATE.allMedia.filter(i => {
+         var mS = (i[5]+" "+i[1]+" "+i[2]+" "+i[3]+" "+i[6]+" "+i[11]).toLowerCase().indexOf(q) !== -1;
+         var mM = (fM === "" || i[6] === fM), mF = (fF === "" || i[3] === fF), mJ = (fJ === "" || i[11] === fJ);
+         return mS && mM && mF && mJ;
+      });
+      STATE.displayedLimit = STATE.itemsPerPage; renderGaleri();
     }
-    function loadMoreItems(){ STATE.displayedLimit+=STATE.itemsPerPage; renderGaleri(); }
+    function loadMoreItems() { STATE.displayedLimit += STATE.itemsPerPage; renderGaleri(); }
 
     function renderGaleri() {
-      var c=document.getElementById('galeri-container'); c.innerHTML='';
-      var saved=JSON.parse(localStorage.getItem('GB_FAV_'+STATE.user.name)||'[]');
-      var show=STATE.filtered.slice(0,STATE.displayedLimit);
-      show.forEach(item=>{
-         var idx=STATE.allMedia.indexOf(item), id=cleanStr(item[13]), isApp=item[9]==="DISETUJUI", isOwn=STATE.user.name===item[1], isAdm=STATE.user.role!=='GUEST'&&STATE.user.role!=='GURU', isFav=saved.includes(id);
-         var badge=isApp?'<div class="badge-approved"><i class="fas fa-check"></i></div>':(isOwn||isAdm?'<div class="badge-pending">PENDING</div>':'');
-         var editBtns=(isOwn||isAdm)?`<button onclick="event.stopPropagation();bukaEdit(${idx})" class="btn-card-action btn-sec"><i class="fas fa-pencil-alt"></i></button><button onclick="event.stopPropagation();hapusKarya(${idx})" class="btn-card-action btn-sec text-danger"><i class="fas fa-trash"></i></button>`:'';
+      var c = document.getElementById('galeri-container'); c.innerHTML = '';
+      var saved = JSON.parse(localStorage.getItem('GB_FAV_'+STATE.user.name) || '[]');
+      var show = STATE.filtered.slice(0, STATE.displayedLimit);
+      
+      show.forEach(item => {
+         var idx = STATE.allMedia.indexOf(item); // Index asli
+         var id = cleanStr(item[13]), isApp = item[9] === "DISETUJUI", isOwn = STATE.user.name === item[1];
+         var isAdm = STATE.user.role === 'ADMIN' || STATE.user.role === 'MODERATOR';
+         var isFav = saved.includes(id);
          
-         // Smart QR & Link
-         var link=cleanStr(item[8]); if(!link||link.length<5){ var m=(item[7]||"").match(/src\s*=\s*["']([^"']+)["']/i); if(m)link=m[1]; }
-         var qrBtn=(link&&link.length>5)?`<button onclick="event.stopPropagation();showQR('${link}')" class="btn-card-action btn-sec"><i class="fas fa-qrcode"></i></button>`:'';
+         var badge = isApp ? '<div class="badge-approved"><i class="fas fa-check-circle"></i></div>' : (isOwn||isAdm ? '<div class="badge-pending">PENDING</div>' : '');
+         var editBtns = (isOwn || isAdm) ? `<button onclick="event.stopPropagation(); bukaEdit(${idx})" class="btn-card-action btn-sec" title="Edit"><i class="fas fa-pencil-alt"></i></button><button onclick="event.stopPropagation(); hapusKarya(${idx})" class="btn-card-action btn-sec text-danger" title="Hapus"><i class="fas fa-trash"></i></button>` : '';
          
-         var j=cleanStr(item[11]).toUpperCase(), ic="fas fa-file", bg="#64748b";
-         if(j.includes("VIDEO")) {ic="fas fa-play";bg="#ef4444";} else if(j.includes("GAME")) {ic="fas fa-gamepad";bg="#8b5cf6";} else if(j.includes("MODUL")) {ic="fas fa-book";bg="#10b981";}
-         var yt=link.match(/youtu\.?be.*(v\/|embed\/|\?v=)([^#\&\?]*)/);
+         // Smart QR
+         var link = cleanStr(item[8]);
+         if (!link || link.length < 5) { var m = (item[7]||"").match(/src\s*=\s*["']([^"']+)["']/i); if(m) link = m[1]; }
+         var qrBtn = (link && link.length > 5) ? `<button onclick="event.stopPropagation(); showQR('${link}')" class="btn-card-action btn-sec" title="QR"><i class="fas fa-qrcode"></i></button>` : '';
+         
+         // Warna Thumbnail Canggih
+         var j = cleanStr(item[11]).toUpperCase(), ic = "fas fa-file-alt", bg = "#64748b";
+         if(j.includes("VIDEO")) { ic="fas fa-play"; bg="#ef4444"; } 
+         else if(j.includes("GAME") || j.includes("KUIS")) { ic="fas fa-gamepad"; bg="#8b5cf6"; } 
+         else if(j.includes("MODUL") || j.includes("BUKU")) { ic="fas fa-book"; bg="#10b981"; }
+         else if(j.includes("STORY") || j.includes("GEMINI")) { ic="fas fa-robot"; bg="#f59e0b"; } // Amber for AI
+         
+         var yt = link.match(/youtu\.?be.*(v\/|embed\/|\?v=)([^#\&\?]*)/);
          var thumb = yt ? `<img src="https://img.youtube.com/vi/${yt[2]}/mqdefault.jpg">` : `<div style="background:${bg};width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:white"><i class="${ic} fa-3x mb-2"></i><span style="font-size:0.7rem;font-weight:700">${j}</span></div>`;
-         
-         var h=`<div class="col-6 col-md-4 col-lg-3 d-flex fade-in"><div class="card-karya w-100"><div class="card-thumb">${thumb}${badge}<div class="badge-float">${j}</div><div class="badge-views"><i class="fas fa-eye me-1"></i> ${item[14]||0}</div><button onclick="event.stopPropagation();toggleSimpan('${id}')" class="btn-wishlist ${isFav?'active':''}"><i class="${isFav?'fas':'far'} fa-heart"></i></button></div><div class="card-body-mp"><div class="meta-row"><span class="tag-pill tag-mapel">${cleanStr(item[6])}</span><span class="tag-pill tag-fase">${cleanStr(item[3])}</span></div><div class="mp-title">${cleanStr(item[5])}</div><div class="guru-info"><div class="guru-avatar">${cleanStr(item[1]).charAt(0)}</div><div class="lh-1"><div class="fw-bold small text-dark">${cleanStr(item[1])}</div><div class="text-muted" style="font-size:0.65rem">${cleanStr(item[2])}</div></div></div><div class="action-row"><button onclick="bukaPreview(${idx})" class="btn-card-action btn-open">BUKA</button>${qrBtn}${editBtns}</div></div></div></div>`;
-         c.insertAdjacentHTML('beforeend', h);
+
+         var html = `
+           <div class="col-6 col-md-4 col-lg-3 d-flex fade-in">
+             <div class="card-karya w-100">
+               <div class="card-thumb">
+                 ${thumb}
+                 ${badge}
+                 <div class="badge-float">${j}</div>
+                 <div class="badge-views"><i class="fas fa-eye me-1"></i> ${item[14]||0}</div>
+                 <button onclick="event.stopPropagation(); toggleSimpan('${id}')" class="btn-wishlist ${isFav?'active':''}"><i class="${isFav?'fas':'far'} fa-heart"></i></button>
+               </div>
+               <div class="card-body-mp">
+                 <div class="meta-row">
+                   <span class="tag-pill tag-mapel">${cleanStr(item[6])}</span>
+                   <span class="tag-pill tag-fase">${cleanStr(item[3])}</span>
+                 </div>
+                 <div class="mp-title" title="${cleanStr(item[5])}">${cleanStr(item[5])}</div>
+                 <div class="guru-info">
+                   <div class="guru-avatar">${cleanStr(item[1]).charAt(0)}</div>
+                   <div class="lh-1">
+                     <div class="fw-bold small text-dark text-truncate" style="max-width:140px;">${cleanStr(item[1])}</div>
+                     <div class="text-muted text-truncate" style="font-size:0.65rem;max-width:140px;">${cleanStr(item[2])}</div>
+                   </div>
+                 </div>
+                 <div class="action-row">
+                   <button onclick="bukaPreview(${idx})" class="btn-card-action btn-open">BUKA</button>
+                   ${qrBtn}
+                   ${editBtns}
+                 </div>
+               </div>
+             </div>
+           </div>`;
+         c.insertAdjacentHTML('beforeend', html);
       });
-      document.getElementById('loadMoreContainer').classList.toggle('d-none', STATE.filtered.length<=STATE.displayedLimit);
+      document.getElementById('loadMoreContainer').classList.toggle('d-none', STATE.filtered.length <= STATE.displayedLimit);
     }
 
     function bukaPreview(idx) {
-       var item=STATE.allMedia[idx]; if(!item)return;
-       var rawLink=(item[8]||"").trim(), rawHtml=(item[7]||"").trim(), id=item[13];
-       callApi('view',{id:id});
-       
-       // FIX: GEMINI Direct Open
-       if(rawLink && (rawLink.includes('gemini.google.com') || rawLink.includes('g.co') || rawLink.includes('story'))) {
+       var item = STATE.allMedia[idx]; if(!item) return;
+       var rawLink = (item[8]||"").trim(), rawHtml = (item[7]||"").trim(), id = item[13];
+       callApi('view', {id: id});
+
+       // FIX GEMINI
+       if (rawLink && (rawLink.includes('gemini.google.com') || rawLink.includes('g.co') || rawLink.includes('story'))) {
           var url = rawLink.replace('gemini.google.com/share', 'g.co/gemini/share');
           window.open(url, '_blank'); return;
        }
 
-       document.getElementById('previewTitle').innerText=cleanStr(item[5]);
-       var ov=document.getElementById('previewOverlay'), fr=document.getElementById('previewFrame');
-       ov.style.display='flex'; fr.src="about:blank";
-       if(rawHtml.length>10) { ACTIVE_CONTENT={type:'HTML',data:rawHtml}; fr.src=URL.createObjectURL(new Blob([rawHtml],{type:'text/html'})); }
-       else if(rawLink.length>5) { ACTIVE_CONTENT={type:'LINK',data:rawLink}; var yt=getYoutubeId(rawLink); if(yt) fr.src="https://www.youtube.com/embed/"+yt+"?autoplay=1"; else if(rawLink.includes('drive.google')) fr.src=rawLink.replace(/\/view.*/,'/preview'); else fr.src=rawLink; }
+       document.getElementById('previewTitle').innerText = cleanStr(item[5]);
+       var ov = document.getElementById('previewOverlay'), fr = document.getElementById('previewFrame');
+       ov.style.display = 'flex'; fr.src = "about:blank";
+       
+       if (rawHtml.length > 10) { ACTIVE_CONTENT={type:'HTML',data:rawHtml}; fr.src = URL.createObjectURL(new Blob([rawHtml],{type:'text/html'})); }
+       else if (rawLink.length > 5) { 
+          ACTIVE_CONTENT={type:'LINK',data:rawLink}; 
+          var yt = getYoutubeId(rawLink);
+          if (yt) fr.src = "https://www.youtube.com/embed/"+yt+"?autoplay=1";
+          else if (rawLink.includes('drive.google')) fr.src = rawLink.replace(/\/view.*/,'/preview');
+          else fr.src = rawLink;
+       }
        else { Swal.fire('Info','Konten kosong','info'); tutupPreview(); }
     }
 
     function smartFullscreen() { var el=document.getElementById('previewOverlay'); if(el.requestFullscreen) el.requestFullscreen().catch(fallbackTabBaru); else fallbackTabBaru(); }
     function fallbackTabBaru() { 
-       if(!ACTIVE_CONTENT.data)return; var w=window.open("","_blank");
+       if(!ACTIVE_CONTENT.data) return; var w=window.open("","_blank");
        if(ACTIVE_CONTENT.type==='HTML'){ w.document.write('<!DOCTYPE html><html><head><title>Full</title><style>body{margin:0;overflow:auto}</style></head><body>'+ACTIVE_CONTENT.data+'</body></html>'); }
        else { var yt=getYoutubeId(ACTIVE_CONTENT.data); w.location.href=yt?"https://www.youtube.com/embed/"+yt:ACTIVE_CONTENT.data; }
     }
