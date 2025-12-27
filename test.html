@@ -7,7 +7,6 @@
   
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -24,7 +23,7 @@
 
     body { background-color: var(--bg-body); font-family: 'Plus Jakarta Sans', sans-serif; color: var(--text-main); font-size: 0.9rem; padding-bottom: 80px; }
 
-    /* LAYOUT */
+    /* NAVBAR & LAYOUT */
     .navbar { z-index: 1000; position: sticky; top: 0; background: #fff; border-bottom: 1px solid #e2e8f0; }
     .fade-in { animation: fadeIn 0.5s ease-in-out; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -33,6 +32,11 @@
     .brand-text { display: flex; flex-direction: column; justify-content: center; line-height: 1.1; }
     .brand-main { font-weight: 800; color: var(--primary); font-size: 1.4rem; letter-spacing: -0.5px; }
     .brand-sub { font-weight: 600; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* FILTERS AREA */
+    .filter-container { background: #fff; border-radius: 12px; padding: 15px; margin-bottom: 20px; border: 1px solid #e2e8f0; box-shadow: var(--card-shadow); }
+    .form-select-filter { border-radius: 20px; border: 1px solid #cbd5e1; font-size: 0.85rem; font-weight: 600; color: #475569; }
+    .form-select-filter:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(45, 139, 131, 0.2); }
 
     /* CARD SYSTEM */
     .card-karya { 
@@ -81,7 +85,6 @@
     
     .dashboard-header { background: #fff; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
     
-    /* GRADIENT STATS */
     .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 24px; }
     .stat-widget { position: relative; overflow: hidden; padding: 24px; border-radius: 16px; border: none; color: white; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); transition: transform 0.2s; }
     .stat-widget:hover { transform: translateY(-5px); }
@@ -122,8 +125,6 @@
     @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
     #previewFrame { flex-grow: 1; width: 100%; height: 100%; border: none; background: #fff; }
-    
-    #geminiPlaceholder { flex-grow: 1; width: 100%; height: 100%; background: #1e1e1e; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; padding: 20px; }
 
     /* MODAL */
     .preview-box { width: 100%; height: 100%; min-height: 350px; border: 2px dashed #cbd5e1; border-radius: 12px; overflow: hidden; background: #f8fafc; position: relative; }
@@ -142,15 +143,6 @@
       </div>
     </div>
     <iframe id="previewFrame" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe>
-    <div id="geminiPlaceholder">
-      <div class="mb-4 text-center"><span class="fa-stack fa-3x"><i class="fas fa-circle fa-stack-2x text-light opacity-25"></i><i class="fas fa-sparkles fa-stack-1x text-info"></i></span></div>
-      <h3 class="fw-bold mb-2">Konten Storybook / Gemini</h3>
-      <p class="text-white-50 mb-4" style="max-width: 400px; font-size: 0.9rem;">Konten ini dilindungi oleh Google dan tidak dapat ditampilkan di dalam frame aplikasi. Silakan buka di tab baru.</p>
-      <div class="d-flex flex-column gap-3 align-items-center w-100" style="max-width: 350px;">
-        <a id="btnNativeLaunch" href="#" target="_blank" rel="noreferrer noopener" class="btn btn-info btn-lg rounded-pill fw-bold w-100 shadow text-white"><i class="fas fa-external-link-alt me-2"></i> BUKA DI TAB BARU</a>
-        <div class="input-group"><input type="text" id="geminiLinkRaw" class="form-control form-control-sm bg-dark text-white border-secondary text-center" style="font-size:0.8rem;" readonly><button class="btn btn-sm btn-secondary fw-bold" onclick="copyGeminiLink()"><i class="fas fa-copy"></i></button></div>
-      </div>
-    </div>
   </div>
 
   <nav class="navbar">
@@ -159,10 +151,12 @@
         <img src="https://i.imgur.com/4PToETN.png" alt="Logo" style="height: 52px;">
         <div class="brand-text"><div class="brand-main">GURU BERBAGI</div><div class="brand-sub">Korwilcambidik Kecamatan Selogiri</div></div>
       </div>
+      
       <div id="searchWrapper" class="d-flex align-items-center bg-white px-3 py-2 rounded-pill border" style="width:100%; max-width:450px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
         <i class="fas fa-search text-muted me-2"></i>
         <input type="text" id="searchInput" oninput="applyFilters()" class="form-control border-0 p-0 shadow-none bg-transparent" placeholder="Cari karya, mapel, guru...">
       </div>
+
       <div class="d-flex align-items-center gap-2">
         <button id="btnHome" class="btn btn-outline-secondary btn-sm rounded-pill fw-bold px-3 d-none" onclick="switchView('GALERI')">Kembali</button>
         <button id="btnDashboard" class="btn btn-warning btn-sm rounded-pill fw-bold d-none shadow-sm text-dark" onclick="switchView('ADMIN')"><i class="fas fa-chart-pie me-1"></i> Dashboard</button>
@@ -178,12 +172,12 @@
   <div id="view-galeri" class="container mt-4 fade-in">
     <div class="filter-container row g-2 mb-4 align-items-center">
        <div class="col-md-3">
-         <select id="filterMapel" class="form-select form-select-sm border-secondary fw-bold text-secondary" style="border-radius:20px;" onchange="applyFilters()">
+         <select id="filterMapel" class="form-select form-select-filter" onchange="applyFilters()">
             <option value="">Semua Mata Pelajaran</option>
          </select>
        </div>
        <div class="col-md-3">
-         <select id="filterFase" class="form-select form-select-sm border-secondary fw-bold text-secondary" style="border-radius:20px;" onchange="applyFilters()">
+         <select id="filterFase" class="form-select form-select-filter" onchange="applyFilters()">
             <option value="">Semua Fase / Kelas</option>
          </select>
        </div>
@@ -198,7 +192,9 @@
     <div id="galeri-container" class="row gx-3 gx-md-4 gy-4"></div>
     
     <div id="loadMoreContainer" class="text-center mt-5 d-none">
-       <button onclick="loadMoreItems()" class="btn btn-outline-primary rounded-pill px-4 fw-bold">Muat Lebih Banyak <i class="fas fa-chevron-down ms-1"></i></button>
+       <button onclick="loadMoreItems()" class="btn btn-outline-primary rounded-pill px-4 fw-bold">
+         Muat Lebih Banyak <i class="fas fa-chevron-down ms-1"></i>
+       </button>
     </div>
   </div>
 
@@ -207,29 +203,12 @@
       <div><h4 class="fw-800 mb-0 text-dark">Dashboard Admin</h4><small class="text-muted">Kelola data dan kurasi karya guru</small></div>
       <div id="adminRoleBadge" class="badge bg-primary px-3 py-2 rounded-pill">ROLE</div>
     </div>
-
-    <div class="row mb-4">
-      <div class="col-lg-8 mb-3 mb-lg-0">
-        <div class="card border-0 shadow-sm h-100 p-3">
-           <h6 class="fw-bold text-muted mb-3"><i class="fas fa-chart-bar me-2"></i>Statistik Mata Pelajaran</h6>
-           <div style="height: 250px;"><canvas id="chartMapel"></canvas></div>
-        </div>
-      </div>
-      <div class="col-lg-4">
-        <div class="card border-0 shadow-sm h-100 p-3">
-           <h6 class="fw-bold text-muted mb-3"><i class="fas fa-chart-pie me-2"></i>Status Validasi</h6>
-           <div style="height: 250px; position: relative;"><canvas id="chartStatus"></canvas></div>
-        </div>
-      </div>
-    </div>
-
     <div class="stat-grid">
       <div class="stat-widget stat-total"><div class="stat-val" id="statTotal">0</div><div class="stat-label">Total Karya</div><i class="fas fa-layer-group stat-icon-bg"></i></div>
       <div class="stat-widget stat-approved"><div class="stat-val" id="statApproved">0</div><div class="stat-label">Disetujui</div><i class="fas fa-check-double stat-icon-bg"></i></div>
       <div class="stat-widget stat-pending"><div class="stat-val" id="statPending">0</div><div class="stat-label">Menunggu</div><i class="fas fa-clock stat-icon-bg"></i></div>
       <div class="stat-widget stat-users admin-only"><div class="stat-val" id="statUsers">0</div><div class="stat-label">Guru Terdaftar</div><i class="fas fa-users stat-icon-bg"></i></div>
     </div>
-
     <div class="bg-white p-4 border rounded-4 shadow-sm">
       <ul class="nav nav-tabs mb-4 border-bottom-0" id="adminTabs">
         <li class="nav-item"><button class="nav-link active fw-bold border" data-bs-toggle="tab" data-bs-target="#tab-media">Kurasi Karya</button></li>
@@ -237,15 +216,7 @@
       </ul>
       <div class="tab-content">
         <div class="tab-pane fade show active" id="tab-media">
-          <div class="d-flex gap-2 mb-3">
-             <input type="text" class="form-control rounded-pill px-4 border-secondary bg-light" placeholder="Cari karya di database..." oninput="searchAdminTable()">
-             <select id="filterAdminStatus" class="form-select rounded-pill border-secondary fw-bold" style="width:180px;" onchange="searchAdminTable()">
-                <option value="">Semua Status</option>
-                <option value="BARU">BARU (Pending)</option>
-                <option value="DISETUJUI">DISETUJUI</option>
-                <option value="REVISI">REVISI</option>
-             </select>
-          </div>
+          <input type="text" class="form-control rounded-pill px-4 mb-3 border-secondary bg-light" placeholder="Cari karya di database..." oninput="searchAdminTable(this.value)">
           <div class="table-responsive rounded-3 border">
             <table class="table pretty-table table-hover align-middle mb-0">
               <thead><tr><th class="ps-3">INFO KARYA</th><th>GURU</th><th class="text-center">STATUS</th><th class="text-center">AKSI</th></tr></thead>
@@ -296,18 +267,18 @@
                     <div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="checkKaih" onchange="toggleKaih(this.checked)"></div>
                   </div>
                 </div>
+                
                 <div class="mb-3">
                   <label class="small fw-bold mb-2 text-muted">Tipe Konten Utama</label>
                   <select id="inputSourceType" class="form-select bg-light fw-bold" onchange="toggleInputSource(this.value)">
-                    <option value="LINK">🔗 Link Media (Youtube / Drive / Gemini)</option>
+                    <option value="LINK">🔗 Media Umum (Youtube / Drive / Quizizz)</option>
+                    <option value="STORY">🚀 Link Storybook / Web App</option>
                     <option value="HTML">💻 Kode Embed HTML (Prioritas)</option>
                   </select>
                 </div>
-                <div id="groupLink" class="mb-2">
-                  <label class="small fw-bold mb-1 text-muted">Link Media</label>
-                  <input type="url" id="inLink" class="form-control" placeholder="Paste link disini (termasuk link Gemini)..." oninput="updateLivePreview()">
-                  <div class="form-text small text-muted">Jika memasukkan link Gemini Storybook, sistem akan otomatis menyesuaikannya.</div>
-                </div>
+                
+                <div id="groupLink" class="mb-2"><label class="small fw-bold mb-1 text-muted">Link Media</label><input type="url" id="inLink" class="form-control" placeholder="Paste link disini (termasuk link Gemini)..." oninput="updateLivePreview()"><div class="form-text small text-muted">Jika memasukkan link Gemini Storybook, sistem akan otomatis menyesuaikannya.</div></div>
+                <div id="groupStory" class="mb-2 d-none"><label class="small fw-bold mb-1 text-primary">Link Storybook (Gemini)</label><input type="url" id="inLinkStory" class="form-control border-primary" placeholder="Paste link Storybook disini..." oninput="updateLivePreview()"><div class="form-text small text-muted"><i class="fas fa-info-circle me-1"></i>Link ini akan otomatis dibuka di Tab Baru.</div></div>
                 <div id="groupHtml" class="mb-0 d-none"><label class="small fw-bold mb-1 text-muted">Kode Embed HTML</label><textarea id="inHtml" class="form-control small font-monospace bg-light" rows="3" placeholder="<iframe src='...'></iframe>" oninput="updateLivePreview()"></textarea></div>
               </div>
               <div class="col-lg-5 d-flex flex-column pt-3 pt-lg-0">
@@ -332,15 +303,14 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
   <script>
-    // MASUKKAN URL WEB APP ANDA DI SINI
+    // MASUKKAN URL API ANDA DI SINI
     const API_URL = "https://script.google.com/macros/s/AKfycbzhrWjl2Dc0i8V45dD8vNXrt3gfmvEU1pZ5hZOELkTz6e29l68d2hsHfGQEjqTVYdY0/exec";
 
-    // STATE LENGKAP
+    // STATE BARU: limit & pagination
     var STATE = { allMedia: [], filtered: [], users: [], user: { name: "Tamu", role: "GUEST" }, settings: [], displayedLimit: 12, itemsPerPage: 12 };
     var ACTIVE_CONTENT = { type: null, data: null };
     var searchTimeout = null;
     var modalInputInstance = null;
-    var charts = {}; // Untuk menyimpan instance Chart.js
 
     // --- API HANDLER ---
     async function callApi(action, payload = null) {
@@ -410,7 +380,6 @@
         document.getElementById('btnAdd').classList.add('d-none');
         s.style.visibility = 'hidden';
         renderTableAdmin(STATE.allMedia);
-        initDashboardCharts(); // NEW: Render Charts
       } else {
         g.classList.remove('d-none'); a.classList.add('d-none');
         document.getElementById('btnHome').classList.add('d-none');
@@ -426,85 +395,61 @@
       callApi('read').then(function(res) {
         if(res && res.status === "success") {
           STATE.allMedia = res.media; STATE.settings = res.settings;
-          populateDropdowns(); 
-          applyFilters();      
-          updateStats();
+          populateDropdowns(); // Isi dropdown filter & modal
+          applyFilters();      // Terapkan filter awal
+          document.getElementById('statTotal').innerText = res.media.length;
+          document.getElementById('statPending').innerText = res.media.filter(function(i){ return i[9] === "BARU" }).length;
+          document.getElementById('statApproved').innerText = res.media.filter(function(i){ return i[9] === "DISETUJUI" }).length;
         }
         document.getElementById('loader').style.display = 'none';
       });
     }
 
-    function updateStats() {
-       document.getElementById('statTotal').innerText = STATE.allMedia.length;
-       document.getElementById('statPending').innerText = STATE.allMedia.filter(function(i){ return i[9] === "BARU" }).length;
-       document.getElementById('statApproved').innerText = STATE.allMedia.filter(function(i){ return i[9] === "DISETUJUI" }).length;
-       if(STATE.users) document.getElementById('statUsers').innerText = STATE.users.length;
-    }
-
-    // --- CHART.JS LOGIC (NEW) ---
-    function initDashboardCharts() {
-       if(STATE.allMedia.length === 0) return;
-
-       // Data Mapel
-       var mapelCount = {};
-       STATE.allMedia.forEach(m => { var k = m[6] || 'Lainnya'; mapelCount[k] = (mapelCount[k]||0)+1; });
-       
-       // Data Status
-       var statusCount = { 'DISETUJUI': 0, 'BARU': 0, 'REVISI': 0 };
-       STATE.allMedia.forEach(m => { var s = m[9] || 'BARU'; statusCount[s] = (statusCount[s]||0)+1; });
-
-       // Destroy old charts if exist
-       if(charts.mapel) charts.mapel.destroy();
-       if(charts.status) charts.status.destroy();
-
-       // Render Mapel Chart (Bar)
-       charts.mapel = new Chart(document.getElementById('chartMapel'), {
-          type: 'bar',
-          data: {
-             labels: Object.keys(mapelCount),
-             datasets: [{ label: 'Jumlah Karya', data: Object.values(mapelCount), backgroundColor: '#2D8B83' }]
-          },
-          options: { responsive: true, maintainAspectRatio: false }
-       });
-
-       // Render Status Chart (Doughnut)
-       charts.status = new Chart(document.getElementById('chartStatus'), {
-          type: 'doughnut',
-          data: {
-             labels: ['Disetujui', 'Menunggu', 'Revisi'],
-             datasets: [{ data: [statusCount['DISETUJUI'], statusCount['BARU'], statusCount['REVISI']], backgroundColor: ['#10b981', '#f59e0b', '#ef4444'] }]
-          },
-          options: { responsive: true, maintainAspectRatio: false }
-       });
-    }
-
-    // --- MAIN GALLERY LOGIC ---
+    // --- FUNGSI FILTER & PAGINATION UTAMA ---
     function applyFilters() {
+      // 1. Ambil nilai filter
       var q = document.getElementById('searchInput').value.toLowerCase();
       var fMapel = document.getElementById('filterMapel').value;
       var fFase = document.getElementById('filterFase').value;
       
+      // 2. Filter data
       STATE.filtered = STATE.allMedia.filter(function(i) {
+         // Pencarian Teks
          var haystack = (i[5]+" "+i[1]+" "+i[2]+" "+i[3]+" "+i[6]+" "+i[11]).toLowerCase();
          var matchSearch = haystack.indexOf(q) !== -1;
+         
+         // Filter Dropdown
+         // i[6] = Mapel, i[3] = Fase
          var matchMapel = (fMapel === "") || (i[6] === fMapel);
          var matchFase = (fFase === "") || (i[3] === fFase);
+         
          return matchSearch && matchMapel && matchFase;
       });
+
+      // 3. Reset Pagination
       STATE.displayedLimit = STATE.itemsPerPage;
+      
+      // 4. Render
       renderGaleri();
     }
 
-    function loadMoreItems() { STATE.displayedLimit += STATE.itemsPerPage; renderGaleri(); }
+    function loadMoreItems() {
+      STATE.displayedLimit += STATE.itemsPerPage;
+      renderGaleri();
+    }
 
     function renderGaleri() {
-      var c = document.getElementById('galeri-container'); c.innerHTML = '';
+      var c = document.getElementById('galeri-container');
+      c.innerHTML = '';
+      
       var favKey = 'GB_FAV_' + (STATE.user ? STATE.user.name : 'GUEST');
       var saved = JSON.parse(localStorage.getItem(favKey) || '[]');
+      
+      // PAGINATION: Hanya ambil data sesuai limit
       var dataToShow = STATE.filtered.slice(0, STATE.displayedLimit);
       
-      dataToShow.forEach(function(item) {
-        var realIndex = STATE.allMedia.indexOf(item); 
+      dataToShow.forEach(function(item, i) {
+        var realIndex = STATE.allMedia.indexOf(item); // Penting untuk tombol edit/hapus
         var id = cleanStr(item[13]);
         var isApproved = item[9] === "DISETUJUI";
         var isOwner = (STATE.user.name === item[1]);
@@ -515,6 +460,7 @@
         
         var badgeStatus = isApproved ? '<div class="badge-approved"><i class="fas fa-check-circle"></i></div>' : (isOwner||isAdmin ? '<div class="badge-pending">PENDING</div>' : '');
         var kaihHtml = item[10] ? '<div class="kaih-compact"><i class="fas fa-star text-warning"></i>'+cleanStr(item[10])+'</div>' : '';
+        
         var editBtns = (isOwner || isAdmin) ? `<button onclick="event.stopPropagation(); bukaEdit(${realIndex})" class="btn-icon" title="Edit"><i class="fas fa-pencil-alt"></i></button><button onclick="event.stopPropagation(); hapusKarya(${realIndex})" class="btn-icon danger" title="Hapus"><i class="fas fa-trash"></i></button>` : '';
 
         // SMART QR
@@ -530,10 +476,16 @@
         c.insertAdjacentHTML('beforeend', html);
       });
 
+      // Show/Hide Load More Button
       var btnMore = document.getElementById('loadMoreContainer');
-      if (STATE.filtered.length > STATE.displayedLimit) btnMore.classList.remove('d-none'); else btnMore.classList.add('d-none');
+      if (STATE.filtered.length > STATE.displayedLimit) {
+         btnMore.classList.remove('d-none');
+      } else {
+         btnMore.classList.add('d-none');
+      }
     }
 
+    // --- HELPER LAINNYA SAMA SEPERTI SEBELUMNYA ---
     function handleSearchInput(val) {
       if (searchTimeout) clearTimeout(searchTimeout);
       searchTimeout = setTimeout(() => { applyFilters(); }, 300);
@@ -542,11 +494,12 @@
     function filterSaya() { document.getElementById('searchInput').value = STATE.user.name; applyFilters(); }
     function filterSemua() { document.getElementById('searchInput').value = ""; document.getElementById('filterMapel').value = ""; document.getElementById('filterFase').value = ""; applyFilters(); }
     function filterSimpanan() { 
+       // Logic khusus untuk favorit (sedikit beda karena pakai LocalStorage)
        var favKey = 'GB_FAV_' + (STATE.user ? STATE.user.name : 'GUEST');
        var s = JSON.parse(localStorage.getItem(favKey) || '[]');
        STATE.filtered = STATE.allMedia.filter(function(i){ return s.includes(i[13]) });
        STATE.displayedLimit = STATE.itemsPerPage;
-       renderGaleri(); 
+       renderGaleri();
     }
 
     function getYoutubeId(url) {
@@ -568,7 +521,7 @@
     }
 
     function bukaPreview(index) {
-      var item = STATE.allMedia[index]; if(!item) return; 
+      var item = STATE.allMedia[index]; if(!item) return; // Note: Use allMedia with realIndex
       var rawHtml = (item[7] || "").trim();
       var rawLink = (item[8] || "").trim();
       var id = item[13];
@@ -580,8 +533,9 @@
       var frame = document.getElementById('previewFrame');
       var btnFs = document.getElementById('btnFs');
 
-      // 1. GEMINI / Auto-Convert
-      if (rawLink && (rawLink.includes('gemini.google.com') || rawLink.includes('g.co') || rawLink.includes('story'))) {
+      // 1. GEMINI
+      if (rawLink && (rawLink.indexOf('gemini.google.com') !== -1 || rawLink.indexOf('g.co') !== -1)) {
+          ACTIVE_CONTENT = { type: 'GEMINI', data: rawLink };
           var finalUrl = rawLink;
           if(finalUrl.includes('gemini.google.com/share')) {
              finalUrl = finalUrl.replace('gemini.google.com/share', 'g.co/gemini/share');
@@ -617,14 +571,16 @@
       Swal.fire('Info', 'Konten kosong.', 'info'); tutupPreview();
     }
 
-    // DOM FULLSCREEN (Safe)
+    // DOM FULLSCREEN
     function smartFullscreen() {
       var elem = document.getElementById("previewOverlay");
       var req = elem.requestFullscreen || elem.webkitRequestFullscreen || elem.msRequestFullscreen;
       if (req) {
         var promise = req.call(elem);
         if (promise && typeof promise.catch === 'function') {
-           promise.catch(function(err) { fallbackTabBaru(); });
+           promise.catch(function(err) {
+             fallbackTabBaru();
+           });
         }
       } else { fallbackTabBaru(); }
     }
@@ -696,7 +652,7 @@
     }
 
     function bukaEdit(index) {
-      // NOTE: Gunakan STATE.allMedia agar indexnya tepat
+      // NOTE: index yang dikirim harus index dari ALLMEDIA, bukan filtered
       var d = STATE.allMedia[index]; if(!d) return;
       document.getElementById('formMode').value = "EDIT";
       document.getElementById('editRowIdx').value = d[13];
@@ -750,10 +706,10 @@
         STATE.settings.forEach(r => {if(r[idx])el.innerHTML+=`<option value="${r[idx]}">${r[idx]}</option>`}); 
         if(oth)el.innerHTML+='<option value="LAINNYA">LAINNYA</option>'; 
       }; 
-      // Populate Modal
+      // Populate Modal Dropdowns
       f('inJenis',0,true); f('inMapel',1,true); f('inFase',2); f('inKaihType',3); f('inSem', 4);
       
-      // Populate Filter (NEW)
+      // Populate Filter Dropdowns (New)
       var fFilter = function(id, idx) {
          var el = document.getElementById(id); if(!el) return;
          el.innerHTML = '<option value="">Semua</option>';
@@ -763,8 +719,31 @@
       fFilter('filterFase', 2);
     }
 
+    function updateLivePreview() { 
+      var type = document.getElementById('inputSourceType').value;
+      var val = "";
+      if(type==='LINK') val = document.getElementById('inLink').value;
+      else if(type==='STORY') val = document.getElementById('inLinkStory').value;
+      else if(type==='HTML') val = document.getElementById('inHtml').value;
+
+      var doc = document.getElementById('miniPreviewFrame').contentDocument;
+      doc.open();
+      var baseStyle = `<style>body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 10px; color: #333; } img { max-width: 100%; height: auto; } iframe { width: 100%; aspect-ratio: 16/9; border: none; }</style>`;
+
+      if (type === 'STORY' || (type === 'LINK' && (val.includes('gemini.google.com') || val.includes('g.co')))) { 
+         doc.write(baseStyle + '<div style="text-align:center;color:#666;padding-top:20px;">祷 Storybook<br><small>Preview tersedia setelah dibuka</small></div>'); 
+      } 
+      else if(type==='HTML' && val.length > 5) { doc.write(baseStyle + val); } 
+      else if (val.length > 5) {
+         var ytId = getYoutubeId(val);
+         var src = ytId ? "https://www.youtube.com/embed/"+ytId : val;
+         doc.write(`<body style="margin:0;overflow:hidden;"><iframe src="${src}" style="width:100%;height:100%;border:none;"></iframe></body>`);
+      } else { doc.write('<div style="text-align:center;color:#ccc;font-family:sans-serif;padding-top:40px;">Preview</div>'); }
+      doc.close(); 
+    }
+
     function hapusKarya(index) { 
-        var item = STATE.allMedia[index]; 
+        var item = STATE.allMedia[index]; // Use allMedia with real index
         if(!item) return;
         var id = item[13];
         Swal.fire({title:'Hapus?',icon:'warning',showCancelButton:true}).then(r=>{
@@ -778,7 +757,6 @@
     function filterSimpanan() { 
        var k='GB_FAV_'+(STATE.user?STATE.user.name:'GUEST'),s=JSON.parse(localStorage.getItem(k)||'[]'); 
        STATE.filtered=STATE.allMedia.filter(i=>s.includes(i[13])); 
-       STATE.displayedLimit = STATE.itemsPerPage;
        renderGaleri(); 
     }
     function filterSaya() { STATE.filtered = STATE.allMedia.filter(i => i[1] === STATE.user.name); renderGaleri(); }
@@ -806,16 +784,9 @@
     function logout() { localStorage.removeItem('guruBerbagiUser'); STATE.user = { name: "Tamu", role: "GUEST" }; softReset(); }
 
     function renderTableAdmin(data) {
-      // Logic filter status admin
-      var statusFilter = document.getElementById('filterAdminStatus') ? document.getElementById('filterAdminStatus').value : "";
-      
       var html = '';
       data.forEach(item => {
-        var st = item[9];
-        // Apply filter if selected
-        if(statusFilter && st !== statusFilter) return;
-
-        var badge = st === 'DISETUJUI' ? 'bg-success' : (st === 'REVISI' ? 'bg-danger' : 'bg-warning text-dark');
+        var st = item[9], badge = st === 'DISETUJUI' ? 'bg-success' : (st === 'REVISI' ? 'bg-danger' : 'bg-warning text-dark');
         html += `<tr><td class="ps-3"><div class="fw-bold text-dark">${cleanStr(item[5])}</div><div class="small text-muted">${cleanStr(item[11])}</div></td>
         <td><div class="fw-bold">${cleanStr(item[1])}</div><div class="small">${cleanStr(item[2])}</div></td>
         <td class="text-center"><span class="badge ${badge}">${st}</span></td>
@@ -826,11 +797,7 @@
       });
       document.getElementById('tableMedia').innerHTML = html;
     }
-    function searchAdminTable() { 
-        var q = document.querySelector('.tab-pane.active input[type="text"]').value.toLowerCase();
-        var filtered = STATE.allMedia.filter(i => (i[5]||"").toLowerCase().includes(q) || (i[1]||"").toLowerCase().includes(q));
-        renderTableAdmin(filtered); 
-    }
+    function searchAdminTable(val) { var q = val.toLowerCase(); renderTableAdmin(STATE.allMedia.filter(i => (i[5]||"").toLowerCase().includes(q) || (i[1]||"").toLowerCase().includes(q))); }
     
     function bukaKurasi(id,st,fb) { document.getElementById('kurasiId').value=id; document.getElementById('kurasiStatus').value=st; document.getElementById('kurasiFeedback').value=fb; new bootstrap.Modal('#modalKurasi').show(); }
     function simpanKurasi() { 
