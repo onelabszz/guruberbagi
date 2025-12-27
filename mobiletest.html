@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Guru Berbagi - Selogiri</title>
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    
+    :root { 
+      --primary: #2D8B83; 
+      --primary-dark: #1F6660;
+      --accent: #f59e0b;
+      --bg-body: #f1f5f9; 
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    body { background-color: var(--bg-body); font-family: 'Plus Jakarta Sans', sans-serif; color: var(--text-main); font-size: 0.9rem; padding-bottom: 80px; }
+
+    /* LAYOUT */
+    .navbar { z-index: 1000; position: sticky; top: 0; background: #fff; border-bottom: 1px solid #e2e8f0; }
+    .fade-in { animation: fadeIn 0.5s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* BRANDING */
+    .brand-container { display: flex; align-items: center; gap: 12px; }
+    .brand-text { display: flex; flex-direction: column; justify-content: center; line-height: 1.1; }
+    .brand-main { font-weight: 800; color: var(--primary); font-size: 1.4rem; letter-spacing: -0.5px; }
+    .brand-sub { font-weight: 600; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* CARD SYSTEM (STABIL) */
+    .card-karya { 
+      background: #fff; border: 1px solid #fff; border-radius: 16px; 
+      overflow: hidden; height: 100%; display: flex; flex-direction: column; 
+      transition: all 0.2s ease-in-out; position: relative;
+      box-shadow: var(--card-shadow);
+    }
+    .card-karya:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); border-color: var(--primary); }
+    
+    .card-thumb { 
+      height: 160px; position: relative; overflow: hidden; 
+      display: flex; align-items: center; justify-content: center; 
+      background: #e2e8f0; color: #fff;
+    }
+    
+    /* BADGES */
+    .view-badge { position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.6); color: white; backdrop-filter: blur(2px); font-size: 0.65rem; padding: 2px 8px; border-radius: 6px; z-index: 5; font-weight: 700; }
+    .badge-approved { position: absolute; bottom: 8px; right: 8px; color: #38bdf8; background: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 6; }
+    .badge-pending { position: absolute; top: 8px; left: 8px; background: var(--accent); color: white; font-size: 0.6rem; padding: 3px 8px; border-radius: 4px; z-index: 5; font-weight: 800; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
+    
+    .btn-wishlist { position: absolute; top: 8px; right: 8px; z-index: 10; border: none; background: rgba(255,255,255,0.9); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); color: #94a3b8; transition: 0.2s; cursor: pointer; }
+    .btn-wishlist:hover, .btn-wishlist.active { color: #ef4444; transform: scale(1.1); }
+
+    .card-body-mp { padding: 16px; flex-grow: 1; display: flex; flex-direction: column; }
+    .mp-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
+    .badge-pill { font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; }
+    .bg-soft-teal { background: #e0f2f1; color: #00695c; } 
+    .bg-soft-blue { background: #e0f7fa; color: #0277bd; border: 1px solid #b3e5fc; } 
+    .bg-soft-purple { background: #f3e5f5; color: #7b1fa2; border: 1px solid #e1bee7; } 
+    .mp-title { font-weight: 800; font-size: 1rem; line-height: 1.35; margin-bottom: 2px; color: var(--text-main); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.7em; }
+    
+    .guru-info { display: flex; align-items: center; gap: 10px; margin-top: auto; padding-top: 12px; border-top: 1px dashed #e2e8f0; }
+    .guru-avatar { width: 32px; height: 32px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.8rem; color: #64748b; }
+    
+    .action-row { margin-top: 12px; display: flex; gap: 8px; position: relative; z-index: 5; }
+    .btn-open { background: var(--primary); color: white; border: none; padding: 8px 0; border-radius: 8px; font-weight: 700; font-size: 0.8rem; flex-grow: 1; transition: 0.2s; box-shadow: 0 4px 6px rgba(45, 139, 131, 0.2); }
+    .btn-open:hover { background: var(--primary-dark); transform: translateY(-1px); }
+    .btn-icon { width: 36px; background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; color: #475569; display: flex; align-items: center; justify-content: center; transition: 0.2s; cursor: pointer; }
+    .btn-icon:hover { background: #f8fafc; color: #0f172a; border-color: #94a3b8; }
+    .btn-icon.danger:hover { color: #ef4444; border-color: #ef4444; background: #fef2f2; }
+
+    /* FILTER BAR & SEARCH */
+    .search-pill { border-radius: 50px; padding-left: 20px; }
+    .filter-select { border-radius: 50px; font-weight: 600; font-size: 0.85rem; border: 1px solid #cbd5e1; }
+
+    /* ADMIN DASHBOARD */
+    .dashboard-header { background: #fff; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+    .stat-widget { position: relative; overflow: hidden; padding: 24px; border-radius: 16px; border: none; color: white; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); margin-bottom: 20px; }
+    .stat-total { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
+    .stat-approved { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+    .stat-pending { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
+    .stat-val { font-size: 2.5rem; font-weight: 800; line-height: 1; }
+    
+    .pretty-table thead th { background: #f8fafc; color: #64748b; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; padding: 16px; border-bottom: 2px solid #e2e8f0; letter-spacing: 0.5px; }
+    .pretty-table tbody td { padding: 14px 16px; vertical-align: middle; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; }
+
+    /* UTILS */
+    .d-none { display: none !important; }
+    .admin-only { display: none !important; } 
+    .fab-add { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 20px; background: #1e293b; color: white; border: none; font-size: 1.5rem; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3); transition: 0.3s; display: flex; align-items: center; justify-content: center; z-index: 1020; cursor: pointer; }
+    .fab-add:hover { transform: scale(1.1) rotate(90deg); background: var(--primary); }
+
+    /* PREVIEW OVERLAY */
+    #previewOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none; flex-direction: column; z-index: 20000; }
+    .preview-head { background: #111; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; color: white; border-bottom: 1px solid #333; }
+    #previewFrame { flex-grow: 1; width: 100%; height: 100%; border: none; background: #fff; }
+    
+    /* MODAL */
+    .preview-box { width: 100%; height: 100%; min-height: 350px; border: 2px dashed #cbd5e1; border-radius: 12px; overflow: hidden; background: #f8fafc; position: relative; }
+    .preview-placeholder { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #94a3b8; font-weight: 700; text-align: center; }
+  </style>
+</head>
+<body>
+
+  <div id="previewOverlay" data-url="" data-html="">
+    <div class="preview-head" id="overlayControls">
+      <div class="fw-bold text-truncate pe-3" id="previewTitle" style="font-size:1.1rem; color:#f8fafc;">Preview</div>
+      <div class="d-flex align-items-center gap-2">
+        <button class="btn btn-sm btn-danger rounded-pill fw-bold px-3" onclick="tutupPreview()">TUTUP</button>
+      </div>
+    </div>
+    <iframe id="previewFrame" allowfullscreen allow="autoplay"></iframe>
+  </div>
+
+  <nav class="navbar py-3 shadow-sm">
+    <div class="container d-flex flex-column flex-md-row gap-3 justify-content-between align-items-center">
+      <div class="brand-container">
+        <img src="https://i.imgur.com/4PToETN.png" alt="Logo" style="height: 52px;">
+        <div class="brand-text"><div class="brand-main">GURU BERBAGI</div><div class="brand-sub">Korwilcambidik Kecamatan Selogiri</div></div>
+      </div>
+      
+      <div id="searchWrapper" class="d-flex align-items-center bg-white px-3 py-2 rounded-pill border w-100" style="max-width:450px;">
+        <i class="fas fa-search text-muted me-2"></i>
+        <input type="text" id="searchInput" oninput="applyFilters()" class="form-control border-0 p-0 shadow-none bg-transparent" placeholder="Cari karya, mapel, guru...">
+      </div>
+
+      <div class="d-flex align-items-center gap-2">
+        <button id="btnHome" class="btn btn-outline-secondary btn-sm rounded-pill fw-bold px-3 d-none" onclick="switchView('GALERI')">Kembali</button>
+        <button id="btnDashboard" class="btn btn-warning btn-sm rounded-pill fw-bold d-none shadow-sm text-dark" onclick="switchView('ADMIN')"><i class="fas fa-chart-pie me-1"></i> Admin</button>
+        <button id="btnLogin" class="btn btn-outline-primary btn-sm rounded-pill fw-bold px-4" onclick="loginModal()">Login Guru</button>
+        <div id="userPanel" class="d-none d-flex align-items-center gap-3">
+          <div class="text-end lh-1"><div id="uName" class="fw-bold text-dark" style="font-size:0.85rem;">User</div><div id="uRole" class="badge bg-secondary" style="font-size:0.55rem;">GURU</div></div>
+          <button onclick="logout()" class="btn btn-light btn-sm rounded-circle border text-danger" title="Logout"><i class="fas fa-power-off"></i></button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div id="view-galeri" class="container mt-4 fade-in">
+    
+    <div class="row g-2 mb-4 align-items-center bg-white p-3 rounded-4 shadow-sm border">
+       <div class="col-6 col-md-3">
+         <select id="filterMapel" class="form-select filter-select" onchange="applyFilters()">
+            <option value="">📚 Semua Mapel</option>
+         </select>
+       </div>
+       <div class="col-6 col-md-3">
+         <select id="filterFase" class="form-select filter-select" onchange="applyFilters()">
+            <option value="">🎓 Semua Fase</option>
+         </select>
+       </div>
+       <div class="col-12 col-md-6 d-flex justify-content-end gap-2">
+          <button onclick="filterSemua()" class="btn btn-sm btn-dark rounded-pill px-4 fw-bold">Semua</button>
+          <button id="btnFilterMy" onclick="filterSaya()" class="btn btn-sm btn-outline-primary rounded-pill px-4 fw-bold d-none">Milik Saya</button>
+          <button onclick="filterSimpanan()" class="btn btn-sm btn-outline-danger rounded-pill px-4 fw-bold"><i class="fas fa-heart"></i></button>
+       </div>
+    </div>
+
+    <div id="loader" class="text-center py-5"><div class="spinner-border text-primary"></div></div>
+    <div id="galeri-container" class="row gx-3 gx-md-4 gy-4"></div>
+    
+    <div id="loadMoreContainer" class="text-center mt-5 mb-5 d-none">
+       <button onclick="loadMoreItems()" class="btn btn-outline-primary rounded-pill px-5 fw-bold shadow-sm">
+         Muat Lebih Banyak <i class="fas fa-chevron-down ms-1"></i>
+       </button>
+    </div>
+  </div>
+
+  <div id="view-admin" class="container mt-4 d-none">
+    <div class="dashboard-header">
+      <div><h4 class="fw-800 mb-0 text-dark">Dashboard Admin</h4><small class="text-muted">Kelola data dan kurasi karya guru</small></div>
+      <div id="adminRoleBadge" class="badge bg-primary px-3 py-2 rounded-pill">ROLE</div>
+    </div>
+    
+    <div class="row mb-4">
+       <div class="col-md-8 mb-3 mb-md-0">
+          <div class="card border-0 shadow-sm h-100 p-3">
+             <h6 class="fw-bold text-muted mb-3">Statistik Mapel</h6>
+             <div style="height: 200px;"><canvas id="chartMapel"></canvas></div>
+          </div>
+       </div>
+       <div class="col-md-4">
+          <div class="card border-0 shadow-sm h-100 p-3">
+             <h6 class="fw-bold text-muted mb-3">Status</h6>
+             <div style="height: 200px;"><canvas id="chartStatus"></canvas></div>
+          </div>
+       </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-widget stat-total"><div class="stat-val" id="statTotal">0</div><div class="stat-label">Total Karya</div></div>
+      <div class="stat-widget stat-approved"><div class="stat-val" id="statApproved">0</div><div class="stat-label">Disetujui</div></div>
+      <div class="stat-widget stat-pending"><div class="stat-val" id="statPending">0</div><div class="stat-label">Menunggu</div></div>
+      <div class="stat-widget stat-users admin-only"><div class="stat-val" id="statUsers">0</div><div class="stat-label">Guru Terdaftar</div></div>
+    </div>
+
+    <div class="bg-white p-4 border rounded-4 shadow-sm">
+      <ul class="nav nav-tabs mb-4 border-bottom-0" id="adminTabs">
+        <li class="nav-item"><button class="nav-link active fw-bold border" data-bs-toggle="tab" data-bs-target="#tab-media">Kurasi Karya</button></li>
+        <li class="nav-item admin-only ms-2"><button class="nav-link fw-bold border" data-bs-toggle="tab" data-bs-target="#tab-users" onclick="loadUserList()">Manajemen Akun</button></li>
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane fade show active" id="tab-media">
+          <div class="d-flex gap-2 mb-3">
+             <input type="text" class="form-control rounded-pill px-4 border-secondary bg-light" placeholder="Cari karya..." oninput="searchAdminTable()">
+             <select id="filterAdminStatus" class="form-select rounded-pill border-secondary fw-bold" style="width:150px;" onchange="searchAdminTable()">
+                <option value="">Semua</option><option value="BARU">Baru</option><option value="DISETUJUI">Setuju</option>
+             </select>
+          </div>
+          <div class="table-responsive rounded-3 border">
+            <table class="table pretty-table table-hover align-middle mb-0">
+              <thead><tr><th class="ps-3">INFO KARYA</th><th>GURU</th><th class="text-center">STATUS</th><th class="text-center">AKSI</th></tr></thead>
+              <tbody id="tableMedia"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="tab-users">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="fw-bold text-muted mb-0 ps-2">Daftar Guru Terdaftar</h6>
+            <button class="btn btn-primary btn-sm rounded-pill fw-bold px-4 shadow-sm" onclick="resetUserForm(); showModalInput()"><i class="fas fa-plus me-2"></i>Tambah Guru</button>
+          </div>
+          <div class="table-container">
+            <table class="table pretty-table table-hover align-middle mb-0">
+              <thead><tr><th class="ps-4">NAMA GURU</th><th>PIN AKSES</th><th>PERAN</th><th class="text-center">AKSI</th></tr></thead>
+              <tbody id="tableUsers"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button id="btnAdd" class="fab-add d-none" onclick="resetForm(); showModalInput()"><i class="fas fa-plus"></i></button>
+
+  <div class="modal fade" id="modalInput" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content rounded-4 border-0 shadow">
+        <div class="modal-header border-bottom bg-light py-3"><h5 class="fw-bold text-primary mb-0"><i class="fas fa-cloud-upload-alt me-2"></i>Bagikan Karya</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body p-4 bg-white">
+          <form id="modalForm">
+            <input type="hidden" id="formMode" value="ADD"><input type="hidden" id="editRowIdx">
+            <div class="row h-100">
+              <div class="col-lg-7 modal-left-col border-end pe-4">
+                <div class="mb-3"><label class="small fw-bold mb-1 text-muted">Judul Media <span class="text-danger">*</span></label><input type="text" id="inJudul" class="form-control fw-bold bg-light" placeholder="Judul karya..."></div>
+                <div class="row">
+                  <div class="col-md-6 mb-3"><label class="small fw-bold mb-1 text-muted">Mata Pelajaran <span class="text-danger">*</span></label><select id="inMapel" class="form-select" onchange="checkDropdown('inMapel','manMapel',this.value)"></select><input type="text" id="manMapel" class="form-control mt-2 d-none" placeholder="Tulis mapel..." required></div>
+                  <div class="col-md-6 mb-3"><label class="small fw-bold mb-1 text-muted">Jenis Media <span class="text-danger">*</span></label><select id="inJenis" class="form-select" onchange="checkDropdown('inJenis','manJenis',this.value)"></select><input type="text" id="manJenis" class="form-control mt-2 d-none" placeholder="Tulis jenis..." required></div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3"><label class="small fw-bold mb-1 text-muted">Fase / Kelas</label><select id="inFase" class="form-select"></select></div>
+                  <div class="col-md-6 mb-3"><label class="small fw-bold mb-1 text-muted">Semester</label><select id="inSem" class="form-select"></select></div>
+                </div>
+                <div class="bg-light p-3 rounded mb-3 border d-flex align-items-center justify-content-between">
+                  <div><label class="small fw-bold d-block text-dark">Program KAIH?</label><small class="text-muted" style="font-size:0.7rem;">Kebiasaan Anak Indonesia Hebat</small></div>
+                  <div class="d-flex align-items-center gap-2">
+                    <div id="kaihBox" class="d-none"><select id="inKaihType" class="form-select form-select-sm"></select></div>
+                    <div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="checkKaih" onchange="toggleKaih(this.checked)"></div>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="small fw-bold mb-2 text-muted">Tipe Konten Utama</label>
+                  <select id="inputSourceType" class="form-select bg-light fw-bold" onchange="toggleInputSource(this.value)">
+                    <option value="LINK">🔗 Link Media (Youtube / Drive / Gemini)</option>
+                    <option value="HTML">💻 Kode Embed HTML (Prioritas)</option>
+                  </select>
+                </div>
+                <div id="groupLink" class="mb-2"><label class="small fw-bold mb-1 text-muted">Link Media</label><input type="url" id="inLink" class="form-control" placeholder="Paste link disini..." oninput="updateLivePreview()"></div>
+                <div id="groupHtml" class="mb-0 d-none"><label class="small fw-bold mb-1 text-muted">Kode Embed HTML</label><textarea id="inHtml" class="form-control small font-monospace bg-light" rows="3" placeholder="<iframe src='...'></iframe>" oninput="updateLivePreview()"></textarea></div>
+              </div>
+              <div class="col-lg-5 d-flex flex-column pt-3 pt-lg-0">
+                <label class="small fw-bold text-muted mb-2 text-center">Live Preview Thumbnail</label>
+                <div class="preview-box shadow-sm">
+                  <div class="preview-placeholder">Preview akan muncul disini</div>
+                  <iframe id="miniPreviewFrame" style="width:100%; height:100%; border:none; position:relative; z-index:2;"></iframe>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer bg-light"><button type="button" class="btn btn-outline-secondary rounded-pill fw-bold px-4" data-bs-dismiss="modal">Batal</button><button type="button" onclick="prosesSimpan()" class="btn btn-primary rounded-pill fw-bold px-5 shadow-sm">SIMPAN & TERBITKAN</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalUser" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 rounded-4 shadow"><div class="modal-header"><h5 class="fw-bold text-primary">Data Guru</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="formUser"><input type="hidden" id="userMode" value="ADD"><input type="hidden" id="oldPin"><div class="mb-3"><label class="small fw-bold">Nama Lengkap</label><input type="text" id="userName" class="form-control"></div><div class="mb-3"><label class="small fw-bold">Unit Kerja (Sekolah)</label><input type="text" id="userSchool" class="form-control"></div><div class="row"><div class="col-6"><label class="small fw-bold">PIN Login</label><input type="text" id="userPin" class="form-control"></div><div class="col-6"><label class="small fw-bold">Hak Akses</label><select id="userRole" class="form-select"><option value="GURU">GURU</option><option value="MODERATOR">MODERATOR</option><option value="ADMIN">ADMIN</option></select></div></div></form></div><div class="modal-footer"><button onclick="prosesSimpanUser()" class="btn btn-primary w-100 fw-bold rounded-pill">SIMPAN DATA</button></div></div></div></div>
+  <div class="modal fade" id="modalKurasi" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 rounded-4 shadow"><div class="modal-header border-bottom-0"><h5 class="fw-bold text-primary">Kurasi Karya</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="kurasiId"><div class="mb-3"><label class="small fw-bold">Status Persetujuan</label><select id="kurasiStatus" class="form-select"><option value="BARU">BARU (Pending)</option><option value="DISETUJUI">DISETUJUI (Tampil)</option><option value="REVISI">REVISI (Perlu Perbaikan)</option></select></div><div class="mb-3"><label class="small fw-bold">Catatan / Feedback</label><textarea id="kurasiFeedback" class="form-control" rows="4" placeholder="Tulis masukan untuk guru..."></textarea></div></div><div class="modal-footer border-top-0"><button onclick="simpanKurasi()" class="btn btn-primary w-100 fw-bold rounded-pill">UPDATE STATUS</button></div></div></div></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+  <script>
+    // -----------------------------------------------------------
+    // MASUKKAN URL WEB APP (API) DARI GOOGLE APPS SCRIPT DI SINI:
+    const API_URL = "https://script.google.com/macros/s/AKfycbzhrWjl2Dc0i8V45dD8vNXrt3gfmvEU1pZ5hZOELkTz6e29l68d2hsHfGQEjqTVYdY0/exec";
+    // -----------------------------------------------------------
+
+    var STATE = { allMedia: [], filtered: [], users: [], user: { name: "Tamu", role: "GUEST" }, settings: [], displayedLimit: 12, itemsPerPage: 12 };
+    var ACTIVE_CONTENT = { type: null, data: null };
+    var searchTimeout = null;
+    var modalInputInstance = null;
+    var charts = {}; // Store charts
+
+    // --- API HANDLER (PENGGANTI GOOGLE.SCRIPT.RUN) ---
+    async function callApi(action, payload = null) {
+      try {
+        if (action === 'read') {
+           var response = await fetch(API_URL + "?action=read");
+           return await response.json();
+        } else {
+           var response = await fetch(API_URL, {
+             method: "POST",
+             body: JSON.stringify({ action: action, payload: payload })
+           });
+           return await response.json();
+        }
+      } catch (e) {
+        console.error("API Error:", e);
+        return { status: "error", message: e.toString() };
+      }
+    }
+
+    // INIT
+    window.onload = function() { initApp(); };
+    function initApp() {
+      try { var saved = localStorage.getItem('guruBerbagiUser'); if (saved) { STATE.user = JSON.parse(saved); updateUserInterface(); } } catch(e) {}
+      loadData();
+    }
+
+    function cleanStr(str) {
+      if(!str) return "";
+      return str.toString().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;").replace(/\n/g, " "); 
+    }
+
+    function softReset() { switchView('GALERI'); updateUserInterface(); loadData(); }
+
+    function updateUserInterface() {
+      document.getElementById('uName').innerText = STATE.user.name;
+      document.getElementById('uRole').innerText = STATE.user.role;
+      var isGuest = (STATE.user.role === 'GUEST');
+      document.getElementById('btnLogin').style.display = isGuest ? 'block' : 'none';
+      document.getElementById('userPanel').classList.toggle('d-none', isGuest);
+      
+      var btnDash = document.getElementById('btnDashboard');
+      btnDash.classList.add('d-none');
+      document.getElementById('btnAdd').classList.add('d-none');
+      document.getElementById('btnFilterMy').classList.add('d-none');
+      
+      if (!isGuest) {
+        document.getElementById('btnAdd').classList.remove('d-none');
+        document.getElementById('btnFilterMy').classList.remove('d-none');
+      }
+      if (STATE.user.role === 'ADMIN' || STATE.user.role === 'MODERATOR') {
+        btnDash.classList.remove('d-none');
+        document.getElementById('adminRoleBadge').innerText = STATE.user.role;
+        var adminOnlyEls = document.querySelectorAll('.admin-only');
+        adminOnlyEls.forEach(function(el) { 
+           el.style.setProperty('display', STATE.user.role === 'ADMIN' ? 'block' : 'none', 'important'); 
+        });
+      }
+    }
+
+    function switchView(viewName) {
+      var g = document.getElementById('view-galeri'), a = document.getElementById('view-admin'), s = document.getElementById('searchWrapper');
+      if (viewName === 'ADMIN') {
+        g.classList.add('d-none'); a.classList.remove('d-none');
+        document.getElementById('btnHome').classList.remove('d-none');
+        document.getElementById('btnDashboard').classList.add('d-none');
+        document.getElementById('btnAdd').classList.add('d-none');
+        s.style.visibility = 'hidden';
+        renderTableAdmin(STATE.allMedia);
+        initDashboardCharts(); // LOAD CHART
+      } else {
+        g.classList.remove('d-none'); a.classList.add('d-none');
+        document.getElementById('btnHome').classList.add('d-none');
+        if(STATE.user.role !== 'GUEST') {
+           document.getElementById('btnDashboard').classList.toggle('d-none', !(STATE.user.role === 'ADMIN' || STATE.user.role === 'MODERATOR'));
+           document.getElementById('btnAdd').classList.remove('d-none');
+        }
+        s.style.visibility = 'visible';
+      }
+    }
+
+    function loadData() {
+      callApi('read').then(function(res) {
+        if(res && res.status === "success") {
+          STATE.allMedia = res.media; STATE.settings = res.settings;
+          populateDropdowns(); 
+          applyFilters();      
+          updateStats();
+        }
+        document.getElementById('loader').style.display = 'none';
+      });
+    }
+
+    function updateStats() {
+       document.getElementById('statTotal').innerText = STATE.allMedia.length;
+       document.getElementById('statPending').innerText = STATE.allMedia.filter(function(i){ return i[9] === "BARU" }).length;
+       document.getElementById('statApproved').innerText = STATE.allMedia.filter(function(i){ return i[9] === "DISETUJUI" }).length;
+       if(STATE.users) document.getElementById('statUsers').innerText = STATE.users.length;
+    }
+
+    // --- CHART JS LOGIC ---
+    function initDashboardCharts() {
+       if(STATE.allMedia.length === 0) return;
+       
+       var mapelCount = {}, statusCount = { 'DISETUJUI': 0, 'BARU': 0, 'REVISI': 0 };
+       STATE.allMedia.forEach(m => { 
+           var k = m[6] || 'Lainnya'; mapelCount[k] = (mapelCount[k]||0)+1; 
+           var s = m[9] || 'BARU'; statusCount[s] = (statusCount[s]||0)+1; 
+       });
+
+       if(charts.mapel) charts.mapel.destroy();
+       if(charts.status) charts.status.destroy();
+
+       charts.mapel = new Chart(document.getElementById('chartMapel'), {
+          type: 'bar',
+          data: { labels: Object.keys(mapelCount), datasets: [{ label: 'Jumlah', data: Object.values(mapelCount), backgroundColor: '#0f766e' }] },
+          options: { responsive: true, maintainAspectRatio: false }
+       });
+       charts.status = new Chart(document.getElementById('chartStatus'), {
+          type: 'doughnut',
+          data: { labels: ['Disetujui', 'Menunggu', 'Revisi'], datasets: [{ data: [statusCount['DISETUJUI'], statusCount['BARU'], statusCount['REVISI']], backgroundColor: ['#10b981', '#f59e0b', '#ef4444'] }] },
+          options: { responsive: true, maintainAspectRatio: false }
+       });
+    }
+
+    function applyFilters() {
+      var q = document.getElementById('searchInput').value.toLowerCase();
+      var fMapel = document.getElementById('filterMapel').value;
+      var fFase = document.getElementById('filterFase').value;
+      
+      STATE.filtered = STATE.allMedia.filter(function(i) {
+         var haystack = (i[5]+" "+i[1]+" "+i[2]+" "+i[3]+" "+i[6]+" "+i[11]).toLowerCase();
+         var matchSearch = haystack.indexOf(q) !== -1;
+         var matchMapel = (fMapel === "") || (i[6] === fMapel);
+         var matchFase = (fFase === "") || (i[3] === fFase);
+         return matchSearch && matchMapel && matchFase;
+      });
+      STATE.displayedLimit = STATE.itemsPerPage;
+      renderGaleri();
+    }
+
+    function loadMoreItems() {
+      STATE.displayedLimit += STATE.itemsPerPage;
+      renderGaleri();
+    }
+
+    function renderGaleri() {
+      var c = document.getElementById('galeri-container'); c.innerHTML = '';
+      var favKey = 'GB_FAV_' + (STATE.user ? STATE.user.name : 'GUEST');
+      var saved = JSON.parse(localStorage.getItem(favKey) || '[]');
+      
+      var dataToShow = STATE.filtered.slice(0, STATE.displayedLimit);
+      
+      dataToShow.forEach(function(item) {
+        var idx = STATE.allMedia.indexOf(item); 
+        var id = cleanStr(item[13]);
+        var isApproved = item[9] === "DISETUJUI", isOwn = STATE.user.name === item[1], isAdmin = (STATE.user.role === 'ADMIN' || STATE.user.role === 'MODERATOR');
+        var isSaved = saved.includes(id);
+        var iconLove = isSaved ? 'fas fa-heart text-danger' : 'far fa-heart';
+        var activeClass = isSaved ? 'active' : '';
+        
+        var badgeStatus = isApproved ? '<div class="badge-approved"><i class="fas fa-check-circle"></i></div>' : (isOwner||isAdmin ? '<div class="badge-pending">PENDING</div>' : '');
+        var kaihHtml = item[10] ? '<div class="kaih-compact"><i class="fas fa-star text-warning"></i>'+cleanStr(item[10])+'</div>' : '';
+        var editBtns = (isOwner || isAdmin) ? `<button onclick="event.stopPropagation(); bukaEdit(${idx})" class="btn-icon" title="Edit"><i class="fas fa-pencil-alt"></i></button><button onclick="event.stopPropagation(); hapusKarya(${idx})" class="btn-icon danger" title="Hapus"><i class="fas fa-trash"></i></button>` : '';
+
+        // SMART QR
+        var link = cleanStr(item[8]);
+        if (!link || link.length < 5) {
+            var m = (item[7]||"").match(/src\s*=\s*["']([^"']+)["']/i);
+            if (m) link = m[1];
+        }
+        var qrBtn = (link && link.length > 5) ? `<button onclick="event.stopPropagation(); showQR('${link}')" class="btn-icon" title="QR Code"><i class="fas fa-qrcode"></i></button>` : '';
+
+        // WARNA THUMBNAIL
+        var j = cleanStr(item[11]).toUpperCase(), ic = "fas fa-file-alt", bg = "#64748b";
+        if(j.includes("VIDEO")) { ic="fas fa-play"; bg="#ef4444"; } 
+        else if(j.includes("MODUL")) { ic="fas fa-book"; bg="#10b981"; }
+        else if(j.includes("GAME")) { ic="fas fa-gamepad"; bg="#8b5cf6"; }
+        else if(j.includes("STORY") || j.includes("GEMINI")) { ic="fas fa-robot"; bg="#f59e0b"; }
+
+        var yt = link.match(/youtu\.?be.*(v\/|embed\/|\?v=)([^#\&\?]*)/);
+        var thumb = yt ? `<img src="https://img.youtube.com/vi/${yt[2]}/mqdefault.jpg">` : `<div style="background:${bg};width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:white"><i class="${ic} fa-3x mb-2"></i><span style="font-size:0.6rem;font-weight:800">${j}</span></div>`;
+
+        var html = '<div class="col-6 col-md-4 col-lg-3 d-flex fade-in"><div class="card-karya w-100"><div class="card-thumb">' + thumb + badgeStatus + '<div class="view-badge"><i class="fas fa-eye me-1"></i> ' + (item[14]||0) + '</div><button onclick="event.stopPropagation(); toggleSimpan(\'' + id + '\')" class="btn-wishlist '+activeClass+'"><i class="' + iconLove + '"></i></button></div><div class="card-body-mp"><div class="mp-tags"><span class="badge-pill bg-soft-teal">' + cleanStr(item[6]) + '</span><span class="badge-pill bg-soft-blue">' + cleanStr(item[3]) + '</span><span class="badge-pill bg-soft-purple">' + cleanStr(item[4]) + '</span></div><div class="mp-title" title="'+cleanStr(item[5])+'">' + cleanStr(item[5]) + '</div>' + kaihHtml + '<div class="guru-info"><div class="guru-avatar">' + cleanStr(item[1]).charAt(0) + '</div><div style="overflow:hidden; line-height:1.2;"><div class="text-truncate fw-bold" style="font-size:0.75rem">' + cleanStr(item[1]) + '</div><div class="text-muted text-truncate" style="font-size:0.65rem">' + cleanStr(item[2]) + '</div></div></div><div class="action-row"><button onclick="bukaPreview(' + idx + ')" class="btn-open">BUKA KARYA</button>' + qrBtn + editBtns + '</div></div></div></div>';
+        c.insertAdjacentHTML('beforeend', html);
+      });
+
+      var btnMore = document.getElementById('loadMoreContainer');
+      if (STATE.filtered.length > STATE.displayedLimit) btnMore.classList.remove('d-none'); else btnMore.classList.add('d-none');
+    }
+
+    function getYoutubeId(url) {
+        var match = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
+        return (match && match[2].length == 11) ? match[2] : false;
+    }
+
+    function bukaPreview(index) {
+      var item = STATE.allMedia[index]; if(!item) return;
+      var rawHtml = (item[7] || "").trim();
+      var rawLink = (item[8] || "").trim();
+      var id = item[13];
+
+      callApi('view', { id: id });
+
+      document.getElementById('previewTitle').innerText = cleanStr(item[5]);
+      var overlay = document.getElementById('previewOverlay');
+      var frame = document.getElementById('previewFrame');
+
+      // 1. GEMINI & STORYBOOK (WAJIB TAB BARU)
+      if (rawLink && (rawLink.includes('gemini.google.com') || rawLink.includes('g.co') || rawLink.includes('story'))) {
+          var finalUrl = rawLink;
+          if(finalUrl.includes('gemini.google.com/share')) finalUrl = finalUrl.replace('gemini.google.com/share', 'g.co/gemini/share');
+          window.open(finalUrl, '_blank');
+          return;
+      }
+
+      overlay.style.display = 'flex';
+      frame.style.display = 'block';
+      frame.src = "about:blank"; 
+
+      // 2. HTML
+      if (rawHtml.length > 10) {
+          ACTIVE_CONTENT = { type: 'HTML', data: rawHtml };
+          frame.src = URL.createObjectURL(new Blob([rawHtml], {type: 'text/html'}));
+          return;
+      }
+
+      // 3. LINK
+      if (rawLink.length > 5) {
+          ACTIVE_CONTENT = { type: 'LINK', data: rawLink };
+          var yt = getYoutubeId(rawLink);
+          if (yt) frame.src = "https://www.youtube.com/embed/" + yt + "?autoplay=1&rel=0"; 
+          else if (rawLink.indexOf('drive.google.com') !== -1) frame.src = rawLink.replace(/\/view.*/, '/preview'); 
+          else frame.src = rawLink;
+          return;
+      }
+      Swal.fire('Info', 'Konten kosong.', 'info'); tutupPreview();
+    }
+
+    function tutupPreview() { document.getElementById('previewOverlay').style.display='none'; document.getElementById('previewFrame').src=""; }
+
+    function populateDropdowns() { 
+      var f=(id,idx,t)=>{ var el=document.getElementById(id); el.innerHTML=`<option value="">${t}</option>`; [...new Set(STATE.settings.map(r=>r[idx]).filter(Boolean))].forEach(v=>el.innerHTML+=`<option value="${v}">${v}</option>`); };
+      f('filterMapel',1,'📚 Semua Mapel'); f('filterFase',2,'🎓 Semua Fase');
+      var fm=(id,idx)=>{ var el=document.getElementById(id); el.innerHTML='<option value="">Pilih</option>'; STATE.settings.forEach(r=>{if(r[idx])el.innerHTML+=`<option value="${r[idx]}">${r[idx]}</option>`}); el.innerHTML+='<option value="LAINNYA">LAINNYA</option>'; };
+      fm('inJenis',0); fm('inMapel',1); fm('inFase',2); fm('inKaihType',3); fm('inSem',4);
+    }
+    function toggleSimpan(id){ var k='GB_FAV_'+STATE.user.name,s=JSON.parse(localStorage.getItem(k)||'[]'); if(s.includes(id))s=s.filter(x=>x!==id);else s.push(id); localStorage.setItem(k,JSON.stringify(s)); renderGaleri(); }
+    function filterSimpanan(){ var k='GB_FAV_'+STATE.user.name,s=JSON.parse(localStorage.getItem(k)||'[]'); STATE.filtered=STATE.allMedia.filter(i=>s.includes(i[13])); STATE.displayedLimit=STATE.itemsPerPage; renderGaleri(); }
+    function filterSaya(){ STATE.filtered=STATE.allMedia.filter(i=>i[1]===STATE.user.name); renderGaleri(); }
+    function filterSemua(){ document.getElementById('searchInput').value=""; document.getElementById('filterMapel').value=""; document.getElementById('filterFase').value=""; applyFilters(); }
+    function showQR(l){ Swal.fire({html:`<img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(l)}" class="img-fluid mb-2"><br><a href="${l}" target="_blank" class="btn btn-sm btn-dark">Buka Link</a>`,showConfirmButton:false,showCloseButton:true}); }
+    
+    function loginModal(){ Swal.fire({title:'PIN Guru',input:'password'}).then(r=>{if(r.value)callApi('login',{pin:r.value}).then(res=>{if(res.status==='success'){localStorage.setItem('guruBerbagiUser',JSON.stringify(res.user));STATE.user=res.user;softReset();}else Swal.fire('Gagal',res.message,'error');});}); }
+    function logout(){ localStorage.removeItem('guruBerbagiUser'); STATE.user={name:"Tamu",role:"GUEST"}; softReset(); }
+    function resetForm(){ document.getElementById('modalForm').reset(); document.getElementById('formMode').value="ADD"; toggleInputSource('LINK'); }
+    function toggleInputSource(v){ ['groupLink','groupHtml'].forEach(id=>document.getElementById(id).classList.add('d-none')); if(v==='HTML')document.getElementById('groupHtml').classList.remove('d-none');else document.getElementById('groupLink').classList.remove('d-none'); updateLivePreview(); }
+    function checkDropdown(id,man,v){ var m=document.getElementById(man); if(v==='LAINNYA')m.classList.remove('d-none');else m.classList.add('d-none'); }
+    function toggleKaih(c){ document.getElementById('kaihBox').classList.toggle('d-none',!c); }
+    function updateLivePreview(){ var t=document.getElementById('inputSourceType').value, v=(t==='LINK'?document.getElementById('inLink').value:document.getElementById('inHtml').value); var fr=document.getElementById('miniPreviewFrame').contentDocument; fr.open(); if(v.includes('gemini')||v.includes('story')){ fr.write('<div style="text-align:center;padding:20px;color:#666">Gemini Storybook<br>Buka di Tab Baru</div>'); } else if(t==='HTML'&&v.length>5){ fr.write(v); } else if(v.length>5){ var yt=getYoutubeId(v); fr.write(`<body style="margin:0"><iframe src="${yt?'https://www.youtube.com/embed/'+yt:v}" style="width:100%;height:100%;border:none"></iframe></body>`); } else fr.write('<div style="text-align:center;padding:40px;color:#ccc">Preview</div>'); fr.close(); }
+    function bukaEdit(i){ var d=STATE.allMedia[i]; if(!d)return; document.getElementById('formMode').value="EDIT"; document.getElementById('editRowIdx').value=d[13]; document.getElementById('inJudul').value=d[5]; document.getElementById('inFase').value=d[3]; document.getElementById('inSem').value=d[4]; if(d[7].length>5){ document.getElementById('inputSourceType').value='HTML'; document.getElementById('inHtml').value=d[7]; toggleInputSource('HTML'); } else { document.getElementById('inputSourceType').value='LINK'; document.getElementById('inLink').value=d[8]; toggleInputSource('LINK'); } var s=(id,v,m)=>{ var e=document.getElementById(id), x=[...e.options].some(o=>o.value===v); if(x)e.value=v; else{e.value='LAINNYA';document.getElementById(m).classList.remove('d-none');document.getElementById(m).value=v;} }; s('inMapel',d[6],'manMapel'); s('inJenis',d[11],'manJenis'); var k=d[10]&&d[10]!==""; document.getElementById('checkKaih').checked=k; toggleKaih(k); if(k)document.getElementById('inKaihType').value=d[10]; modalInputInstance = new bootstrap.Modal(document.getElementById('modalInput'),{backdrop:'static'}); modalInputInstance.show(); }
+    function prosesSimpan(){ var p={mode:document.getElementById('formMode').value,idUnik:document.getElementById('editRowIdx').value,nama:STATE.user.name,sekolah:STATE.user.school,fase:document.getElementById('inFase').value,semester:document.getElementById('inSem').value,judul:document.getElementById('inJudul').value,mapel:document.getElementById('inMapel').value==='LAINNYA'?document.getElementById('manMapel').value:document.getElementById('inMapel').value,jenis:document.getElementById('inJenis').value==='LAINNYA'?document.getElementById('manJenis').value:document.getElementById('inJenis').value,kodeHtml:document.getElementById('inputSourceType').value==='HTML'?document.getElementById('inHtml').value:'',linkLuar:document.getElementById('inputSourceType').value==='LINK'?document.getElementById('inLink').value:'',kaihType:document.getElementById('checkKaih').checked?document.getElementById('inKaihType').value:''}; if(p.linkLuar.includes('gemini.google.com/share')) p.linkLuar=p.linkLuar.replace('gemini.google.com/share','g.co/gemini/share'); Swal.fire({title:'Menyimpan...',didOpen:()=>Swal.showLoading()}); callApi('simpan',p).then(r=>{if(r.status==='success'){if(modalInputInstance)modalInputInstance.hide();loadData();Swal.fire('Sukses','','success');}else Swal.fire('Error',r.message,'error');}); }
+    function hapusKarya(i){ Swal.fire({title:'Hapus?',icon:'warning',showCancelButton:true}).then(r=>{if(r.isConfirmed)callApi('hapus',{id:STATE.allMedia[i][13]}).then(()=>loadData());}); }
+    function searchAdminTable(){ var q=document.querySelector('#view-admin input').value.toLowerCase(), st=document.getElementById('filterAdminStatus').value; renderTableAdmin(STATE.allMedia.filter(i=>{return ((i[5]||"").toLowerCase().includes(q)||(i[1]||"").toLowerCase().includes(q))&&(st===""||i[9]===st)})); }
+    function bukaKurasi(id,st,fb){ document.getElementById('kurasiId').value=id; document.getElementById('kurasiStatus').value=st; document.getElementById('kurasiFeedback').value=fb||''; new bootstrap.Modal('#modalKurasi').show(); }
+    function simpanKurasi(){ callApi('updateKurasi',{id:document.getElementById('kurasiId').value,status:document.getElementById('kurasiStatus').value,feedback:document.getElementById('kurasiFeedback').value}).then(()=>{Swal.fire('Sukses');loadData();bootstrap.Modal.getInstance(document.getElementById('modalKurasi')).hide();}); }
+    function loadUserList(){ if(STATE.user.role!=='ADMIN')return; callApi('users').then(res=>{STATE.users=res.data; var h=''; res.data.forEach(u=>{h+=`<tr><td><div class="fw-bold">${u[0]}</div><small>${u[1]}</small></td><td>${u[2]}</td><td>${u[3]}</td><td class="text-center"><button onclick="hapusUser('${u[2]}')" class="btn-soft btn-soft-danger"><i class="fas fa-trash"></i></button></td></tr>`;}); document.getElementById('tableUsers').innerHTML=h;}); }
+    function saveUser(){ api('simpanUser',{nama:document.getElementById('uN').value,sekolah:document.getElementById('uS').value,pin:document.getElementById('uP').value,role:document.getElementById('uR').value}).then(r=>{if(r.status==='success'){loadUserList();bootstrap.Modal.getInstance(document.getElementById('modalUser')).hide();Swal.fire('Sukses');}else Swal.fire('Error');}); }
+    function hapusUser(p){ if(confirm('Hapus?')) callApi('hapusUser',{pin:p}).then(()=>loadUserList()); }
+    function showModalInput() { modalInputInstance = new bootstrap.Modal(document.getElementById('modalInput'),{backdrop:'static'}); modalInputInstance.show(); }
+  </script>
+</body>
+</html>
