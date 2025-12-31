@@ -101,12 +101,19 @@
     .pretty-table { width: 100%; border-collapse: collapse; }
     .pretty-table thead th { background: #f8fafc; color: #64748b; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; padding: 16px; border-bottom: 2px solid #e2e8f0; letter-spacing: 0.5px; }
     .pretty-table tbody td { padding: 14px 16px; vertical-align: middle; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; }
+    
     .avatar-circle { width: 36px; height: 36px; border-radius: 50%; background: #e0f2f1; color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem; }
     .btn-soft { width: 34px; height: 34px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; border: none; transition: 0.2s; margin-left: 4px; }
     .btn-soft-primary { background: #e0f2f1; color: #00695c; }
     .btn-soft-primary:hover { background: var(--primary); color: white; transform: translateY(-2px); }
     .btn-soft-danger { background: #fee2e2; color: #991b1b; }
     .btn-soft-danger:hover { background: #ef4444; color: white; transform: translateY(-2px); }
+
+    .rank-badge { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: 800; font-size: 0.8rem; }
+    .rank-1 { background: #fef3c7; color: #d97706; border: 1px solid #fcd34d; }
+    .rank-2 { background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; }
+    .rank-3 { background: #fff7ed; color: #c2410c; border: 1px solid #fdba74; }
+    .rank-other { background: #f8fafc; color: #94a3b8; font-size: 0.75rem; }
 
     .d-none { display: none !important; }
     .admin-only { display: none !important; } 
@@ -218,8 +225,11 @@
       <ul class="nav nav-tabs mb-4 border-bottom-0" id="adminTabs">
         <li class="nav-item"><button class="nav-link active fw-bold border" data-bs-toggle="tab" data-bs-target="#tab-media">Kurasi Karya</button></li>
         <li class="nav-item admin-only ms-2"><button class="nav-link fw-bold border" data-bs-toggle="tab" data-bs-target="#tab-users" onclick="loadUserList()">Manajemen Akun</button></li>
-        <li class="nav-item admin-only ms-2"><button class="nav-link fw-bold border" data-bs-toggle="tab" data-bs-target="#tab-stats" onclick="loadSchoolStats()">Statistik Sekolah</button></li>
+        
+        <li class="nav-item admin-only ms-2"><button class="nav-link fw-bold border" data-bs-toggle="tab" data-bs-target="#tab-rank-school" onclick="loadSchoolStats()">Top Sekolah</button></li>
+        <li class="nav-item admin-only ms-2"><button class="nav-link fw-bold border" data-bs-toggle="tab" data-bs-target="#tab-rank-teacher" onclick="loadTeacherStats()">Top Guru</button></li>
       </ul>
+
       <div class="tab-content">
         <div class="tab-pane fade show active" id="tab-media">
           <input type="text" class="form-control rounded-pill px-4 mb-3 border-secondary bg-light" placeholder="Cari karya di database..." oninput="searchAdminTable(this.value)">
@@ -244,22 +254,44 @@
           </div>
         </div>
 
-        <div class="tab-pane fade" id="tab-stats">
+        <div class="tab-pane fade" id="tab-rank-school">
            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h6 class="fw-bold text-muted mb-0 ps-2">Rekapitulasi Satuan Pendidikan</h6>
+              <h6 class="fw-bold text-muted mb-0 ps-2">🏆 Peringkat Satuan Pendidikan</h6>
               <button class="btn btn-outline-success btn-sm rounded-pill fw-bold px-3" onclick="loadSchoolStats()"><i class="fas fa-sync-alt me-1"></i> Refresh</button>
            </div>
            <div class="table-responsive rounded-3 border">
               <table class="table pretty-table table-hover align-middle mb-0">
                  <thead class="bg-light">
                     <tr>
-                       <th class="ps-4">SATUAN PENDIDIKAN</th>
-                       <th class="text-center">GURU TERDAFTAR</th>
+                       <th class="text-center" style="width: 50px;">#</th>
+                       <th class="ps-3">SATUAN PENDIDIKAN</th>
+                       <th class="text-center">JML GURU</th>
                        <th class="text-center">TOTAL KARYA</th>
-                       <th class="text-center">KONTRIBUSI (%)</th>
+                       <th class="text-center">PERSENTASE</th>
                     </tr>
                  </thead>
-                 <tbody id="tableStats"></tbody>
+                 <tbody id="tableRankSchool"></tbody>
+              </table>
+           </div>
+        </div>
+
+        <div class="tab-pane fade" id="tab-rank-teacher">
+           <div class="d-flex justify-content-between align-items-center mb-3">
+              <h6 class="fw-bold text-muted mb-0 ps-2">🥇 Top Kontributor Guru (100 Teratas)</h6>
+              <button class="btn btn-outline-success btn-sm rounded-pill fw-bold px-3" onclick="loadTeacherStats()"><i class="fas fa-sync-alt me-1"></i> Refresh</button>
+           </div>
+           <div class="table-responsive rounded-3 border">
+              <table class="table pretty-table table-hover align-middle mb-0">
+                 <thead class="bg-light">
+                    <tr>
+                       <th class="text-center" style="width: 50px;">#</th>
+                       <th class="ps-3">NAMA GURU</th>
+                       <th class="ps-3">UNIT KERJA</th>
+                       <th class="text-center">TOTAL KARYA</th>
+                       <th class="text-center">MEDALI</th>
+                    </tr>
+                 </thead>
+                 <tbody id="tableRankTeacher"></tbody>
               </table>
            </div>
         </div>
@@ -333,25 +365,17 @@
   
   <script>
     // --- KONFIGURASI ---
-    // GANTI URL INI DENGAN URL WEB APP ANDA SETELAH DEPLOY BACKEND
     const API_URL = "https://script.google.com/macros/s/AKfycbzhrWjl2Dc0i8V45dD8vNXrt3gfmvEU1pZ5hZOELkTz6e29l68d2hsHfGQEjqTVYdY0/exec";
 
-    // STATE UTAMA & PAGINATION
     var STATE = { 
-        allMedia: [], 
-        filtered: [], 
-        users: [], 
-        user: { name: "Tamu", role: "GUEST" }, 
-        settings: [],
-        displayedLimit: 12,  // Default kartu awal
-        itemsPerPage: 12     // Jumlah kartu saat Load More
+        allMedia: [], filtered: [], users: [], user: { name: "Tamu", role: "GUEST" }, settings: [],
+        displayedLimit: 12, itemsPerPage: 12 
     };
     
     var ACTIVE_CONTENT = { type: null, data: null };
     var searchTimeout = null;
     var modalInputInstance = null;
 
-    // --- API HANDLER ---
     async function callApi(action, payload = null) {
       try {
         if (action === 'read') {
@@ -364,24 +388,16 @@
            });
            return await response.json();
         }
-      } catch (e) {
-        console.error("API Error:", e);
-        return { status: "error", message: e.toString() };
-      }
+      } catch (e) { console.error("API Error:", e); return { status: "error", message: e.toString() }; }
     }
 
-    // INIT
     window.onload = function() { initApp(); };
     function initApp() {
       try { var saved = localStorage.getItem('guruBerbagiUser'); if (saved) { STATE.user = JSON.parse(saved); updateUserInterface(); } } catch(e) {}
       loadData();
     }
 
-    function cleanStr(str) {
-      if(!str) return "";
-      return str.toString().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;").replace(/\n/g, " "); 
-    }
-
+    function cleanStr(str) { if(!str) return ""; return str.toString().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;").replace(/\n/g, " "); }
     function softReset() { switchView('GALERI'); updateUserInterface(); loadData(); }
 
     function updateUserInterface() {
@@ -444,36 +460,24 @@
       });
     }
 
-    // --- FUNGSI FILTER & PAGINATION ---
     function applyFilters() {
       var q = document.getElementById('searchInput').value.toLowerCase();
       var fMapel = document.getElementById('filterMapel').value;
       var fFase = document.getElementById('filterFase').value;
-      
       STATE.filtered = STATE.allMedia.filter(function(i) {
          var haystack = (i[5]+" "+i[1]+" "+i[2]+" "+i[3]+" "+i[6]+" "+i[11]).toLowerCase();
-         var matchSearch = haystack.indexOf(q) !== -1;
-         var matchMapel = (fMapel === "") || (i[6] === fMapel);
-         var matchFase = (fFase === "") || (i[3] === fFase);
-         return matchSearch && matchMapel && matchFase;
+         return haystack.indexOf(q)!==-1 && ((fMapel==="") || (i[6]===fMapel)) && ((fFase==="") || (i[3]===fFase));
       });
-
       STATE.displayedLimit = STATE.itemsPerPage;
       renderGaleri();
     }
 
-    function loadMoreItems() {
-      STATE.displayedLimit += STATE.itemsPerPage;
-      renderGaleri();
-    }
+    function loadMoreItems() { STATE.displayedLimit += STATE.itemsPerPage; renderGaleri(); }
 
     function renderGaleri() {
-      var c = document.getElementById('galeri-container');
-      c.innerHTML = '';
-      
+      var c = document.getElementById('galeri-container'); c.innerHTML = '';
       var favKey = 'GB_FAV_' + (STATE.user ? STATE.user.name : 'GUEST');
       var saved = JSON.parse(localStorage.getItem(favKey) || '[]');
-      
       var dataToShow = STATE.filtered.slice(0, STATE.displayedLimit);
       
       dataToShow.forEach(function(item) {
@@ -484,101 +488,58 @@
         var isAdmin = (STATE.user.role === 'ADMIN' || STATE.user.role === 'MODERATOR');
         var isSaved = saved.includes(id);
         var iconLove = isSaved ? 'fas fa-heart text-danger' : 'far fa-heart';
-        var activeClass = isSaved ? 'active' : '';
-        
         var badgeStatus = isApproved ? '<div class="badge-approved"><i class="fas fa-check-circle"></i></div>' : (isOwner||isAdmin ? '<div class="badge-pending">PENDING</div>' : '');
         var kaihHtml = item[10] ? '<div class="kaih-compact"><i class="fas fa-star text-warning"></i>'+cleanStr(item[10])+'</div>' : '';
         var editBtns = (isOwner || isAdmin) ? `<button onclick="event.stopPropagation(); bukaEdit(${realIndex})" class="btn-icon" title="Edit"><i class="fas fa-pencil-alt"></i></button><button onclick="event.stopPropagation(); hapusKarya(${realIndex})" class="btn-icon danger" title="Hapus"><i class="fas fa-trash"></i></button>` : '';
 
         var finalQrLink = cleanStr(item[8]);
         if (!finalQrLink || finalQrLink.length < 5) {
-            var htmlVal = cleanStr(item[7]);
-            var extractSrc = htmlVal.match(/src\s*=\s*["']([^"']+)["']/i);
+            var htmlVal = cleanStr(item[7]); var extractSrc = htmlVal.match(/src\s*=\s*["']([^"']+)["']/i);
             if (extractSrc && extractSrc[1]) finalQrLink = extractSrc[1];
         }
         var qrBtn = (finalQrLink && finalQrLink.length > 5) ? `<button onclick="event.stopPropagation(); showQR('${finalQrLink}')" class="btn-icon" title="QR Code"><i class="fas fa-qrcode"></i></button>` : '';
 
-        var html = '<div class="col-6 col-md-4 col-lg-3 d-flex"><div class="card-karya w-100"><div class="card-thumb">' + getThumbnailHtml(cleanStr(item[11]), item[8]) + badgeStatus + '<div class="view-badge"><i class="fas fa-eye me-1"></i> ' + (item[14]||0) + '</div><button onclick="event.stopPropagation(); toggleSimpan(\'' + id + '\')" class="btn-wishlist '+activeClass+'"><i class="' + iconLove + '"></i></button></div><div class="card-body-mp"><div class="mp-tags"><span class="badge-pill bg-soft-teal">' + cleanStr(item[6]) + '</span><span class="badge-pill bg-soft-blue">' + cleanStr(item[3]) + '</span><span class="badge-pill bg-soft-purple">' + cleanStr(item[4]) + '</span></div><div class="mp-title" title="'+cleanStr(item[5])+'">' + cleanStr(item[5]) + '</div>' + kaihHtml + '<div class="guru-info"><div class="guru-avatar">' + cleanStr(item[1]).charAt(0) + '</div><div style="overflow:hidden; line-height:1.2;"><div class="text-truncate fw-bold" style="font-size:0.75rem">' + cleanStr(item[1]) + '</div><div class="text-muted text-truncate" style="font-size:0.65rem">' + cleanStr(item[2]) + '</div></div></div><div class="action-row"><button onclick="bukaPreview(' + realIndex + ')" class="btn-open">BUKA KARYA</button>' + qrBtn + editBtns + '</div></div></div></div>';
+        var html = '<div class="col-6 col-md-4 col-lg-3 d-flex"><div class="card-karya w-100"><div class="card-thumb">' + getThumbnailHtml(cleanStr(item[11]), item[8]) + badgeStatus + '<div class="view-badge"><i class="fas fa-eye me-1"></i> ' + (item[14]||0) + '</div><button onclick="event.stopPropagation(); toggleSimpan(\'' + id + '\')" class="btn-wishlist '+(isSaved?'active':'')+'"><i class="' + iconLove + '"></i></button></div><div class="card-body-mp"><div class="mp-tags"><span class="badge-pill bg-soft-teal">' + cleanStr(item[6]) + '</span><span class="badge-pill bg-soft-blue">' + cleanStr(item[3]) + '</span><span class="badge-pill bg-soft-purple">' + cleanStr(item[4]) + '</span></div><div class="mp-title" title="'+cleanStr(item[5])+'">' + cleanStr(item[5]) + '</div>' + kaihHtml + '<div class="guru-info"><div class="guru-avatar">' + cleanStr(item[1]).charAt(0) + '</div><div style="overflow:hidden; line-height:1.2;"><div class="text-truncate fw-bold" style="font-size:0.75rem">' + cleanStr(item[1]) + '</div><div class="text-muted text-truncate" style="font-size:0.65rem">' + cleanStr(item[2]) + '</div></div></div><div class="action-row"><button onclick="bukaPreview(' + realIndex + ')" class="btn-open">BUKA KARYA</button>' + qrBtn + editBtns + '</div></div></div></div>';
         c.insertAdjacentHTML('beforeend', html);
       });
 
       var btnMore = document.getElementById('loadMoreContainer');
-      var infoText = document.getElementById('loadMoreInfo');
-      if (STATE.filtered.length > STATE.displayedLimit) {
-         btnMore.classList.remove('d-none');
-         infoText.innerText = `Menampilkan ${dataToShow.length} dari ${STATE.filtered.length} karya`;
-      } else {
-         btnMore.classList.add('d-none');
-      }
-
-      if (STATE.filtered.length === 0) {
-        c.innerHTML = `<div class="col-12 text-center py-5 text-muted"><i class="fas fa-search fa-3x mb-3 text-secondary opacity-25"></i><br>Tidak ada karya ditemukan.</div>`;
-      }
+      if (STATE.filtered.length > STATE.displayedLimit) { btnMore.classList.remove('d-none'); document.getElementById('loadMoreInfo').innerText = `Menampilkan ${dataToShow.length} dari ${STATE.filtered.length} karya`; } else { btnMore.classList.add('d-none'); }
+      if (STATE.filtered.length === 0) c.innerHTML = `<div class="col-12 text-center py-5 text-muted"><i class="fas fa-search fa-3x mb-3 text-secondary opacity-25"></i><br>Tidak ada karya ditemukan.</div>`;
     }
 
-    function handleSearchInput(val) {
-      if (searchTimeout) clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(() => { applyFilters(); }, 300);
-    }
-    
+    function handleSearchInput(val) { if (searchTimeout) clearTimeout(searchTimeout); searchTimeout = setTimeout(() => { applyFilters(); }, 300); }
     function filterSaya() { document.getElementById('searchInput').value = STATE.user.name; applyFilters(); }
     function filterSemua() { document.getElementById('searchInput').value = ""; document.getElementById('filterMapel').value = ""; document.getElementById('filterFase').value = ""; applyFilters(); }
-    
-    function filterSimpanan() { 
-       var favKey = 'GB_FAV_' + (STATE.user ? STATE.user.name : 'GUEST');
-       var s = JSON.parse(localStorage.getItem(favKey) || '[]');
-       STATE.filtered = STATE.allMedia.filter(function(i){ return s.includes(i[13]) });
-       STATE.displayedLimit = STATE.itemsPerPage;
-       renderGaleri();
-    }
+    function filterSimpanan() { var k='GB_FAV_'+(STATE.user?STATE.user.name:'GUEST'), s=JSON.parse(localStorage.getItem(k)||'[]'); STATE.filtered = STATE.allMedia.filter(i=>s.includes(i[13])); STATE.displayedLimit=STATE.itemsPerPage; renderGaleri(); }
 
-    function getYoutubeId(url) {
-        var match = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
-        return (match && match[2].length == 11) ? match[2] : false;
-    }
-
+    function getYoutubeId(url) { var match = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/); return (match && match[2].length == 11) ? match[2] : false; }
     function getThumbnailHtml(jenis, link) {
-      let ic = "fas fa-code"; let bg = "#475569";
-      let j = (jenis || "").toUpperCase();
-      if(j.includes("VIDEO")) { ic="fas fa-play"; bg="#ef4444"; } 
-      else if(j.includes("MODUL")) { ic="fas fa-book-open"; bg="#10b981"; } 
-      else if(j.includes("GAME")) { ic="fas fa-gamepad"; bg="#8b5cf6"; } 
-      else if(j.includes("KUIS")) { ic="fas fa-stopwatch"; bg="#f59e0b"; }
-      else if(j.includes("STORY") || j.includes("BUKU")) { ic="fas fa-book-reader"; bg="#d97706"; }
-      var ytId = getYoutubeId(link || "");
-      if (ytId) return `<img src="https://img.youtube.com/vi/${ytId}/mqdefault.jpg" loading="lazy" style="width:100%; height:100%; object-fit:cover;">`;
+      let ic = "fas fa-code"; let bg = "#475569"; let j = (jenis || "").toUpperCase();
+      if(j.includes("VIDEO")) { ic="fas fa-play"; bg="#ef4444"; } else if(j.includes("MODUL")) { ic="fas fa-book-open"; bg="#10b981"; } else if(j.includes("GAME")) { ic="fas fa-gamepad"; bg="#8b5cf6"; } else if(j.includes("KUIS")) { ic="fas fa-stopwatch"; bg="#f59e0b"; } else if(j.includes("STORY") || j.includes("BUKU")) { ic="fas fa-book-reader"; bg="#d97706"; }
+      var ytId = getYoutubeId(link || ""); if (ytId) return `<img src="https://img.youtube.com/vi/${ytId}/mqdefault.jpg" loading="lazy" style="width:100%; height:100%; object-fit:cover;">`;
       return `<div style="background:${bg}; width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white;"><i class="${ic} fa-3x mb-2"></i><span style="font-size:0.6rem; font-weight:800;">${j}</span></div>`;
     }
 
     function bukaPreview(index) {
       var item = STATE.allMedia[index]; if(!item) return;
-      var rawHtml = (item[7] || "").trim();
-      var rawLink = (item[8] || "").trim();
-      var id = item[13];
+      var rawHtml = (item[7] || "").trim(), rawLink = (item[8] || "").trim(), id = item[13];
       callApi('view', { id: id });
       document.getElementById('previewTitle').innerText = cleanStr(item[5]);
-      var overlay = document.getElementById('previewOverlay');
-      var frame = document.getElementById('previewFrame');
-      var btnFs = document.getElementById('btnFs');
-
-      if (rawLink && (rawLink.indexOf('gemini.google.com') !== -1 || rawLink.indexOf('g.co') !== -1)) {
+      var overlay = document.getElementById('previewOverlay'), frame = document.getElementById('previewFrame');
+      if (rawLink && (rawLink.indexOf('gemini.google.com')!==-1 || rawLink.indexOf('g.co')!==-1)) {
           ACTIVE_CONTENT = { type: 'GEMINI', data: rawLink };
           var finalUrl = rawLink.includes('gemini.google.com/share') ? rawLink.replace('gemini.google.com/share', 'g.co/gemini/share') : rawLink;
           window.open(finalUrl, '_blank'); return;
       }
-      overlay.style.display = 'flex'; frame.style.display = 'block'; frame.src = "about:blank"; btnFs.style.display = 'block';
-
+      overlay.style.display = 'flex'; frame.style.display = 'block'; frame.src = "about:blank";
       if (rawHtml.length > 10) {
           ACTIVE_CONTENT = { type: 'HTML', data: rawHtml };
-          var blob = new Blob([rawHtml], { type: 'text/html' });
-          frame.src = URL.createObjectURL(blob);
-          frame.dataset.blob = frame.src; 
-          return;
+          var blob = new Blob([rawHtml], { type: 'text/html' }); frame.src = URL.createObjectURL(blob); frame.dataset.blob = frame.src; return;
       }
       if (rawLink.length > 5) {
           ACTIVE_CONTENT = { type: 'LINK', data: rawLink };
-          var finalUrl = rawLink;
-          var ytId = getYoutubeId(rawLink);
+          var finalUrl = rawLink, ytId = getYoutubeId(rawLink);
           if (ytId) { finalUrl = "https://www.youtube.com/embed/" + ytId + "?autoplay=1&rel=0&modestbranding=1"; } 
           else if (finalUrl.indexOf('drive.google.com') !== -1) { finalUrl = finalUrl.replace(/\/view.*/, '/preview').replace(/\/edit.*/, '/preview'); }
           frame.src = finalUrl; return;
@@ -587,193 +548,78 @@
     }
 
     function smartFullscreen() {
-      var elem = document.getElementById("previewOverlay");
-      var req = elem.requestFullscreen || elem.webkitRequestFullscreen || elem.msRequestFullscreen;
-      if (req) {
-        var promise = req.call(elem);
-        if (promise && typeof promise.catch === 'function') { promise.catch(function(err) { fallbackTabBaru(); }); }
-      } else { fallbackTabBaru(); }
+      var elem = document.getElementById("previewOverlay"); var req = elem.requestFullscreen || elem.webkitRequestFullscreen || elem.msRequestFullscreen;
+      if (req) { var promise = req.call(elem); if (promise && typeof promise.catch === 'function') { promise.catch(function(err) { fallbackTabBaru(); }); } } else { fallbackTabBaru(); }
     }
     function fallbackTabBaru() {
       Swal.fire({ title: 'Mode Tab Baru', text: 'Membuka konten di tab baru agar tampilan maksimal.', icon: 'info', timer: 1500, showConfirmButton: false });
       setTimeout(function() {
         if (!ACTIVE_CONTENT.data) return;
-        if (ACTIVE_CONTENT.type === 'HTML') {
-            var win = window.open("", "_blank");
-            if (win) {
-                win.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Layar Penuh</title><style>body{margin:0;padding:0;overflow-y:auto;} #content{width:100%;min-height:100vh;border:none;}</style></head><body><div id="content">' + ACTIVE_CONTENT.data + '</div></body></html>');
-                win.document.close();
-            }
-        } else if (ACTIVE_CONTENT.type === 'LINK') {
-            var ytId = getYoutubeId(ACTIVE_CONTENT.data);
-            window.open(ytId ? "https://www.youtube.com/embed/"+ytId+"?autoplay=1" : ACTIVE_CONTENT.data, '_blank');
-        }
+        if (ACTIVE_CONTENT.type === 'HTML') { var win = window.open("", "_blank"); if (win) { win.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Layar Penuh</title><style>body{margin:0;padding:0;overflow-y:auto;} #content{width:100%;min-height:100vh;border:none;}</style></head><body><div id="content">' + ACTIVE_CONTENT.data + '</div></body></html>'); win.document.close(); } } 
+        else if (ACTIVE_CONTENT.type === 'LINK') { var ytId = getYoutubeId(ACTIVE_CONTENT.data); window.open(ytId ? "https://www.youtube.com/embed/"+ytId+"?autoplay=1" : ACTIVE_CONTENT.data, '_blank'); }
       }, 500);
     }
+    function tutupFullscreen() { if (document.exitFullscreen) document.exitFullscreen(); else if (document.webkitExitFullscreen) document.webkitExitFullscreen(); else if (document.msExitFullscreen) document.msExitFullscreen(); }
+    function tutupPreview() { if (document.fullscreenElement) tutupFullscreen(); var overlay = document.getElementById('previewOverlay'), frame = document.getElementById('previewFrame'); overlay.style.display = 'none'; frame.src = ""; if(frame.dataset.blob) { URL.revokeObjectURL(frame.dataset.blob); frame.dataset.blob = ""; } }
 
-    function tutupFullscreen() {
-      if (document.exitFullscreen) document.exitFullscreen();
-      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-      else if (document.msExitFullscreen) document.msExitFullscreen();
-    }
-
-    function tutupPreview() { 
-      if (document.fullscreenElement) tutupFullscreen();
-      var overlay = document.getElementById('previewOverlay');
-      var frame = document.getElementById('previewFrame');
-      overlay.style.display = 'none'; frame.src = "";
-      if(frame.dataset.blob) { URL.revokeObjectURL(frame.dataset.blob); frame.dataset.blob = ""; }
-    }
-
-    function showModalInput() {
-      if (!modalInputInstance) modalInputInstance = new bootstrap.Modal(document.getElementById('modalInput'), {backdrop:'static', keyboard:false});
-      modalInputInstance.show();
-    }
-    
-    function resetForm() { 
-      document.getElementById('modalForm').reset(); 
-      document.getElementById('formMode').value="ADD"; 
-      document.getElementById('inputSourceType').value = 'LINK';
-      toggleInputSource('LINK'); updateLivePreview(); toggleKaih(false); 
-      document.getElementById('manMapel').classList.add('d-none'); document.getElementById('manJenis').classList.add('d-none'); 
-    }
+    function showModalInput() { if (!modalInputInstance) modalInputInstance = new bootstrap.Modal(document.getElementById('modalInput'), {backdrop:'static', keyboard:false}); modalInputInstance.show(); }
+    function resetForm() { document.getElementById('modalForm').reset(); document.getElementById('formMode').value="ADD"; document.getElementById('inputSourceType').value = 'LINK'; toggleInputSource('LINK'); updateLivePreview(); toggleKaih(false); document.getElementById('manMapel').classList.add('d-none'); document.getElementById('manJenis').classList.add('d-none'); }
 
     function prosesSimpan() {
-        var judul = document.getElementById('inJudul').value;
-        if(!judul) { Swal.fire('Error', 'Judul wajib diisi', 'error'); return; }
-
-        var mapel = document.getElementById('inMapel').value;
-        if(mapel === 'LAINNYA') mapel = document.getElementById('manMapel').value;
-
-        var jenis = document.getElementById('inJenis').value;
-        if(jenis === 'LAINNYA') jenis = document.getElementById('manJenis').value;
-
+        var judul = document.getElementById('inJudul').value; if(!judul) { Swal.fire('Error', 'Judul wajib diisi', 'error'); return; }
+        var mapel = document.getElementById('inMapel').value; if(mapel === 'LAINNYA') mapel = document.getElementById('manMapel').value;
+        var jenis = document.getElementById('inJenis').value; if(jenis === 'LAINNYA') jenis = document.getElementById('manJenis').value;
         var payload = {
-            user: STATE.user.name,
-            school: STATE.user.school || "-",
-            judul: judul,
-            mapel: mapel,
-            jenis: jenis,
-            fase: document.getElementById('inFase').value,
-            sem: document.getElementById('inSem').value,
+            user: STATE.user.name, school: STATE.user.school || "-", judul: judul, mapel: mapel, jenis: jenis,
+            fase: document.getElementById('inFase').value, sem: document.getElementById('inSem').value,
             kaih: document.getElementById('checkKaih').checked ? document.getElementById('inKaihType').value : "",
             link: document.getElementById('inputSourceType').value === 'STORY' ? document.getElementById('inLinkStory').value : document.getElementById('inLink').value,
             html: document.getElementById('inputSourceType').value === 'HTML' ? document.getElementById('inHtml').value : ""
         };
-
-        var mode = document.getElementById('formMode').value;
-        var action = (mode === 'ADD') ? 'add' : 'edit';
-        if(mode === 'EDIT') payload.id = document.getElementById('editRowIdx').value;
-        
+        var mode = document.getElementById('formMode').value; if(mode === 'EDIT') payload.id = document.getElementById('editRowIdx').value;
         Swal.fire({title: 'Menyimpan...', didOpen:()=>{Swal.showLoading()}});
-        callApi('add', payload).then(res => {
-            if(res.status === 'success') {
-                Swal.fire('Berhasil', 'Karya berhasil disimpan!', 'success');
-                bootstrap.Modal.getInstance(document.getElementById('modalInput')).hide();
-                loadData();
-            } else {
-                Swal.fire('Gagal', res.message, 'error');
-            }
-        });
+        callApi('add', payload).then(res => { if(res.status === 'success') { Swal.fire('Berhasil', 'Karya berhasil disimpan!', 'success'); bootstrap.Modal.getInstance(document.getElementById('modalInput')).hide(); loadData(); } else { Swal.fire('Gagal', res.message, 'error'); } });
     }
 
     function bukaEdit(index) {
       var d = STATE.allMedia[index]; if(!d) return;
-      document.getElementById('formMode').value = "EDIT";
-      document.getElementById('editRowIdx').value = d[13];
-      document.getElementById('inJudul').value = d[5];
-      document.getElementById('inFase').value = d[3];
-      document.getElementById('inSem').value = d[4];
-
-      var hasHtml = (d[7] && d[7].length > 5);
-      var hasLink = (d[8] && d[8].length > 5);
-      
+      document.getElementById('formMode').value = "EDIT"; document.getElementById('editRowIdx').value = d[13];
+      document.getElementById('inJudul').value = d[5]; document.getElementById('inFase').value = d[3]; document.getElementById('inSem').value = d[4];
+      var hasHtml = (d[7] && d[7].length > 5), hasLink = (d[8] && d[8].length > 5);
       if(hasHtml) { document.getElementById('inputSourceType').value = 'HTML'; toggleInputSource('HTML'); document.getElementById('inHtml').value = d[7]; } 
       else if (hasLink && (d[8].includes('g.co') || d[8].includes('gemini'))) { document.getElementById('inputSourceType').value = 'STORY'; toggleInputSource('STORY'); document.getElementById('inLinkStory').value = d[8]; } 
       else { document.getElementById('inputSourceType').value = 'LINK'; toggleInputSource('LINK'); document.getElementById('inLink').value = d[8]; }
-
-      setValOrOther('inMapel', d[6], 'manMapel');
-      setValOrOther('inJenis', d[11], 'manJenis');
-      var isKaih = d[10] && d[10] !== "";
-      document.getElementById('checkKaih').checked = isKaih; toggleKaih(isKaih);
-      if(isKaih) document.getElementById('inKaihType').value = d[10];
-      
-      updateLivePreview();
-      showModalInput();
+      setValOrOther('inMapel', d[6], 'manMapel'); setValOrOther('inJenis', d[11], 'manJenis');
+      var isKaih = d[10] && d[10] !== ""; document.getElementById('checkKaih').checked = isKaih; toggleKaih(isKaih); if(isKaih) document.getElementById('inKaihType').value = d[10];
+      updateLivePreview(); showModalInput();
     }
 
-    function setValOrOther(elId, val, manId) {
-      var el = document.getElementById(elId);
-      var exists = Array.from(el.options).some(o => o.value === val);
-      if(exists) { el.value = val; checkDropdown(elId, manId, val); } 
-      else { el.value = 'LAINNYA'; checkDropdown(elId, manId, 'LAINNYA'); document.getElementById(manId).value = val; }
-    }
-
-    function toggleInputSource(type) {
-      ['groupLink','groupStory','groupHtml'].forEach(id => document.getElementById(id).classList.add('d-none'));
-      if(type === 'LINK') document.getElementById('groupLink').classList.remove('d-none');
-      else if (type === 'STORY') document.getElementById('groupStory').classList.remove('d-none');
-      else if (type === 'HTML') document.getElementById('groupHtml').classList.remove('d-none');
-      updateLivePreview();
-    }
-
-    function checkDropdown(selectId, manualInputId, val) {
-      var man = document.getElementById(manualInputId);
-      if (val === 'LAINNYA') { man.classList.remove('d-none'); man.focus(); } else { man.classList.add('d-none'); man.value = ""; }
-    }
-    
+    function setValOrOther(elId, val, manId) { var el = document.getElementById(elId); if(Array.from(el.options).some(o => o.value === val)) { el.value = val; checkDropdown(elId, manId, val); } else { el.value = 'LAINNYA'; checkDropdown(elId, manId, 'LAINNYA'); document.getElementById(manId).value = val; } }
+    function toggleInputSource(type) { ['groupLink','groupStory','groupHtml'].forEach(id => document.getElementById(id).classList.add('d-none')); if(type === 'LINK') document.getElementById('groupLink').classList.remove('d-none'); else if (type === 'STORY') document.getElementById('groupStory').classList.remove('d-none'); else if (type === 'HTML') document.getElementById('groupHtml').classList.remove('d-none'); updateLivePreview(); }
+    function checkDropdown(selectId, manualInputId, val) { var man = document.getElementById(manualInputId); if (val === 'LAINNYA') { man.classList.remove('d-none'); man.focus(); } else { man.classList.add('d-none'); man.value = ""; } }
     function toggleKaih(checked) { document.getElementById('kaihBox').classList.toggle('d-none', !checked); }
 
     function populateDropdowns() { 
-      var f = function(id,idx,oth) { 
-        var el=document.getElementById(id); if(!el)return; 
-        el.innerHTML='<option value="">Pilih</option>'; 
-        STATE.settings.forEach(r => {if(r[idx])el.innerHTML+=`<option value="${r[idx]}">${r[idx]}</option>`}); 
-        if(oth)el.innerHTML+='<option value="LAINNYA">LAINNYA</option>'; 
-      }; 
+      var f = function(id,idx,oth) { var el=document.getElementById(id); if(!el)return; el.innerHTML='<option value="">Pilih</option>'; STATE.settings.forEach(r => {if(r[idx])el.innerHTML+=`<option value="${r[idx]}">${r[idx]}</option>`}); if(oth)el.innerHTML+='<option value="LAINNYA">LAINNYA</option>'; }; 
       f('inJenis',0,true); f('inMapel',1,true); f('inFase',2); f('inKaihType',3); f('inSem', 4);
-      
-      var fFilter = function(id, idx) {
-         var el = document.getElementById(id); if(!el) return;
-         el.innerHTML = '<option value="">Semua</option>';
-         STATE.settings.forEach(r => { if(r[idx]) el.innerHTML += `<option value="${r[idx]}">${r[idx]}</option>` });
-      }
-      fFilter('filterMapel', 1);
-      fFilter('filterFase', 2);
+      var fFilter = function(id, idx) { var el = document.getElementById(id); if(!el) return; el.innerHTML = '<option value="">Semua</option>'; STATE.settings.forEach(r => { if(r[idx]) el.innerHTML += `<option value="${r[idx]}">${r[idx]}</option>` }); };
+      fFilter('filterMapel', 1); fFilter('filterFase', 2);
     }
 
     function updateLivePreview() { 
-      var type = document.getElementById('inputSourceType').value;
-      var val = "";
-      if(type==='LINK') val = document.getElementById('inLink').value;
-      else if(type==='STORY') val = document.getElementById('inLinkStory').value;
-      else if(type==='HTML') val = document.getElementById('inHtml').value;
-
-      var doc = document.getElementById('miniPreviewFrame').contentDocument;
-      doc.open();
+      var type = document.getElementById('inputSourceType').value, val = "";
+      if(type==='LINK') val = document.getElementById('inLink').value; else if(type==='STORY') val = document.getElementById('inLinkStory').value; else if(type==='HTML') val = document.getElementById('inHtml').value;
+      var doc = document.getElementById('miniPreviewFrame').contentDocument; doc.open();
       var baseStyle = `<style>body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 10px; color: #333; } img { max-width: 100%; height: auto; } iframe { width: 100%; aspect-ratio: 16/9; border: none; }</style>`;
-
-      if (type === 'STORY' || (type === 'LINK' && (val.includes('gemini.google.com') || val.includes('g.co')))) { 
-         doc.write(baseStyle + '<div style="text-align:center;color:#666;padding-top:20px;">📖 Storybook<br><small>Preview tersedia setelah dibuka</small></div>'); 
-      } 
+      if (type === 'STORY' || (type === 'LINK' && (val.includes('gemini.google.com') || val.includes('g.co')))) { doc.write(baseStyle + '<div style="text-align:center;color:#666;padding-top:20px;">📖 Storybook<br><small>Preview tersedia setelah dibuka</small></div>'); } 
       else if(type==='HTML' && val.length > 5) { doc.write(baseStyle + val); } 
-      else if (val.length > 5) {
-         var ytId = getYoutubeId(val);
-         var src = ytId ? "https://www.youtube.com/embed/"+ytId : val;
-         doc.write(`<body style="margin:0;overflow:hidden;"><iframe src="${src}" style="width:100%;height:100%;border:none;"></iframe></body>`);
-      } else { doc.write('<div style="text-align:center;color:#ccc;font-family:sans-serif;padding-top:40px;">Preview</div>'); }
-      doc.close(); 
+      else if (val.length > 5) { var ytId = getYoutubeId(val); var src = ytId ? "https://www.youtube.com/embed/"+ytId : val; doc.write(`<body style="margin:0;overflow:hidden;"><iframe src="${src}" style="width:100%;height:100%;border:none;"></iframe></body>`); } 
+      else { doc.write('<div style="text-align:center;color:#ccc;font-family:sans-serif;padding-top:40px;">Preview</div>'); } doc.close(); 
     }
 
     function hapusKarya(index) { 
-        var item = STATE.allMedia[index]; 
-        if(!item) return;
-        var id = item[13];
-        Swal.fire({title:'Hapus?',icon:'warning',showCancelButton:true}).then(r=>{
-            if(r.isConfirmed) {
-                callApi('hapus', {id: id}).then(function(){ loadData() });
-            }
-        });
+        var item = STATE.allMedia[index]; if(!item) return;
+        Swal.fire({title:'Hapus?',icon:'warning',showCancelButton:true}).then(r=>{ if(r.isConfirmed) { callApi('hapus', {id: item[13]}).then(function(){ loadData() }); } });
     }
 
     function toggleSimpan(id) { var k='GB_FAV_'+(STATE.user?STATE.user.name:'GUEST'),s=JSON.parse(localStorage.getItem(k)||'[]'); if(s.includes(id))s=s.filter(i=>i!==id);else s.push(id); localStorage.setItem(k,JSON.stringify(s)); renderGaleri(); }
@@ -786,8 +632,12 @@
           callApi('login', {pin: r.value}).then(function(res){
              if(res.status==='success'){ 
                 localStorage.setItem('guruBerbagiUser',JSON.stringify(res.user)); STATE.user = res.user;
-                Swal.fire({icon:'success',timer:800,showConfirmButton:false}).then(softReset); 
-             } else Swal.fire('Gagal',res.message,'error');
+                // ALERT BERHASIL LOGIN TETAP ADA
+                Swal.fire({icon:'success', title:'Berhasil Login', timer:800, showConfirmButton:false}).then(softReset); 
+             } else {
+                // ALERT GAGAL LOGIN TETAP ADA
+                Swal.fire('Gagal',res.message,'error');
+             }
           });
         }
       }); 
@@ -801,50 +651,28 @@
         html += `<tr><td class="ps-3"><div class="fw-bold text-dark">${cleanStr(item[5])}</div><div class="small text-muted">${cleanStr(item[11])}</div></td>
         <td><div class="fw-bold">${cleanStr(item[1])}</div><div class="small">${cleanStr(item[2])}</div></td>
         <td class="text-center"><span class="badge ${badge}">${st}</span></td>
-        <td class="text-center"><div class="d-flex justify-content-center gap-1">
-          <button onclick="bukaKurasi('${item[13]}','${item[9]}','${cleanStr(item[12])}')" class="btn-soft btn-soft-primary"><i class="fas fa-edit"></i></button>
-          <button onclick="hapusKarya('${item[13]}')" class="btn-soft btn-soft-danger"><i class="fas fa-trash"></i></button>
-        </div></td></tr>`;
+        <td class="text-center"><div class="d-flex justify-content-center gap-1"><button onclick="bukaKurasi('${item[13]}','${item[9]}','${cleanStr(item[12])}')" class="btn-soft btn-soft-primary"><i class="fas fa-edit"></i></button><button onclick="hapusKarya('${item[13]}')" class="btn-soft btn-soft-danger"><i class="fas fa-trash"></i></button></div></td></tr>`;
       });
       document.getElementById('tableMedia').innerHTML = html;
     }
     function searchAdminTable(val) { var q = val.toLowerCase(); renderTableAdmin(STATE.allMedia.filter(i => (i[5]||"").toLowerCase().includes(q) || (i[1]||"").toLowerCase().includes(q))); }
     
     function bukaKurasi(id,st,fb) { document.getElementById('kurasiId').value=id; document.getElementById('kurasiStatus').value=st; document.getElementById('kurasiFeedback').value=fb; new bootstrap.Modal('#modalKurasi').show(); }
-    function simpanKurasi() { 
-        callApi('updateKurasi', {
-            id: document.getElementById('kurasiId').value,
-            status: document.getElementById('kurasiStatus').value,
-            feedback: document.getElementById('kurasiFeedback').value
-        }).then(function(){
-            Swal.fire('Sukses','','success');loadData();bootstrap.Modal.getInstance(document.getElementById('modalKurasi')).hide();
-        });
-    }
+    function simpanKurasi() { callApi('updateKurasi', { id: document.getElementById('kurasiId').value, status: document.getElementById('kurasiStatus').value, feedback: document.getElementById('kurasiFeedback').value }).then(function(){ Swal.fire('Sukses','','success');loadData();bootstrap.Modal.getInstance(document.getElementById('modalKurasi')).hide(); }); }
     
-    // --- FUNGSI ADMIN: USER & STATISTIK (DIPERBAIKI) ---
+    // --- FUNGSI ADMIN: USER, SEKOLAH, GURU ---
 
-    // 1. UPDATE USER LIST: Hitung Karya
     function loadUserList() { 
         if(STATE.user.role!=='ADMIN') return; 
-        
-        // Hitung total karya per guru
         var karyaCount = {};
-        STATE.allMedia.forEach(m => {
-            var n = m[1];
-            karyaCount[n] = (karyaCount[n] || 0) + 1;
-        });
+        STATE.allMedia.forEach(m => { var n = m[1]; karyaCount[n] = (karyaCount[n] || 0) + 1; });
 
         callApi('users').then(function(res){
             STATE.users=res.data; 
             var h=''; 
-            
             document.getElementById('statUsers').innerText = STATE.users.length;
-
             STATE.users.forEach(u=>{ 
-                var nama = u[0];
-                var jml = karyaCount[nama] || 0;
-                var badgeRole = u[3]==='ADMIN'?'bg-danger':'bg-secondary';
-                
+                var nama = u[0], jml = karyaCount[nama] || 0, badgeRole = u[3]==='ADMIN'?'bg-danger':'bg-secondary';
                 h+=`<tr>
                 <td><div class="d-flex align-items-center"><div class="avatar-circle me-3">${nama.charAt(0)}</div><div><div class="fw-bold">${cleanStr(nama)}</div><small class="text-muted">${cleanStr(u[1])}</small></div></div></td>
                 <td class="text-center"><span class="badge bg-light text-dark border px-3">${jml} Karya</span></td>
@@ -857,77 +685,66 @@
         });
     }
     
-    // 2. STATISTIK SEKOLAH
+    // 1. STATISTIK TOP SEKOLAH
     function loadSchoolStats() {
-        if(!STATE.users || STATE.users.length === 0) {
-            callApi('users').then(function(res){ STATE.users = res.data; processSchoolStats(); });
-        } else { processSchoolStats(); }
+        if(!STATE.users || STATE.users.length === 0) { callApi('users').then(function(res){ STATE.users = res.data; processSchoolStats(); }); } else { processSchoolStats(); }
     }
 
     function processSchoolStats() {
-        var stats = {};
-        var totalKaryaSemua = STATE.allMedia.length;
+        var stats = {}; var totalKaryaSemua = STATE.allMedia.length;
+        STATE.users.forEach(u => { var s = u[1] || "Tanpa Satuan Pendidikan"; if(!stats[s]) stats[s] = { guru: 0, karya: 0 }; stats[s].guru++; });
+        STATE.allMedia.forEach(m => { var s = m[2] || "Tanpa Satuan Pendidikan"; if(!stats[s]) stats[s] = { guru: 0, karya: 0 }; stats[s].karya++; });
 
-        // 1. Hitung Guru
-        STATE.users.forEach(u => {
-            var s = u[1] || "Tanpa Satuan Pendidikan";
-            if(!stats[s]) stats[s] = { guru: 0, karya: 0 };
-            stats[s].guru++;
-        });
-
-        // 2. Hitung Karya (Pakai nama sekolah dari media)
-        STATE.allMedia.forEach(m => {
-            var s = m[2] || "Tanpa Satuan Pendidikan"; 
-            if(!stats[s]) stats[s] = { guru: 0, karya: 0 };
-            stats[s].karya++;
-        });
-
-        // 3. Konversi ke Array & Sort
-        var arr = Object.keys(stats).map(k => {
-            return {
-                nama: k,
-                guru: stats[k].guru,
-                karya: stats[k].karya,
-                persen: totalKaryaSemua > 0 ? ((stats[k].karya / totalKaryaSemua) * 100).toFixed(1) : 0
-            };
-        });
-
+        var arr = Object.keys(stats).map(k => { return { nama: k, guru: stats[k].guru, karya: stats[k].karya, persen: totalKaryaSemua > 0 ? ((stats[k].karya / totalKaryaSemua) * 100).toFixed(1) : 0 }; });
         arr.sort((a, b) => b.karya - a.karya || b.guru - a.guru);
 
         var h = '';
-        arr.forEach(x => {
+        arr.forEach((x, idx) => {
             var barColor = x.persen > 50 ? 'bg-success' : (x.persen > 20 ? 'bg-primary' : 'bg-warning');
+            var badgeRank = idx < 3 ? `<div class="rank-badge rank-${idx+1}">${idx+1}</div>` : `<div class="rank-badge rank-other">${idx+1}</div>`;
             h += `<tr>
-                <td class="ps-4 fw-bold text-dark">${cleanStr(x.nama)}</td>
+                <td class="text-center align-middle">${badgeRank}</td>
+                <td class="ps-3 fw-bold text-dark">${cleanStr(x.nama)}</td>
                 <td class="text-center"><span class="badge bg-soft-blue text-dark fw-bold" style="font-size:0.9rem">${x.guru}</span></td>
                 <td class="text-center"><span class="badge bg-soft-teal text-dark fw-bold" style="font-size:0.9rem">${x.karya}</span></td>
-                <td class="text-center" style="width:25%">
-                    <div class="d-flex align-items-center gap-2">
-                        <div class="progress flex-grow-1" style="height: 6px;">
-                            <div class="progress-bar ${barColor}" role="progressbar" style="width: ${x.persen}%"></div>
-                        </div>
-                        <small class="fw-bold text-muted" style="width:40px">${x.persen}%</small>
-                    </div>
-                </td>
+                <td class="text-center" style="width:20%"><div class="d-flex align-items-center gap-2"><div class="progress flex-grow-1" style="height: 6px;"><div class="progress-bar ${barColor}" role="progressbar" style="width: ${x.persen}%"></div></div><small class="fw-bold text-muted">${x.persen}%</small></div></td>
             </tr>`;
         });
+        if(arr.length === 0) h = `<tr><td colspan="5" class="text-center py-4 text-muted">Belum ada data statistik.</td></tr>`;
+        document.getElementById('tableRankSchool').innerHTML = h;
+    }
+
+    // 2. STATISTIK TOP GURU
+    function loadTeacherStats() {
+        // Hitung karya per guru
+        var teacherCounts = {};
+        STATE.allMedia.forEach(m => { var n = m[1]; var s = m[2]; if(!teacherCounts[n]) teacherCounts[n] = {name: n, school: s, count: 0}; teacherCounts[n].count++; });
         
-        if(arr.length === 0) h = `<tr><td colspan="4" class="text-center py-4 text-muted">Belum ada data statistik.</td></tr>`;
-        document.getElementById('tableStats').innerHTML = h;
+        var arr = Object.values(teacherCounts);
+        arr.sort((a, b) => b.count - a.count);
+        
+        var h = '';
+        arr.slice(0, 100).forEach((t, idx) => {
+            var medal = idx === 0 ? '🥇' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : ''));
+            var badgeRank = idx < 3 ? `<div class="rank-badge rank-${idx+1}">${idx+1}</div>` : `<div class="rank-badge rank-other">${idx+1}</div>`;
+            h += `<tr>
+                <td class="text-center align-middle">${badgeRank}</td>
+                <td class="ps-3 fw-bold text-dark">${cleanStr(t.name)} ${medal}</td>
+                <td class="ps-3 text-muted small">${cleanStr(t.school)}</td>
+                <td class="text-center"><span class="badge bg-soft-teal text-dark fw-bold" style="font-size:0.9rem">${t.count}</span></td>
+                <td class="text-center" style="font-size:1.2rem;">${medal}</td>
+            </tr>`;
+        });
+        if(arr.length === 0) h = `<tr><td colspan="5" class="text-center py-4 text-muted">Belum ada data guru.</td></tr>`;
+        document.getElementById('tableRankTeacher').innerHTML = h;
     }
     
     function resetUserForm() { document.getElementById('formUser').reset(); document.getElementById('userMode').value="ADD"; }
     function bukaEditUser(pin) { var u=STATE.users.find(x=>x[2].toString()===pin.toString()); if(!u)return; document.getElementById('userMode').value="EDIT"; document.getElementById('oldPin').value=pin; document.getElementById('userName').value=u[0]; document.getElementById('userSchool').value=u[1]; document.getElementById('userPin').value=u[2]; document.getElementById('userRole').value=u[3]; new bootstrap.Modal('#modalUser').show(); }
-    
     function prosesSimpanUser() { 
         var p={nama:document.getElementById('userName').value,sekolah:document.getElementById('userSchool').value,pin:document.getElementById('userPin').value,role:document.getElementById('userRole').value,oldPin:document.getElementById('oldPin').value}; 
-        callApi('simpanUser', p).then(function(res){
-            if(res.status==='success'){
-                Swal.fire('Sukses','','success'); loadUserList(); bootstrap.Modal.getInstance(document.getElementById('modalUser')).hide();
-            } else { Swal.fire('Error',res.message,'error'); }
-        });
+        callApi('simpanUser', p).then(function(res){ if(res.status==='success'){ Swal.fire('Sukses','','success'); loadUserList(); bootstrap.Modal.getInstance(document.getElementById('modalUser')).hide(); } else { Swal.fire('Error',res.message,'error'); } });
     }
-    
     function hapusUser(p) { Swal.fire({title:'Hapus User?',icon:'warning',showCancelButton:true}).then(r=>{if(r.isConfirmed) callApi('hapusUser', {pin: p}).then(function(){ loadUserList() }); });}
   </script>
 </body>
