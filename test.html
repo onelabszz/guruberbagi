@@ -11,7 +11,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <style>
-    /* CUSTOM STYLES & VARIABLES */
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
     
     :root { 
@@ -24,13 +23,7 @@
       --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
 
-    body {
-      background-color: var(--bg-body);
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      color: var(--text-main);
-      font-size: 0.9rem;
-      padding-bottom: 80px; /* Space for FAB */
-    }
+    body { background-color: var(--bg-body); font-family: 'Plus Jakarta Sans', sans-serif; color: var(--text-main); font-size: 0.9rem; padding-bottom: 80px; }
 
     /* NAVBAR & LAYOUT */
     .navbar { z-index: 1000; position: sticky; top: 0; background: #fff; border-bottom: 1px solid #e2e8f0; }
@@ -118,6 +111,7 @@
     .btn-soft-danger { background: #fee2e2; color: #991b1b; }
     .btn-soft-danger:hover { background: #ef4444; color: white; transform: translateY(-2px); }
 
+    /* CSS BARU UNTUK RANKING */
     .rank-badge { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: 800; font-size: 0.8rem; }
     .rank-1 { background: #fef3c7; color: #d97706; border: 1px solid #fcd34d; }
     .rank-2 { background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; }
@@ -148,6 +142,17 @@
     .transition-all { transition: all 0.3s ease; }
     .transition-all:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(45, 139, 131, 0.2) !important; }
   </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "sweetalert2": "https://esm.sh/sweetalert2@^11.26.17"
+  }
+}
+</script>
 </head>
 <body>
 
@@ -157,7 +162,8 @@
     <div class="preview-head" id="overlayControls">
       <div class="fw-bold text-truncate pe-3" id="previewTitle" style="font-size:1.1rem; color:#f8fafc;">Preview</div>
       <div class="d-flex align-items-center gap-2">
-        <button id="btnFs" class="btn btn-sm btn-outline-light rounded-pill fw-bold" onclick="smartFullscreen()" title="Layar Penuh"><i class="fas fa-expand me-1"></i> LAYAR PENUH</button>
+        <button onclick="shareContent()" class="btn btn-sm btn-primary rounded-pill fw-bold px-3 d-flex align-items-center gap-1 shadow-sm"><i class="fas fa-share-alt"></i> Share</button>
+        <button id="btnFs" class="btn btn-sm btn-outline-light rounded-pill fw-bold" onclick="smartFullscreen()" title="Layar Penuh"><i class="fas fa-expand me-1"></i> FULLSCREEN</button>
         <button class="btn btn-sm btn-danger rounded-pill fw-bold px-3" onclick="tutupPreview()">TUTUP</button>
       </div>
     </div>
@@ -172,19 +178,15 @@
         <div class="brand-text"><div class="brand-main">GURU BERBAGI</div><div class="brand-sub">Korwilcambidik Kecamatan Selogiri</div></div>
       </div>
       
-      <!-- Search (Hidden in Admin) -->
       <div id="searchWrapper" class="d-flex align-items-center bg-white px-3 py-2 rounded-pill border" style="width:100%; max-width:450px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
         <i class="fas fa-search text-muted me-2"></i>
-        <input type="text" id="searchInput" oninput="applyFilters()" class="form-control border-0 p-0 shadow-none bg-transparent" placeholder="Cari karya, mapel, guru...">
+        <input type="text" id="searchInput" oninput="handleSearchInput(this.value)" class="form-control border-0 p-0 shadow-none bg-transparent" placeholder="Cari karya, mapel, guru...">
       </div>
 
-      <!-- User Actions -->
       <div class="d-flex align-items-center gap-2">
         <button id="btnHome" class="btn btn-outline-secondary btn-sm rounded-pill fw-bold px-3 d-none" onclick="switchView('GALERI')">Kembali</button>
         <button id="btnDashboard" class="btn btn-warning btn-sm rounded-pill fw-bold d-none shadow-sm text-dark" onclick="switchView('ADMIN')"><i class="fas fa-chart-pie me-1"></i> Dashboard</button>
-        
         <button id="btnLogin" class="btn btn-outline-primary btn-sm rounded-pill fw-bold px-4" onclick="loginModal()">Login Guru</button>
-        
         <div id="userPanel" class="d-none d-flex align-items-center gap-3">
           <div class="text-end lh-1"><div id="uName" class="fw-bold text-dark" style="font-size:0.85rem;">User</div><div id="uRole" class="badge bg-secondary" style="font-size:0.55rem;">GURU</div></div>
           <button onclick="logout()" class="btn btn-light btn-sm rounded-circle border text-danger" title="Logout"><i class="fas fa-power-off"></i></button>
@@ -195,7 +197,6 @@
 
   <!-- VIEW: GALERI -->
   <div id="view-galeri" class="container mt-4 fade-in">
-    <!-- Filters -->
     <div class="filter-container row g-2 mb-4 align-items-center">
        <div class="col-md-3">
          <select id="filterMapel" class="form-select form-select-filter" onchange="applyFilters()">
@@ -214,20 +215,16 @@
        </div>
     </div>
 
-    <!-- Loader -->
     <div id="loader" class="text-center py-5"><div class="spinner-border text-primary"></div></div>
     
-    <!-- Grid Karya -->
     <div id="galeri-container" class="row gx-3 gx-md-4 gy-4"></div>
     
-    <!-- Load More -->
     <div id="loadMoreContainer" class="text-center mt-5 d-none">
        <button onclick="loadMoreItems()" class="btn btn-outline-primary rounded-pill px-4 fw-bold shadow-sm transition-all">
          Muat Lebih Banyak <i class="fas fa-chevron-down ms-1"></i>
        </button>
        <div class="small text-muted mt-2" id="loadMoreInfo"></div>
     </div>
-
   </div>
 
   <!-- VIEW: ADMIN DASHBOARD -->
@@ -237,7 +234,6 @@
       <div id="adminRoleBadge" class="badge bg-primary px-3 py-2 rounded-pill">ROLE</div>
     </div>
     
-    <!-- Admin Stats -->
     <div class="stat-grid">
       <div class="stat-widget stat-total"><div class="stat-val" id="statTotal">0</div><div class="stat-label">Total Karya</div><i class="fas fa-layer-group stat-icon-bg"></i></div>
       <div class="stat-widget stat-approved"><div class="stat-val" id="statApproved">0</div><div class="stat-label">Disetujui</div><i class="fas fa-check-double stat-icon-bg"></i></div>
@@ -245,7 +241,6 @@
       <div class="stat-widget stat-users admin-only"><div class="stat-val" id="statUsers">0</div><div class="stat-label">Guru Terdaftar</div><i class="fas fa-users stat-icon-bg"></i></div>
     </div>
     
-    <!-- Admin Tables -->
     <div class="bg-white p-4 border rounded-4 shadow-sm">
       <ul class="nav nav-tabs mb-4 border-bottom-0" id="adminTabs">
         <li class="nav-item"><button class="nav-link active fw-bold border" data-bs-toggle="tab" data-bs-target="#tab-media">Kurasi Karya</button></li>
@@ -255,7 +250,6 @@
       </ul>
 
       <div class="tab-content">
-        <!-- Tab Media -->
         <div class="tab-pane fade show active" id="tab-media">
           <input type="text" class="form-control rounded-pill px-4 mb-3 border-secondary bg-light" placeholder="Cari karya di database..." oninput="searchAdminTable(this.value)">
           <div class="table-responsive rounded-3 border">
@@ -266,7 +260,6 @@
           </div>
         </div>
         
-        <!-- Tab Users -->
         <div class="tab-pane fade" id="tab-users">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h6 class="fw-bold text-muted mb-0 ps-2">Daftar Guru Terdaftar</h6>
@@ -280,7 +273,6 @@
           </div>
         </div>
 
-        <!-- Tab Ranking Sekolah -->
         <div class="tab-pane fade" id="tab-rank-school">
            <div class="d-flex justify-content-between align-items-center mb-3">
               <h6 class="fw-bold text-muted mb-0 ps-2">🏆 Peringkat Satuan Pendidikan</h6>
@@ -302,7 +294,6 @@
            </div>
         </div>
 
-        <!-- Tab Ranking Guru -->
         <div class="tab-pane fade" id="tab-rank-teacher">
            <div class="d-flex justify-content-between align-items-center mb-3">
               <h6 class="fw-bold text-muted mb-0 ps-2">🥇 Top Kontributor Guru (100 Teratas)</h6>
@@ -328,10 +319,9 @@
     </div>
   </div>
 
-  <!-- FAB ADD BUTTON (Floating) -->
   <button id="btnAdd" class="fab-add d-none" onclick="resetForm(); showModalInput()"><i class="fas fa-plus"></i></button>
 
-  <!-- MODAL: ADD/EDIT MEDIA -->
+  <!-- MODAL: INPUT/EDIT KARYA -->
   <div class="modal fade" id="modalInput" tabindex="-1">
     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content rounded-4 border-0 shadow">
@@ -340,7 +330,6 @@
           <form id="modalForm">
             <input type="hidden" id="formMode" value="ADD"><input type="hidden" id="editRowIdx">
             <div class="row h-100">
-              <!-- Form Column -->
               <div class="col-lg-7 modal-left-col border-end pe-4">
                 <div class="mb-3"><label class="small fw-bold mb-1 text-muted">Judul Media <span class="text-danger">*</span></label><input type="text" id="inJudul" class="form-control fw-bold bg-light" placeholder="Judul karya..."></div>
                 <div class="row">
@@ -351,7 +340,6 @@
                   <div class="col-md-6 mb-3"><label class="small fw-bold mb-1 text-muted">Fase / Kelas</label><select id="inFase" class="form-select"></select></div>
                   <div class="col-md-6 mb-3"><label class="small fw-bold mb-1 text-muted">Semester</label><select id="inSem" class="form-select"></select></div>
                 </div>
-                <!-- KAIH Option -->
                 <div class="bg-light p-3 rounded mb-3 border d-flex align-items-center justify-content-between">
                   <div><label class="small fw-bold d-block text-dark">Program KAIH?</label><small class="text-muted" style="font-size:0.7rem;">Kebiasaan Anak Indonesia Hebat</small></div>
                   <div class="d-flex align-items-center gap-2">
@@ -360,7 +348,6 @@
                   </div>
                 </div>
                 
-                <!-- Content Source Select -->
                 <div class="mb-3">
                   <label class="small fw-bold mb-2 text-muted">Tipe Konten Utama</label>
                   <select id="inputSourceType" class="form-select bg-light fw-bold" onchange="toggleInputSource(this.value)">
@@ -374,7 +361,6 @@
                 <div id="groupStory" class="mb-2 d-none"><label class="small fw-bold mb-1 text-primary">Link Storybook (Gemini)</label><input type="url" id="inLinkStory" class="form-control border-primary" placeholder="Paste link Storybook disini..." oninput="updateLivePreview()"><div class="form-text small text-muted"><i class="fas fa-info-circle me-1"></i>Link ini akan otomatis dibuka di Tab Baru.</div></div>
                 <div id="groupHtml" class="mb-0 d-none"><label class="small fw-bold mb-1 text-muted">Kode Embed HTML</label><textarea id="inHtml" class="form-control small font-monospace bg-light" rows="3" placeholder="<iframe src='...'></iframe>" oninput="updateLivePreview()"></textarea></div>
               </div>
-              <!-- Preview Column -->
               <div class="col-lg-5 d-flex flex-column pt-3 pt-lg-0">
                 <label class="small fw-bold text-muted mb-2 text-center">Live Preview Thumbnail</label>
                 <div class="preview-box shadow-sm">
@@ -390,21 +376,21 @@
     </div>
   </div>
 
-  <!-- MODAL: MANAGE USER (Admin) -->
+  <!-- MODAL: USER -->
   <div class="modal fade" id="modalUser" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 rounded-4 shadow"><div class="modal-header"><h5 class="fw-bold text-primary">Data Guru</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="formUser"><input type="hidden" id="userMode" value="ADD"><input type="hidden" id="oldPin"><div class="mb-3"><label class="small fw-bold">Nama Lengkap</label><input type="text" id="userName" class="form-control"></div><div class="mb-3"><label class="small fw-bold">Unit Kerja (Sekolah)</label><input type="text" id="userSchool" class="form-control"></div><div class="row"><div class="col-6"><label class="small fw-bold">PIN Login</label><input type="text" id="userPin" class="form-control"></div><div class="col-6"><label class="small fw-bold">Hak Akses</label><select id="userRole" class="form-select"><option value="GURU">GURU</option><option value="MODERATOR">MODERATOR</option><option value="ADMIN">ADMIN</option></select></div></div></form></div><div class="modal-footer"><button onclick="prosesSimpanUser()" class="btn btn-primary w-100 fw-bold rounded-pill">SIMPAN DATA</button></div></div></div></div>
   
-  <!-- MODAL: KURASI (Admin) -->
+  <!-- MODAL: KURASI -->
   <div class="modal fade" id="modalKurasi" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 rounded-4 shadow"><div class="modal-header border-bottom-0"><h5 class="fw-bold text-primary">Kurasi Karya</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="kurasiId"><div class="mb-3"><label class="small fw-bold">Status Persetujuan</label><select id="kurasiStatus" class="form-select"><option value="BARU">BARU (Pending)</option><option value="DISETUJUI">DISETUJUI (Tampil)</option><option value="REVISI">REVISI (Perlu Perbaikan)</option></select></div><div class="mb-3"><label class="small fw-bold">Catatan / Feedback</label><textarea id="kurasiFeedback" class="form-control" rows="4" placeholder="Tulis masukan untuk guru..."></textarea></div></div><div class="modal-footer border-top-0"><button onclick="simpanKurasi()" class="btn btn-primary w-100 fw-bold rounded-pill">UPDATE STATUS</button></div></div></div></div>
 
-  <!-- SCRIPTS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
   <script>
-    // --- API CONFIG ---
+    // --- KONFIGURASI ---
     const API_URL = "https://script.google.com/macros/s/AKfycbzhrWjl2Dc0i8V45dD8vNXrt3gfmvEU1pZ5hZOELkTz6e29l68d2hsHfGQEjqTVYdY0/exec";
+    const CACHE_KEY_DATA = 'guruBerbagi_data_cache';
+    const CACHE_DURATION = 5 * 60 * 1000; // 5 Menit Cache
 
-    // --- GLOBAL STATE ---
     var STATE = { 
         allMedia: [], filtered: [], users: [], 
         user: { name: "Tamu", role: "GUEST", school: "-" }, 
@@ -414,15 +400,41 @@
     
     var ACTIVE_CONTENT = { type: null, data: null };
     var searchTimeout = null;
-    var modalInputInstance = null; // Bootstrap Modal Instance
+    var modalInputInstance = null;
 
-    // --- API HELPER ---
+    // --- API HANDLER ---
     async function callApi(action, payload = null) {
       try {
         if (action === 'read') {
+           // Implement Caching for Read
+           const cached = localStorage.getItem(CACHE_KEY_DATA);
+           if (cached) {
+               const { timestamp, data } = JSON.parse(cached);
+               if (new Date().getTime() - timestamp < CACHE_DURATION) {
+                   console.log("Serving from Cache");
+                   return data;
+               }
+           }
+           
+           // Network Call
            var response = await fetch(API_URL + "?action=read");
-           return await response.json();
+           var json = await response.json();
+           
+           if(json.status === 'success') {
+               try {
+                   localStorage.setItem(CACHE_KEY_DATA, JSON.stringify({
+                       timestamp: new Date().getTime(),
+                       data: json
+                   }));
+               } catch(e) { console.warn("Cache full"); }
+           }
+           return json;
         } else {
+           // Write operations invalidate cache
+           if(['add', 'hapus', 'updateKurasi'].includes(action)) {
+               localStorage.removeItem(CACHE_KEY_DATA);
+           }
+           
            var response = await fetch(API_URL, {
              method: "POST",
              body: JSON.stringify({ action: action, payload: payload })
@@ -432,41 +444,20 @@
       } catch (e) { console.error("API Error:", e); return { status: "error", message: e.toString() }; }
     }
 
-    // --- INITIALIZATION ---
-    window.onload = function() { 
-        initApp(); 
-    };
-
+    // INIT
+    window.onload = function() { initApp(); };
     function initApp() {
-      // 1. Check Login
-      try { 
-          var saved = localStorage.getItem('guruBerbagiUser'); 
-          if (saved) { STATE.user = JSON.parse(saved); } 
-      } catch(e) {}
-      
-      updateUserInterface();
-      
-      // 2. Load Data
+      try { var saved = localStorage.getItem('guruBerbagiUser'); if (saved) { STATE.user = JSON.parse(saved); updateUserInterface(); } } catch(e) {}
       loadData();
     }
 
-    // --- UTILS ---
-    function cleanStr(str) { 
-        if(!str) return ""; 
-        return str.toString().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;").replace(/\n/g, " "); 
-    }
-    
-    function softReset() { 
-        switchView('GALERI'); 
-        updateUserInterface(); 
-        loadData(); 
-    }
+    function cleanStr(str) { if(!str) return ""; return str.toString().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;").replace(/\n/g, " "); }
+    function softReset() { switchView('GALERI'); updateUserInterface(); loadData(); }
 
     function updateUserInterface() {
       document.getElementById('uName').innerText = STATE.user.name;
       document.getElementById('uRole').innerText = STATE.user.role;
       var isGuest = (STATE.user.role === 'GUEST');
-      
       document.getElementById('btnLogin').classList.toggle('d-none', !isGuest);
       document.getElementById('userPanel').classList.toggle('d-none', isGuest);
       
@@ -479,14 +470,11 @@
         document.getElementById('btnAdd').classList.remove('d-none');
         document.getElementById('btnFilterMy').classList.remove('d-none');
       }
-      
-      // Admin Logic
       if (STATE.user.role === 'ADMIN' || STATE.user.role === 'MODERATOR') {
         btnDash.classList.remove('d-none');
         document.getElementById('adminRoleBadge').innerText = STATE.user.role;
         var adminOnlyEls = document.querySelectorAll('.admin-only');
         adminOnlyEls.forEach(function(el) { 
-           // Only strict ADMIN sees .admin-only elements
            el.style.setProperty('display', STATE.user.role === 'ADMIN' ? 'block' : 'none', 'important'); 
         });
       }
@@ -518,8 +506,6 @@
           STATE.allMedia = res.media; STATE.settings = res.settings;
           populateDropdowns(); 
           applyFilters();      
-          
-          // Stats
           document.getElementById('statTotal').innerText = res.media.length;
           document.getElementById('statPending').innerText = res.media.filter(function(i){ return i[9] === "BARU" }).length;
           document.getElementById('statApproved').innerText = res.media.filter(function(i){ return i[9] === "DISETUJUI" }).length;
@@ -528,27 +514,24 @@
       });
     }
 
-    // --- GALLERY LOGIC ---
+    // --- SEARCH & FILTER (DEBOUNCED) ---
+    function handleSearchInput(val) {
+        if (searchTimeout) clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            applyFilters();
+        }, 400); // 400ms Debounce
+    }
+
     function applyFilters() {
       var q = document.getElementById('searchInput').value.toLowerCase();
       var fMapel = document.getElementById('filterMapel').value;
       var fFase = document.getElementById('filterFase').value;
-      
       STATE.filtered = STATE.allMedia.filter(function(i) {
-         // [1]Author, [2]School, [5]Title, [6]Mapel, [11]Type
          var haystack = (i[5]+" "+i[1]+" "+i[2]+" "+i[3]+" "+i[6]+" "+i[11]).toLowerCase();
-         var matches = haystack.indexOf(q) !== -1;
-         var mMapel = (fMapel === "") || (i[6] === fMapel);
-         var mFase = (fFase === "") || (i[3] === fFase);
-         
+         var matches = haystack.indexOf(q)!==-1 && ((fMapel==="") || (i[6]===fMapel)) && ((fFase==="") || (i[3]===fFase));
          // Visibility Check
-         var isVisible = (i[9] === "DISETUJUI");
-         var isOwner = (STATE.user.name === i[1]);
-         var isAdmin = (STATE.user.role === 'ADMIN' || STATE.user.role === 'MODERATOR');
-         
-         if (!isVisible && !isOwner && !isAdmin) return false;
-         
-         return matches && mMapel && mFase;
+         var isVisible = i[9] === "DISETUJUI" || (STATE.user.name === i[1]) || (STATE.user.role === 'ADMIN' || STATE.user.role === 'MODERATOR');
+         return matches && isVisible;
       });
       STATE.displayedLimit = STATE.itemsPerPage;
       renderGaleri();
@@ -569,139 +552,76 @@
         var isOwner = (STATE.user.name === item[1]);
         var isAdmin = (STATE.user.role === 'ADMIN' || STATE.user.role === 'MODERATOR');
         var isSaved = saved.includes(id);
-        
         var iconLove = isSaved ? 'fas fa-heart text-danger' : 'far fa-heart';
-        var badgeStatus = isApproved 
-            ? '<div class="badge-approved"><i class="fas fa-check-circle"></i></div>' 
-            : ((isOwner||isAdmin) ? '<div class="badge-pending">PENDING</div>' : '');
-        
+        var badgeStatus = isApproved ? '<div class="badge-approved"><i class="fas fa-check-circle"></i></div>' : (isOwner||isAdmin ? '<div class="badge-pending">PENDING</div>' : '');
         var kaihHtml = item[10] ? '<div class="kaih-compact"><i class="fas fa-star text-warning"></i>'+cleanStr(item[10])+'</div>' : '';
-        
-        // Buttons
-        var editBtns = (isOwner || isAdmin) 
-            ? `<button onclick="event.stopPropagation(); bukaEdit(${realIndex})" class="btn-icon" title="Edit"><i class="fas fa-pencil-alt"></i></button>
-               <button onclick="event.stopPropagation(); hapusKarya(${realIndex})" class="btn-icon danger" title="Hapus"><i class="fas fa-trash"></i></button>` 
-            : '';
+        var editBtns = (isOwner || isAdmin) ? `<button onclick="event.stopPropagation(); bukaEdit(${realIndex})" class="btn-icon" title="Edit"><i class="fas fa-pencil-alt"></i></button><button onclick="event.stopPropagation(); hapusKarya(${realIndex})" class="btn-icon danger" title="Hapus"><i class="fas fa-trash"></i></button>` : '';
 
-        // QR Check
         var finalQrLink = cleanStr(item[8]);
         if (!finalQrLink || finalQrLink.length < 5) {
-            var htmlVal = cleanStr(item[7]); 
-            var extractSrc = htmlVal.match(/src\s*=\s*["']([^"']+)["']/i);
+            var htmlVal = cleanStr(item[7]); var extractSrc = htmlVal.match(/src\s*=\s*["']([^"']+)["']/i);
             if (extractSrc && extractSrc[1]) finalQrLink = extractSrc[1];
         }
-        var qrBtn = (finalQrLink && finalQrLink.length > 5) 
-            ? `<button onclick="event.stopPropagation(); showQR('${finalQrLink}')" class="btn-icon" title="QR Code"><i class="fas fa-qrcode"></i></button>` 
-            : '';
+        var qrBtn = (finalQrLink && finalQrLink.length > 5) ? `<button onclick="event.stopPropagation(); showQR('${finalQrLink}')" class="btn-icon" title="QR Code"><i class="fas fa-qrcode"></i></button>` : '';
 
-        // Render HTML
-        var html = `
-        <div class="col-6 col-md-4 col-lg-3 d-flex">
-          <div class="card-karya w-100">
-            <div class="card-thumb">
-               ${getThumbnailHtml(cleanStr(item[11]), item[8])}
-               ${badgeStatus}
-               <div class="view-badge"><i class="fas fa-eye me-1"></i> ${(item[14]||0)}</div>
-               <button onclick="event.stopPropagation(); toggleSimpan('${id}')" class="btn-wishlist ${isSaved?'active':''}"><i class="${iconLove}"></i></button>
-            </div>
-            <div class="card-body-mp">
-               <div class="mp-tags">
-                 <span class="badge-pill bg-soft-teal">${cleanStr(item[6])}</span>
-                 <span class="badge-pill bg-soft-blue">${cleanStr(item[3])}</span>
-                 <span class="badge-pill bg-soft-purple">${cleanStr(item[4])}</span>
-               </div>
-               <div class="mp-title" title="${cleanStr(item[5])}">${cleanStr(item[5])}</div>
-               ${kaihHtml}
-               <div class="guru-info">
-                 <div class="guru-avatar">${cleanStr(item[1]).charAt(0)}</div>
-                 <div style="overflow:hidden; line-height:1.2;">
-                   <div class="text-truncate fw-bold" style="font-size:0.75rem">${cleanStr(item[1])}</div>
-                   <div class="text-muted text-truncate" style="font-size:0.65rem">${cleanStr(item[2])}</div>
-                 </div>
-               </div>
-               <div class="action-row">
-                 <button onclick="bukaPreview(${realIndex})" class="btn-open">BUKA KARYA</button>
-                 ${qrBtn}
-                 ${editBtns}
-               </div>
-            </div>
-          </div>
-        </div>`;
+        var html = '<div class="col-6 col-md-4 col-lg-3 d-flex"><div class="card-karya w-100"><div class="card-thumb">' + getThumbnailHtml(cleanStr(item[11]), item[8]) + badgeStatus + '<div class="view-badge"><i class="fas fa-eye me-1"></i> ' + (item[14]||0) + '</div><button onclick="event.stopPropagation(); toggleSimpan(\'' + id + '\')" class="btn-wishlist '+(isSaved?'active':'')+'"><i class="' + iconLove + '"></i></button></div><div class="card-body-mp"><div class="mp-tags"><span class="badge-pill bg-soft-teal">' + cleanStr(item[6]) + '</span><span class="badge-pill bg-soft-blue">' + cleanStr(item[3]) + '</span><span class="badge-pill bg-soft-purple">' + cleanStr(item[4]) + '</span></div><div class="mp-title" title="'+cleanStr(item[5])+'">' + cleanStr(item[5]) + '</div>' + kaihHtml + '<div class="guru-info"><div class="guru-avatar">' + cleanStr(item[1]).charAt(0) + '</div><div style="overflow:hidden; line-height:1.2;"><div class="text-truncate fw-bold" style="font-size:0.75rem">' + cleanStr(item[1]) + '</div><div class="text-muted text-truncate" style="font-size:0.65rem">' + cleanStr(item[2]) + '</div></div></div><div class="action-row"><button onclick="bukaPreview(' + realIndex + ')" class="btn-open">BUKA KARYA</button>' + qrBtn + editBtns + '</div></div></div></div>';
         c.insertAdjacentHTML('beforeend', html);
       });
 
       var btnMore = document.getElementById('loadMoreContainer');
-      if (STATE.filtered.length > STATE.displayedLimit) { 
-          btnMore.classList.remove('d-none'); 
-          document.getElementById('loadMoreInfo').innerText = `Menampilkan ${dataToShow.length} dari ${STATE.filtered.length} karya`; 
-      } else { 
-          btnMore.classList.add('d-none'); 
-      }
-      
-      if (STATE.filtered.length === 0) {
-          c.innerHTML = `<div class="col-12 text-center py-5 text-muted"><i class="fas fa-search fa-3x mb-3 text-secondary opacity-25"></i><br>Tidak ada karya ditemukan.</div>`;
-      }
+      if (STATE.filtered.length > STATE.displayedLimit) { btnMore.classList.remove('d-none'); document.getElementById('loadMoreInfo').innerText = `Menampilkan ${dataToShow.length} dari ${STATE.filtered.length} karya`; } else { btnMore.classList.add('d-none'); }
+      if (STATE.filtered.length === 0) c.innerHTML = `<div class="col-12 text-center py-5 text-muted"><i class="fas fa-search fa-3x mb-3 text-secondary opacity-25"></i><br>Tidak ada karya ditemukan.</div>`;
     }
 
-    function handleSearchInput(val) { if (searchTimeout) clearTimeout(searchTimeout); searchTimeout = setTimeout(() => { applyFilters(); }, 300); }
     function filterSaya() { document.getElementById('searchInput').value = STATE.user.name; applyFilters(); }
     function filterSemua() { document.getElementById('searchInput').value = ""; document.getElementById('filterMapel').value = ""; document.getElementById('filterFase').value = ""; applyFilters(); }
     function filterSimpanan() { var k='GB_FAV_'+(STATE.user?STATE.user.name:'GUEST'), s=JSON.parse(localStorage.getItem(k)||'[]'); STATE.filtered = STATE.allMedia.filter(i=>s.includes(i[13])); STATE.displayedLimit=STATE.itemsPerPage; renderGaleri(); }
 
     function getYoutubeId(url) { var match = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/); return (match && match[2].length == 11) ? match[2] : false; }
-    
     function getThumbnailHtml(jenis, link) {
       let ic = "fas fa-code"; let bg = "#475569"; let j = (jenis || "").toUpperCase();
-      if(j.includes("VIDEO")) { ic="fas fa-play"; bg="#ef4444"; } 
-      else if(j.includes("MODUL")) { ic="fas fa-book-open"; bg="#10b981"; } 
-      else if(j.includes("GAME")) { ic="fas fa-gamepad"; bg="#8b5cf6"; } 
-      else if(j.includes("KUIS")) { ic="fas fa-stopwatch"; bg="#f59e0b"; } 
-      else if(j.includes("STORY") || j.includes("BUKU")) { ic="fas fa-book-reader"; bg="#d97706"; }
-      
-      var ytId = getYoutubeId(link || ""); 
-      if (ytId) return `<img src="https://img.youtube.com/vi/${ytId}/mqdefault.jpg" loading="lazy" style="width:100%; height:100%; object-fit:cover;">`;
+      if(j.includes("VIDEO")) { ic="fas fa-play"; bg="#ef4444"; } else if(j.includes("MODUL")) { ic="fas fa-book-open"; bg="#10b981"; } else if(j.includes("GAME")) { ic="fas fa-gamepad"; bg="#8b5cf6"; } else if(j.includes("KUIS")) { ic="fas fa-stopwatch"; bg="#f59e0b"; } else if(j.includes("STORY") || j.includes("BUKU")) { ic="fas fa-book-reader"; bg="#d97706"; }
+      var ytId = getYoutubeId(link || ""); if (ytId) return `<img src="https://img.youtube.com/vi/${ytId}/mqdefault.jpg" loading="lazy" style="width:100%; height:100%; object-fit:cover;">`;
       return `<div style="background:${bg}; width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white;"><i class="${ic} fa-3x mb-2"></i><span style="font-size:0.6rem; font-weight:800;">${j}</span></div>`;
     }
 
-    // --- PREVIEW LOGIC ---
+    // --- SHARE & PREVIEW ---
+    function shareContent() {
+       if (ACTIVE_CONTENT.data) {
+           var url = ACTIVE_CONTENT.type === 'LINK' ? ACTIVE_CONTENT.data : window.location.href;
+           var title = document.getElementById('previewTitle').innerText || "Guru Berbagi";
+           if (navigator.share) {
+               navigator.share({ title: title, text: 'Cek karya ini di Guru Berbagi!', url: url }).catch(console.error);
+           } else {
+               navigator.clipboard.writeText(url);
+               Swal.fire({icon: 'success', title: 'Link Disalin', text: url, timer: 1500, showConfirmButton: false});
+           }
+       }
+    }
+
     function bukaPreview(index) {
       var item = STATE.allMedia[index]; if(!item) return;
       var rawHtml = (item[7] || "").trim(), rawLink = (item[8] || "").trim(), id = item[13];
-      
-      callApi('view', { id: id }); // Fire and forget view count
+      callApi('view', { id: id });
       document.getElementById('previewTitle').innerText = cleanStr(item[5]);
-      
       var overlay = document.getElementById('previewOverlay'), frame = document.getElementById('previewFrame');
-      
-      // External Logic
       if (rawLink && (rawLink.indexOf('gemini.google.com')!==-1 || rawLink.indexOf('g.co')!==-1)) {
           ACTIVE_CONTENT = { type: 'GEMINI', data: rawLink };
           var finalUrl = rawLink.includes('gemini.google.com/share') ? rawLink.replace('gemini.google.com/share', 'g.co/gemini/share') : rawLink;
-          window.open(finalUrl, '_blank'); 
-          return;
+          window.open(finalUrl, '_blank'); return;
       }
-      
-      overlay.style.display = 'flex'; 
-      frame.style.display = 'block'; 
-      frame.src = "about:blank";
-      
+      overlay.style.display = 'flex'; frame.style.display = 'block'; frame.src = "about:blank";
       if (rawHtml.length > 10) {
           ACTIVE_CONTENT = { type: 'HTML', data: rawHtml };
-          var blob = new Blob([rawHtml], { type: 'text/html' }); 
-          frame.src = URL.createObjectURL(blob); 
-          frame.dataset.blob = frame.src; 
-          return;
+          var blob = new Blob([rawHtml], { type: 'text/html' }); frame.src = URL.createObjectURL(blob); frame.dataset.blob = frame.src; return;
       }
-      
       if (rawLink.length > 5) {
           ACTIVE_CONTENT = { type: 'LINK', data: rawLink };
           var finalUrl = rawLink, ytId = getYoutubeId(rawLink);
           if (ytId) { finalUrl = "https://www.youtube.com/embed/" + ytId + "?autoplay=1&rel=0&modestbranding=1"; } 
           else if (finalUrl.indexOf('drive.google.com') !== -1) { finalUrl = finalUrl.replace(/\/view.*/, '/preview').replace(/\/edit.*/, '/preview'); }
-          frame.src = finalUrl; 
-          return;
+          frame.src = finalUrl; return;
       }
-      
       Swal.fire('Info', 'Konten kosong.', 'info'); tutupPreview();
     }
 
@@ -720,28 +640,13 @@
     function tutupFullscreen() { if (document.exitFullscreen) document.exitFullscreen(); else if (document.webkitExitFullscreen) document.webkitExitFullscreen(); else if (document.msExitFullscreen) document.msExitFullscreen(); }
     function tutupPreview() { if (document.fullscreenElement) tutupFullscreen(); var overlay = document.getElementById('previewOverlay'), frame = document.getElementById('previewFrame'); overlay.style.display = 'none'; frame.src = ""; if(frame.dataset.blob) { URL.revokeObjectURL(frame.dataset.blob); frame.dataset.blob = ""; } }
 
-    // --- FORM & MODALS ---
-    function showModalInput() { 
-        if (!modalInputInstance) modalInputInstance = new bootstrap.Modal(document.getElementById('modalInput'), {backdrop:'static', keyboard:false}); 
-        modalInputInstance.show(); 
-    }
-    
-    function resetForm() { 
-        document.getElementById('modalForm').reset(); 
-        document.getElementById('formMode').value="ADD"; 
-        document.getElementById('inputSourceType').value = 'LINK'; 
-        toggleInputSource('LINK'); 
-        updateLivePreview(); 
-        toggleKaih(false); 
-        document.getElementById('manMapel').classList.add('d-none'); 
-        document.getElementById('manJenis').classList.add('d-none'); 
-    }
+    function showModalInput() { if (!modalInputInstance) modalInputInstance = new bootstrap.Modal(document.getElementById('modalInput'), {backdrop:'static', keyboard:false}); modalInputInstance.show(); }
+    function resetForm() { document.getElementById('modalForm').reset(); document.getElementById('formMode').value="ADD"; document.getElementById('inputSourceType').value = 'LINK'; toggleInputSource('LINK'); updateLivePreview(); toggleKaih(false); document.getElementById('manMapel').classList.add('d-none'); document.getElementById('manJenis').classList.add('d-none'); }
 
     function prosesSimpan() {
         var judul = document.getElementById('inJudul').value; if(!judul) { Swal.fire('Error', 'Judul wajib diisi', 'error'); return; }
         var mapel = document.getElementById('inMapel').value; if(mapel === 'LAINNYA') mapel = document.getElementById('manMapel').value;
         var jenis = document.getElementById('inJenis').value; if(jenis === 'LAINNYA') jenis = document.getElementById('manJenis').value;
-        
         var payload = {
             user: STATE.user.name, school: STATE.user.school || "-", judul: judul, mapel: mapel, jenis: jenis,
             fase: document.getElementById('inFase').value, sem: document.getElementById('inSem').value,
@@ -749,30 +654,19 @@
             link: document.getElementById('inputSourceType').value === 'STORY' ? document.getElementById('inLinkStory').value : document.getElementById('inLink').value,
             html: document.getElementById('inputSourceType').value === 'HTML' ? document.getElementById('inHtml').value : ""
         };
-        
-        var mode = document.getElementById('formMode').value; 
-        if(mode === 'EDIT') payload.id = document.getElementById('editRowIdx').value;
-        
+        var mode = document.getElementById('formMode').value; if(mode === 'EDIT') payload.id = document.getElementById('editRowIdx').value;
         Swal.fire({title: 'Menyimpan...', didOpen:()=>{Swal.showLoading()}});
-        callApi('add', payload).then(res => { 
-            if(res.status === 'success') { 
-                Swal.fire('Berhasil', 'Karya berhasil disimpan!', 'success'); 
-                bootstrap.Modal.getInstance(document.getElementById('modalInput')).hide(); 
-                loadData(); 
-            } else { Swal.fire('Gagal', res.message, 'error'); } 
-        });
+        callApi('add', payload).then(res => { if(res.status === 'success') { Swal.fire('Berhasil', 'Karya berhasil disimpan!', 'success'); bootstrap.Modal.getInstance(document.getElementById('modalInput')).hide(); loadData(); } else { Swal.fire('Gagal', res.message, 'error'); } });
     }
 
     function bukaEdit(index) {
       var d = STATE.allMedia[index]; if(!d) return;
       document.getElementById('formMode').value = "EDIT"; document.getElementById('editRowIdx').value = d[13];
       document.getElementById('inJudul').value = d[5]; document.getElementById('inFase').value = d[3]; document.getElementById('inSem').value = d[4];
-      
       var hasHtml = (d[7] && d[7].length > 5), hasLink = (d[8] && d[8].length > 5);
       if(hasHtml) { document.getElementById('inputSourceType').value = 'HTML'; toggleInputSource('HTML'); document.getElementById('inHtml').value = d[7]; } 
       else if (hasLink && (d[8].includes('g.co') || d[8].includes('gemini'))) { document.getElementById('inputSourceType').value = 'STORY'; toggleInputSource('STORY'); document.getElementById('inLinkStory').value = d[8]; } 
       else { document.getElementById('inputSourceType').value = 'LINK'; toggleInputSource('LINK'); document.getElementById('inLink').value = d[8]; }
-      
       setValOrOther('inMapel', d[6], 'manMapel'); setValOrOther('inJenis', d[11], 'manJenis');
       var isKaih = d[10] && d[10] !== ""; document.getElementById('checkKaih').checked = isKaih; toggleKaih(isKaih); if(isKaih) document.getElementById('inKaihType').value = d[10];
       updateLivePreview(); showModalInput();
@@ -793,10 +687,8 @@
     function updateLivePreview() { 
       var type = document.getElementById('inputSourceType').value, val = "";
       if(type==='LINK') val = document.getElementById('inLink').value; else if(type==='STORY') val = document.getElementById('inLinkStory').value; else if(type==='HTML') val = document.getElementById('inHtml').value;
-      
       var doc = document.getElementById('miniPreviewFrame').contentDocument; doc.open();
       var baseStyle = `<style>body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 10px; color: #333; } img { max-width: 100%; height: auto; } iframe { width: 100%; aspect-ratio: 16/9; border: none; }</style>`;
-      
       if (type === 'STORY' || (type === 'LINK' && (val.includes('gemini.google.com') || val.includes('g.co')))) { doc.write(baseStyle + '<div style="text-align:center;color:#666;padding-top:20px;">📖 Storybook<br><small>Preview tersedia setelah dibuka</small></div>'); } 
       else if(type==='HTML' && val.length > 5) { doc.write(baseStyle + val); } 
       else if (val.length > 5) { var ytId = getYoutubeId(val); var src = ytId ? "https://www.youtube.com/embed/"+ytId : val; doc.write(`<body style="margin:0;overflow:hidden;"><iframe src="${src}" style="width:100%;height:100%;border:none;"></iframe></body>`); } 
@@ -811,7 +703,6 @@
     function toggleSimpan(id) { var k='GB_FAV_'+(STATE.user?STATE.user.name:'GUEST'),s=JSON.parse(localStorage.getItem(k)||'[]'); if(s.includes(id))s=s.filter(i=>i!==id);else s.push(id); localStorage.setItem(k,JSON.stringify(s)); renderGaleri(); }
     function showQR(link) { Swal.fire({ title: 'Scan', html: `<img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(link)}" class="img-fluid"><br><a href="${link}" target="_blank" class="btn btn-sm btn-link mt-2">Buka Link</a>`, showConfirmButton: false, showCloseButton: true }); }
 
-    // --- AUTH ---
     function loginModal() { 
       Swal.fire({title:'PIN Guru',input:'password'}).then(r=>{ 
         if(r.value) {
@@ -829,7 +720,6 @@
     }
     function logout() { localStorage.removeItem('guruBerbagiUser'); STATE.user = { name: "Tamu", role: "GUEST" }; softReset(); }
 
-    // --- ADMIN TABLE & LOGIC ---
     function renderTableAdmin(data) {
       var html = '';
       data.forEach(item => {
@@ -846,7 +736,8 @@
     function bukaKurasi(id,st,fb) { document.getElementById('kurasiId').value=id; document.getElementById('kurasiStatus').value=st; document.getElementById('kurasiFeedback').value=fb; new bootstrap.Modal('#modalKurasi').show(); }
     function simpanKurasi() { callApi('updateKurasi', { id: document.getElementById('kurasiId').value, status: document.getElementById('kurasiStatus').value, feedback: document.getElementById('kurasiFeedback').value }).then(function(){ Swal.fire('Sukses','','success');loadData();bootstrap.Modal.getInstance(document.getElementById('modalKurasi')).hide(); }); }
     
-    // --- ADMIN: USERS, SEKOLAH, GURU ---
+    // --- FUNGSI ADMIN: USER, SEKOLAH, GURU ---
+
     function showModalInputUser() { new bootstrap.Modal(document.getElementById('modalUser')).show(); }
 
     function loadUserList() { 
@@ -903,6 +794,7 @@
 
     // 2. STATISTIK TOP GURU
     function loadTeacherStats() {
+        // Hitung karya per guru
         var teacherCounts = {};
         STATE.allMedia.forEach(m => { var n = m[1]; var s = m[2]; if(!teacherCounts[n]) teacherCounts[n] = {name: n, school: s, count: 0}; teacherCounts[n].count++; });
         
