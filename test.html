@@ -56,8 +56,15 @@
     }
     
     .view-badge { position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.6); color: white; backdrop-filter: blur(2px); font-size: 0.65rem; padding: 2px 8px; border-radius: 6px; z-index: 5; font-weight: 700; }
-    .badge-approved { position: absolute; bottom: 8px; right: 8px; color: #38bdf8; background: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 6; }
-    .badge-pending { position: absolute; top: 8px; left: 8px; background: var(--accent); color: white; font-size: 0.6rem; padding: 3px 8px; border-radius: 4px; z-index: 5; font-weight: 800; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
+    
+    /* STATUS BADGES */
+    .badge-status { position: absolute; top: 8px; left: 8px; padding: 3px 8px; border-radius: 4px; font-size: 0.6rem; font-weight: 800; z-index: 5; box-shadow: 0 2px 4px rgba(0,0,0,0.15); text-transform: uppercase; }
+    .st-approved { display: none; } /* Approved doesn't need a label usually, or use checkmark */
+    .st-pending { background: var(--accent); color: white; }
+    .st-revisi { background: #ef4444; color: white; }
+
+    .badge-check { position: absolute; bottom: 8px; right: 8px; color: #38bdf8; background: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 6; }
+    
     .kaih-compact { display: inline-flex; align-items: center; gap: 4px; font-size: 0.65rem; color: #b45309; background-color: #fffbeb; padding: 3px 8px; border-radius: 20px; font-weight: 700; margin-top: 6px; border: 1px solid #fcd34d; width: fit-content; }
 
     .btn-wishlist { position: absolute; top: 8px; right: 8px; z-index: 10; border: none; background: rgba(255,255,255,0.9); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); color: #94a3b8; transition: 0.2s; cursor: pointer; }
@@ -111,7 +118,7 @@
     .btn-soft-danger { background: #fee2e2; color: #991b1b; }
     .btn-soft-danger:hover { background: #ef4444; color: white; transform: translateY(-2px); }
 
-    /* CSS BARU UNTUK RANKING */
+    /* RANKING */
     .rank-badge { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: 800; font-size: 0.8rem; }
     .rank-1 { background: #fef3c7; color: #d97706; border: 1px solid #fcd34d; }
     .rank-2 { background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; }
@@ -138,7 +145,6 @@
     .preview-box { width: 100%; height: 100%; min-height: 350px; border: 2px dashed #cbd5e1; border-radius: 12px; overflow: hidden; background: #f8fafc; position: relative; }
     .preview-placeholder { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #94a3b8; font-weight: 700; text-align: center; }
     
-    /* ANIMASI LOAD MORE */
     .transition-all { transition: all 0.3s ease; }
     .transition-all:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(45, 139, 131, 0.2) !important; }
   </style>
@@ -156,7 +162,7 @@
 </head>
 <body>
 
-  <!-- PREVIEW OVERLAY (Fullscreen) -->
+  <!-- PREVIEW OVERLAY -->
   <div id="previewOverlay" data-url="" data-html="">
     <button id="floatingExitBtn" onclick="tutupFullscreen()" title="Keluar Layar Penuh"><i class="fas fa-times fa-lg"></i></button>
     <div class="preview-head" id="overlayControls">
@@ -197,6 +203,14 @@
 
   <!-- VIEW: GALERI -->
   <div id="view-galeri" class="container mt-4 fade-in">
+    <div class="alert alert-info border-0 shadow-sm rounded-3 mb-4 d-flex align-items-center" role="alert">
+      <i class="fas fa-info-circle fa-lg me-3 text-info"></i>
+      <div>
+        <strong>Semua Karya Ditampilkan!</strong><br>
+        Kami menghargai setiap kontribusi. Karya yang berstatus "Baru" atau "Revisi" tetap dapat diakses oleh publik.
+      </div>
+    </div>
+
     <div class="filter-container row g-2 mb-4 align-items-center">
        <div class="col-md-3">
          <select id="filterMapel" class="form-select form-select-filter" onchange="applyFilters()">
@@ -529,9 +543,8 @@
       STATE.filtered = STATE.allMedia.filter(function(i) {
          var haystack = (i[5]+" "+i[1]+" "+i[2]+" "+i[3]+" "+i[6]+" "+i[11]).toLowerCase();
          var matches = haystack.indexOf(q)!==-1 && ((fMapel==="") || (i[6]===fMapel)) && ((fFase==="") || (i[3]===fFase));
-         // Visibility Check
-         var isVisible = i[9] === "DISETUJUI" || (STATE.user.name === i[1]) || (STATE.user.role === 'ADMIN' || STATE.user.role === 'MODERATOR');
-         return matches && isVisible;
+         // SEMUA KARYA MUNCUL (Tanpa filter status)
+         return matches;
       });
       STATE.displayedLimit = STATE.itemsPerPage;
       renderGaleri();
@@ -548,12 +561,20 @@
       dataToShow.forEach(function(item) {
         var realIndex = STATE.allMedia.indexOf(item);
         var id = cleanStr(item[13]);
-        var isApproved = item[9] === "DISETUJUI";
+        var status = item[9]; // BARU, REVISI, DISETUJUI
+        var isApproved = status === "DISETUJUI";
         var isOwner = (STATE.user.name === item[1]);
         var isAdmin = (STATE.user.role === 'ADMIN' || STATE.user.role === 'MODERATOR');
         var isSaved = saved.includes(id);
+        
         var iconLove = isSaved ? 'fas fa-heart text-danger' : 'far fa-heart';
-        var badgeStatus = isApproved ? '<div class="badge-approved"><i class="fas fa-check-circle"></i></div>' : (isOwner||isAdmin ? '<div class="badge-pending">PENDING</div>' : '');
+        
+        // LABEL STATUS (Hanya jika belum disetujui agar user tahu)
+        var badgeStatus = '';
+        if (status === 'BARU') badgeStatus = '<div class="badge-status st-pending"><i class="fas fa-clock"></i> MENUNGGU KURASI</div>';
+        else if (status === 'REVISI') badgeStatus = '<div class="badge-status st-revisi"><i class="fas fa-exclamation-circle"></i> PERLU REVISI</div>';
+        
+        var checkMark = isApproved ? '<div class="badge-check"><i class="fas fa-check-circle"></i></div>' : '';
         var kaihHtml = item[10] ? '<div class="kaih-compact"><i class="fas fa-star text-warning"></i>'+cleanStr(item[10])+'</div>' : '';
         var editBtns = (isOwner || isAdmin) ? `<button onclick="event.stopPropagation(); bukaEdit(${realIndex})" class="btn-icon" title="Edit"><i class="fas fa-pencil-alt"></i></button><button onclick="event.stopPropagation(); hapusKarya(${realIndex})" class="btn-icon danger" title="Hapus"><i class="fas fa-trash"></i></button>` : '';
 
@@ -564,7 +585,7 @@
         }
         var qrBtn = (finalQrLink && finalQrLink.length > 5) ? `<button onclick="event.stopPropagation(); showQR('${finalQrLink}')" class="btn-icon" title="QR Code"><i class="fas fa-qrcode"></i></button>` : '';
 
-        var html = '<div class="col-6 col-md-4 col-lg-3 d-flex"><div class="card-karya w-100"><div class="card-thumb">' + getThumbnailHtml(cleanStr(item[11]), item[8]) + badgeStatus + '<div class="view-badge"><i class="fas fa-eye me-1"></i> ' + (item[14]||0) + '</div><button onclick="event.stopPropagation(); toggleSimpan(\'' + id + '\')" class="btn-wishlist '+(isSaved?'active':'')+'"><i class="' + iconLove + '"></i></button></div><div class="card-body-mp"><div class="mp-tags"><span class="badge-pill bg-soft-teal">' + cleanStr(item[6]) + '</span><span class="badge-pill bg-soft-blue">' + cleanStr(item[3]) + '</span><span class="badge-pill bg-soft-purple">' + cleanStr(item[4]) + '</span></div><div class="mp-title" title="'+cleanStr(item[5])+'">' + cleanStr(item[5]) + '</div>' + kaihHtml + '<div class="guru-info"><div class="guru-avatar">' + cleanStr(item[1]).charAt(0) + '</div><div style="overflow:hidden; line-height:1.2;"><div class="text-truncate fw-bold" style="font-size:0.75rem">' + cleanStr(item[1]) + '</div><div class="text-muted text-truncate" style="font-size:0.65rem">' + cleanStr(item[2]) + '</div></div></div><div class="action-row"><button onclick="bukaPreview(' + realIndex + ')" class="btn-open">BUKA KARYA</button>' + qrBtn + editBtns + '</div></div></div></div>';
+        var html = '<div class="col-6 col-md-4 col-lg-3 d-flex"><div class="card-karya w-100"><div class="card-thumb">' + getThumbnailHtml(cleanStr(item[11]), item[8]) + badgeStatus + checkMark + '<div class="view-badge"><i class="fas fa-eye me-1"></i> ' + (item[14]||0) + '</div><button onclick="event.stopPropagation(); toggleSimpan(\'' + id + '\')" class="btn-wishlist '+(isSaved?'active':'')+'"><i class="' + iconLove + '"></i></button></div><div class="card-body-mp"><div class="mp-tags"><span class="badge-pill bg-soft-teal">' + cleanStr(item[6]) + '</span><span class="badge-pill bg-soft-blue">' + cleanStr(item[3]) + '</span><span class="badge-pill bg-soft-purple">' + cleanStr(item[4]) + '</span></div><div class="mp-title" title="'+cleanStr(item[5])+'">' + cleanStr(item[5]) + '</div>' + kaihHtml + '<div class="guru-info"><div class="guru-avatar">' + cleanStr(item[1]).charAt(0) + '</div><div style="overflow:hidden; line-height:1.2;"><div class="text-truncate fw-bold" style="font-size:0.75rem">' + cleanStr(item[1]) + '</div><div class="text-muted text-truncate" style="font-size:0.65rem">' + cleanStr(item[2]) + '</div></div></div><div class="action-row"><button onclick="bukaPreview(' + realIndex + ')" class="btn-open">BUKA KARYA</button>' + qrBtn + editBtns + '</div></div></div></div>';
         c.insertAdjacentHTML('beforeend', html);
       });
 
