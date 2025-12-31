@@ -378,7 +378,7 @@
     var searchTimeout = null;
     var modalInputInstance = null;
 
-    [cite_start]// --- API HANDLER [cite: 1] ---
+    // --- API HANDLER ---
     async function callApi(action, payload = null) {
       try {
         if (action === 'read') {
@@ -394,7 +394,7 @@
       } catch (e) { console.error("API Error:", e); return { status: "error", message: e.toString() }; }
     }
 
-    [cite_start]// INIT [cite: 1]
+    // INIT
     window.onload = function() { initApp(); };
     function initApp() {
       try { var saved = localStorage.getItem('guruBerbagiUser'); if (saved) { STATE.user = JSON.parse(saved); updateUserInterface(); } } catch(e) {}
@@ -464,7 +464,7 @@
       });
     }
 
-    [cite_start]// --- FUNGSI FILTER & PAGINATION [cite: 1] ---
+    // --- FUNGSI FILTER & PAGINATION ---
     function applyFilters() {
       var q = document.getElementById('searchInput').value.toLowerCase();
       var fMapel = document.getElementById('filterMapel').value;
@@ -637,10 +637,10 @@
           callApi('login', {pin: r.value}).then(function(res){
              if(res.status==='success'){ 
                 localStorage.setItem('guruBerbagiUser',JSON.stringify(res.user)); STATE.user = res.user;
-                [cite_start]// ALERT BERHASIL LOGIN TETAP ADA [cite: 1]
+                // ALERT BERHASIL LOGIN TETAP ADA
                 Swal.fire({icon:'success', title:'Berhasil Login', timer:800, showConfirmButton:false}).then(softReset); 
              } else {
-                [cite_start]// ALERT GAGAL LOGIN TETAP ADA [cite: 1]
+                // ALERT GAGAL LOGIN TETAP ADA
                 Swal.fire('Gagal',res.message,'error');
              }
           });
@@ -690,7 +690,7 @@
         });
     }
     
-    [cite_start]// 1. STATISTIK TOP SEKOLAH [cite: 1]
+    // 1. STATISTIK TOP SEKOLAH
     function loadSchoolStats() {
         if(!STATE.users || STATE.users.length === 0) { callApi('users').then(function(res){ STATE.users = res.data; processSchoolStats(); }); } else { processSchoolStats(); }
     }
@@ -719,7 +719,7 @@
         document.getElementById('tableRankSchool').innerHTML = h;
     }
 
-    [cite_start]// 2. STATISTIK TOP GURU [cite: 1]
+    // 2. STATISTIK TOP GURU
     function loadTeacherStats() {
         // Hitung karya per guru
         var teacherCounts = {};
