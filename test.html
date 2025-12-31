@@ -109,6 +109,7 @@
     .btn-soft-danger { background: #fee2e2; color: #991b1b; }
     .btn-soft-danger:hover { background: #ef4444; color: white; transform: translateY(-2px); }
 
+    /* CSS BARU UNTUK RANKING */
     .rank-badge { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: 800; font-size: 0.8rem; }
     .rank-1 { background: #fef3c7; color: #d97706; border: 1px solid #fcd34d; }
     .rank-2 { background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; }
@@ -221,6 +222,7 @@
       <div class="stat-widget stat-pending"><div class="stat-val" id="statPending">0</div><div class="stat-label">Menunggu</div><i class="fas fa-clock stat-icon-bg"></i></div>
       <div class="stat-widget stat-users admin-only"><div class="stat-val" id="statUsers">0</div><div class="stat-label">Guru Terdaftar</div><i class="fas fa-users stat-icon-bg"></i></div>
     </div>
+    
     <div class="bg-white p-4 border rounded-4 shadow-sm">
       <ul class="nav nav-tabs mb-4 border-bottom-0" id="adminTabs">
         <li class="nav-item"><button class="nav-link active fw-bold border" data-bs-toggle="tab" data-bs-target="#tab-media">Kurasi Karya</button></li>
@@ -376,6 +378,7 @@
     var searchTimeout = null;
     var modalInputInstance = null;
 
+    [cite_start]// --- API HANDLER [cite: 1] ---
     async function callApi(action, payload = null) {
       try {
         if (action === 'read') {
@@ -391,6 +394,7 @@
       } catch (e) { console.error("API Error:", e); return { status: "error", message: e.toString() }; }
     }
 
+    [cite_start]// INIT [cite: 1]
     window.onload = function() { initApp(); };
     function initApp() {
       try { var saved = localStorage.getItem('guruBerbagiUser'); if (saved) { STATE.user = JSON.parse(saved); updateUserInterface(); } } catch(e) {}
@@ -460,6 +464,7 @@
       });
     }
 
+    [cite_start]// --- FUNGSI FILTER & PAGINATION [cite: 1] ---
     function applyFilters() {
       var q = document.getElementById('searchInput').value.toLowerCase();
       var fMapel = document.getElementById('filterMapel').value;
@@ -632,10 +637,10 @@
           callApi('login', {pin: r.value}).then(function(res){
              if(res.status==='success'){ 
                 localStorage.setItem('guruBerbagiUser',JSON.stringify(res.user)); STATE.user = res.user;
-                // ALERT BERHASIL LOGIN TETAP ADA
+                [cite_start]// ALERT BERHASIL LOGIN TETAP ADA [cite: 1]
                 Swal.fire({icon:'success', title:'Berhasil Login', timer:800, showConfirmButton:false}).then(softReset); 
              } else {
-                // ALERT GAGAL LOGIN TETAP ADA
+                [cite_start]// ALERT GAGAL LOGIN TETAP ADA [cite: 1]
                 Swal.fire('Gagal',res.message,'error');
              }
           });
@@ -685,7 +690,7 @@
         });
     }
     
-    // 1. STATISTIK TOP SEKOLAH
+    [cite_start]// 1. STATISTIK TOP SEKOLAH [cite: 1]
     function loadSchoolStats() {
         if(!STATE.users || STATE.users.length === 0) { callApi('users').then(function(res){ STATE.users = res.data; processSchoolStats(); }); } else { processSchoolStats(); }
     }
@@ -714,7 +719,7 @@
         document.getElementById('tableRankSchool').innerHTML = h;
     }
 
-    // 2. STATISTIK TOP GURU
+    [cite_start]// 2. STATISTIK TOP GURU [cite: 1]
     function loadTeacherStats() {
         // Hitung karya per guru
         var teacherCounts = {};
