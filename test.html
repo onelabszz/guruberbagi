@@ -18,7 +18,7 @@
     }
     body { background-color: var(--bg-body); font-family: 'Plus Jakarta Sans', sans-serif; color: var(--text-main); font-size: 0.9rem; padding-bottom: 80px; }
     
-    /* UTILITIES */
+    /* UTILS */
     .d-none { display: none !important; }
     .admin-only { display: none !important; } 
     .fade-in { animation: fadeIn 0.5s ease-in-out; }
@@ -30,23 +30,21 @@
     .brand-main { font-weight: 800; color: var(--primary); font-size: 1.4rem; letter-spacing: -0.5px; }
     .brand-sub { font-weight: 600; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; }
 
-    /* CARDS */
+    /* CARD SYSTEM */
     .card-karya { background: #fff; border: 1px solid #fff; border-radius: 16px; overflow: hidden; height: 100%; display: flex; flex-direction: column; transition: all 0.2s; box-shadow: var(--card-shadow); position: relative; }
-    .card-karya:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); border-color: var(--primary); }
+    .card-karya:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); border-color: var(--primary); }
     .card-thumb { height: 150px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #e2e8f0; color: #fff; }
     .view-badge { position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.6); color: white; backdrop-filter: blur(2px); font-size: 0.65rem; padding: 2px 8px; border-radius: 6px; z-index: 5; font-weight: 700; }
     .badge-approved { position: absolute; bottom: 8px; right: 8px; color: #38bdf8; background: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 6; }
     .badge-pending { position: absolute; top: 8px; left: 8px; background: var(--accent); color: white; font-size: 0.6rem; padding: 3px 8px; border-radius: 4px; z-index: 5; font-weight: 800; }
+    .kaih-compact { display: inline-flex; align-items: center; gap: 4px; font-size: 0.65rem; color: #b45309; background-color: #fffbeb; padding: 3px 8px; border-radius: 20px; font-weight: 700; margin-top: 6px; border: 1px solid #fcd34d; width: fit-content; }
     .btn-wishlist { position: absolute; top: 8px; right: 8px; z-index: 10; border: none; background: rgba(255,255,255,0.9); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #94a3b8; transition: 0.2s; cursor: pointer; }
     .btn-wishlist:hover, .btn-wishlist.active { color: #ef4444; transform: scale(1.1); }
-    
     .card-body-mp { padding: 16px; flex-grow: 1; display: flex; flex-direction: column; }
     .mp-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
     .badge-pill { font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; }
-    .bg-soft-teal { background: #e0f2f1; color: #00695c; } 
-    .bg-soft-blue { background: #e0f7fa; color: #0277bd; border: 1px solid #b3e5fc; } 
+    .bg-soft-teal { background: #e0f2f1; color: #00695c; } .bg-soft-blue { background: #e0f7fa; color: #0277bd; }
     .mp-title { font-weight: 800; font-size: 1rem; line-height: 1.35; margin-bottom: 2px; color: var(--text-main); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.7em; }
-    .kaih-compact { display: inline-flex; align-items: center; gap: 4px; font-size: 0.65rem; color: #b45309; background-color: #fffbeb; padding: 3px 8px; border-radius: 20px; font-weight: 700; margin-top: 6px; border: 1px solid #fcd34d; width: fit-content; }
     .guru-info { display: flex; align-items: center; gap: 10px; margin-top: auto; padding-top: 12px; border-top: 1px dashed #e2e8f0; }
     .guru-avatar { width: 32px; height: 32px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.8rem; color: #64748b; }
     .action-row { margin-top: 12px; display: flex; gap: 8px; position: relative; z-index: 5; }
@@ -64,18 +62,15 @@
     .stat-users { background: linear-gradient(135deg, #64748b 0%, #475569 100%); }
     .stat-val { font-size: 2.5rem; font-weight: 800; line-height: 1; margin-bottom: 4px; position: relative; z-index: 2; }
     .stat-label { font-size: 0.8rem; font-weight: 600; opacity: 0.9; text-transform: uppercase; }
-    .stat-icon-bg { position: absolute; right: -10px; bottom: -10px; font-size: 5rem; opacity: 0.2; transform: rotate(-15deg); z-index: 1; }
-    
     .fab-add { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 20px; background: #1e293b; color: white; border: none; font-size: 1.5rem; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3); transition: 0.3s; display: flex; align-items: center; justify-content: center; z-index: 1020; }
     .fab-add:hover { transform: scale(1.1) rotate(90deg); background: var(--primary); }
-    
     .pretty-table thead th { background: #f8fafc; color: #64748b; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; padding: 16px; border-bottom: 2px solid #e2e8f0; }
     .pretty-table tbody td { padding: 14px 16px; vertical-align: middle; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; }
     .btn-soft { width: 34px; height: 34px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; border: none; transition: 0.2s; margin-left: 4px; }
     .btn-soft-primary { background: #e0f2f1; color: #00695c; }
     .btn-soft-danger { background: #fee2e2; color: #991b1b; }
 
-    /* PREVIEW OVERLAY */
+    /* PREVIEW */
     #previewOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none; flex-direction: column; z-index: 20000; }
     .preview-head { background: #111; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; color: white; border-bottom: 1px solid #333; }
     #previewFrame { flex-grow: 1; width: 100%; height: 100%; border: none; background: #fff; }
@@ -105,7 +100,7 @@
       </div>
       <div id="searchWrapper" class="d-flex align-items-center bg-white px-3 py-2 rounded-pill border" style="width:100%; max-width:450px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
         <i class="fas fa-search text-muted me-2"></i>
-        <input type="text" id="searchInput" oninput="applyFilters()" class="form-control border-0 p-0 shadow-none bg-transparent" placeholder="Cari karya...">
+        <input type="text" id="searchInput" oninput="applyFilters()" class="form-control border-0 p-0 shadow-none bg-transparent" placeholder="Cari karya, mapel, guru...">
       </div>
       <div class="d-flex align-items-center gap-2">
         <button id="btnHome" class="btn btn-outline-secondary btn-sm rounded-pill fw-bold px-3 d-none" onclick="switchView('GALERI')">Kembali</button>
@@ -251,7 +246,8 @@
         var idx=STATE.allMedia.indexOf(i), id=cleanStr(i[13]), app=i[9]==="DISETUJUI", own=(STATE.user.name===i[1]), adm=['ADMIN','MODERATOR'].includes(STATE.user.role);
         var il=fav.includes(id)?'fas fa-heart text-danger':'far fa-heart', ac=fav.includes(id)?'active':'';
         var bs=app?'<div class="badge-approved"><i class="fas fa-check-circle"></i></div>':(own||adm?'<div class="badge-pending">PENDING</div>':'');
-        var kh=i[12]?'<div class="kaih-compact"><i class="fas fa-star text-warning"></i>'+cleanStr(i[12])+'</div>':''; // KAIH in col 12 (Index 12 matches M)
+        // KAIH Fix: Index 12
+        var kh=i[12]?'<div class="kaih-compact"><i class="fas fa-star text-warning"></i>'+cleanStr(i[12])+'</div>':''; 
         var ed=(own||adm)?`<button onclick="event.stopPropagation();bukaEdit(${idx})" class="btn-icon"><i class="fas fa-pencil-alt"></i></button><button onclick="event.stopPropagation();hapusKarya(${idx})" class="btn-icon danger"><i class="fas fa-trash"></i></button>`:'';
         var h=`<div class="col-6 col-md-4 col-lg-3 d-flex"><div class="card-karya w-100"><div class="card-thumb">${getThumbnailHtml(i[11],i[8])}${bs}<div class="view-badge"><i class="fas fa-eye me-1"></i> ${i[14]||0}</div><button onclick="event.stopPropagation();toggleSimpan('${id}')" class="btn-wishlist ${ac}"><i class="${il}"></i></button></div><div class="card-body-mp"><div class="mp-tags"><span class="badge-pill bg-soft-teal">${cleanStr(i[6])}</span><span class="badge-pill bg-soft-blue">${cleanStr(i[3])}</span></div><div class="mp-title">${cleanStr(i[5])}</div>${kh}<div class="guru-info"><div class="guru-avatar">${cleanStr(i[1]).charAt(0)}</div><div style="overflow:hidden;line-height:1.2"><div class="text-truncate fw-bold" style="font-size:0.75rem">${cleanStr(i[1])}</div><div class="text-muted text-truncate" style="font-size:0.65rem">${cleanStr(i[2])}</div></div></div><div class="action-row"><button onclick="bukaPreview(${idx})" class="btn-open">BUKA KARYA</button>${ed}</div></div></div></div>`;
         c.insertAdjacentHTML('beforeend',h);
@@ -264,7 +260,7 @@
     function getYoutubeId(u){var m=u.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);return(m&&m[2].length==11)?m[2]:false}
     function getThumbnailHtml(j,l){var y=getYoutubeId(l||"");if(y)return `<img src="https://img.youtube.com/vi/${y}/mqdefault.jpg" style="width:100%;height:100%;object-fit:cover;">`; var ic="fas fa-code",bg="#475569"; var J=(j||"").toUpperCase(); if(J.includes("VIDEO")){ic="fas fa-play";bg="#ef4444"}else if(J.includes("MODUL")){ic="fas fa-book-open";bg="#10b981"}else if(J.includes("GAME")){ic="fas fa-gamepad";bg="#8b5cf6"} return `<div style="background:${bg};width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:white;"><i class="${ic} fa-3x"></i></div>`}
 
-    // --- USER MANAGEMENT (FIXED INDICES 0-3) ---
+    // --- USER MANAGEMENT (INDEX 0,1,2,3) ---
     function loadUserList(){
       if(STATE.user.role!=='ADMIN')return;
       document.getElementById('tableUsers').innerHTML='<tr><td colspan="5" class="text-center py-3">Loading...</td></tr>';
@@ -275,7 +271,7 @@
         if(srt.length===0)sH='<tr><td colspan="2" class="text-center small">Belum ada data</td></tr>';
         else srt.forEach((x,i)=>{sH+=`<tr class="${i<3?'fw-bold':''}"><td class="ps-3 text-truncate" style="max-width:180px;">${i+1}. ${x[0]}</td><td class="text-center bg-light">${x[1]}</td></tr>`});
         document.getElementById('tableSekolah').innerHTML=sH;
-        var h=''; r.data.forEach(u=>{ // u[0]=Nama, u[1]=Sekolah, u[2]=PIN, u[3]=Role
+        var h=''; r.data.forEach(u=>{ // 0:Nama, 1:Sekolah, 2:PIN, 3:Role
           var jk=gc[u[0]]||0, bd=jk>0?`<span class="badge bg-success rounded-pill px-3">${jk}</span>`:`<span class="badge bg-light text-muted border rounded-pill px-3">0</span>`;
           h+=`<tr><td><div class="d-flex align-items-center"><div class="avatar-circle me-2" style="font-size:0.7rem;">${u[0].charAt(0)}</div><div style="line-height:1.2"><div class="fw-bold">${u[0]}</div><small class="text-muted" style="font-size:0.7rem">${u[1]}</small></div></div></td><td class="text-center">${bd}</td><td class="font-monospace small">${u[2]}</td><td><span class="badge bg-secondary" style="font-size:0.6rem">${u[3]}</span></td><td class="text-center"><button onclick="bukaEditUser('${u[2]}')" class="btn-soft btn-soft-primary"><i class="fas fa-pencil-alt"></i></button><button onclick="hapusUser('${u[2]}')" class="btn-soft btn-soft-danger ms-1"><i class="fas fa-trash"></i></button></td></tr>`;
         });
@@ -314,7 +310,7 @@
     function showModalInput(){if(!modalInputInstance)modalInputInstance=new bootstrap.Modal(document.getElementById('modalInput'),{backdrop:'static'});modalInputInstance.show()}
     function toggleInputSource(v){['groupLink','groupStory','groupHtml'].forEach(id=>document.getElementById(id).classList.add('d-none'));if(v==='LINK')document.getElementById('groupLink').classList.remove('d-none');else if(v==='STORY')document.getElementById('groupStory').classList.remove('d-none');else document.getElementById('groupHtml').classList.remove('d-none');updateLivePreview()}
     function updateLivePreview(){} 
-    function checkDropdown(id,manId,val){var m=document.getElementById(manId);if(val==='LAINNYA'){m.classList.remove('d-none');m.focus()}else{m.classList.add('d-none');m.value=""}}
+    function checkDropdown(id,manId,val){var m=document.getElementById(manId);if(val==='LAINNYA'){m.classList.remove('d-none');m.focus()}else{m.classList.add('d-none');m.value=""} }
     function toggleKaih(c){document.getElementById('kaihBox').classList.toggle('d-none',!c)}
     function filterSemua(){document.getElementById('searchInput').value="";document.getElementById('filterMapel').value="";applyFilters()}
     function filterSaya(){document.getElementById('searchInput').value=STATE.user.name;applyFilters()}
@@ -326,7 +322,17 @@
     function hapusKarya(idx){var id=typeof idx==='string'?idx:STATE.allMedia[idx][13];Swal.fire({title:'Hapus?',showCancelButton:true}).then(r=>{if(r.isConfirmed)callApi('hapus',{id:id}).then(loadData)})}
     function bukaKurasi(id,st,fb){document.getElementById('kurasiId').value=id;document.getElementById('kurasiStatus').value=st;document.getElementById('kurasiFeedback').value=fb;new bootstrap.Modal('#modalKurasi').show()}
     function simpanKurasi(){callApi('updateKurasi',{id:document.getElementById('kurasiId').value,status:document.getElementById('kurasiStatus').value,feedback:document.getElementById('kurasiFeedback').value}).then(()=>{Swal.fire('Sukses','','success');loadData();bootstrap.Modal.getInstance(document.getElementById('modalKurasi')).hide()})}
-    function bukaEdit(idx){var d=STATE.allMedia[idx];document.getElementById('formMode').value="EDIT";document.getElementById('editRowIdx').value=d[13];document.getElementById('inJudul').value=d[5];document.getElementById('inFase').value=d[3];document.getElementById('inSem').value=d[4];var t='LINK';if(d[7]&&d[7].length>5){t='HTML';document.getElementById('inHtml').value=d[7]}else if(d[8]&&d[8].includes('gemini')){t='STORY';document.getElementById('inLinkStory').value=d[8]}else{document.getElementById('inLink').value=d[8]}document.getElementById('inputSourceType').value=t;toggleInputSource(t);checkDropdown('inMapel','manMapel',d[6]);checkDropdown('inJenis','manJenis',d[11]);document.getElementById('checkKaih').checked=!!d[12];toggleKaih(!!d[12]);if(d[12])document.getElementById('inKaihType').value=d[12];showModalInput()}
+    function bukaEdit(idx){
+        var d=STATE.allMedia[idx]; 
+        document.getElementById('formMode').value="EDIT"; document.getElementById('editRowIdx').value=d[13]; 
+        document.getElementById('inJudul').value=d[5]; document.getElementById('inFase').value=d[3]; document.getElementById('inSem').value=d[4]; 
+        var t='LINK'; if(d[7]&&d[7].length>5){t='HTML';document.getElementById('inHtml').value=d[7]} else if(d[8]&&d[8].includes('gemini')){t='STORY';document.getElementById('inLinkStory').value=d[8]} else {document.getElementById('inLink').value=d[8]}
+        document.getElementById('inputSourceType').value=t; toggleInputSource(t); 
+        checkDropdown('inMapel','manMapel',d[6]); checkDropdown('inJenis','manJenis',d[11]); 
+        // KAIH: Index 12
+        document.getElementById('checkKaih').checked=!!d[12]; toggleKaih(!!d[12]); if(d[12])document.getElementById('inKaihType').value=d[12]; 
+        showModalInput();
+    }
   </script>
 </body>
 </html>
