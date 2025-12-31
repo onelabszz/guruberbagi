@@ -107,6 +107,10 @@
     .btn-soft-danger { background: #fee2e2; color: #991b1b; }
     .btn-soft-danger:hover { background: #ef4444; color: white; transform: translateY(-2px); }
 
+    /* BARU: STATISTIK SEKOLAH */
+    .school-card { min-width: 200px; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+    .school-icon { width: 40px; height: 40px; background: #e0f2f1; color: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+
     .d-none { display: none !important; }
     .admin-only { display: none !important; } 
     .fab-add { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 20px; background: #1e293b; color: white; border: none; font-size: 1.5rem; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3); transition: 0.3s; display: flex; align-items: center; justify-content: center; z-index: 1020; }
@@ -127,7 +131,6 @@
     .preview-box { width: 100%; height: 100%; min-height: 350px; border: 2px dashed #cbd5e1; border-radius: 12px; overflow: hidden; background: #f8fafc; position: relative; }
     .preview-placeholder { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #94a3b8; font-weight: 700; text-align: center; }
     
-    /* ANIMASI LOAD MORE */
     .transition-all { transition: all 0.3s ease; }
     .transition-all:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(45, 139, 131, 0.2) !important; }
   </style>
@@ -228,18 +231,24 @@
             </table>
           </div>
         </div>
+        
         <div class="tab-pane fade" id="tab-users">
+          <div class="mb-4">
+            <h6 class="fw-bold text-muted ps-2 mb-3">Statistik Satuan Pendidikan</h6>
+            <div id="schoolStatsGrid" class="d-flex gap-3 overflow-auto pb-2" style="white-space: nowrap;"></div>
+          </div>
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h6 class="fw-bold text-muted mb-0 ps-2">Daftar Guru Terdaftar</h6>
             <button class="btn btn-primary btn-sm rounded-pill fw-bold px-4 shadow-sm" onclick="resetUserForm(); showModalInput()"><i class="fas fa-plus me-2"></i>Tambah Guru</button>
           </div>
           <div class="table-container">
             <table class="table pretty-table table-hover align-middle mb-0">
-              <thead><tr><th class="ps-4">NAMA GURU</th><th>PIN AKSES</th><th>PERAN</th><th class="text-center">AKSI</th></tr></thead>
+              <thead><tr><th class="ps-4">NAMA GURU</th><th class="text-center">JML KARYA</th><th>PIN AKSES</th><th>PERAN</th><th class="text-center">AKSI</th></tr></thead>
               <tbody id="tableUsers"></tbody>
             </table>
           </div>
         </div>
+
       </div>
     </div>
   </div>
@@ -275,9 +284,9 @@
                 <div class="mb-3">
                   <label class="small fw-bold mb-2 text-muted">Tipe Konten Utama</label>
                   <select id="inputSourceType" class="form-select bg-light fw-bold" onchange="toggleInputSource(this.value)">
-                    <option value="LINK">🔗 Media Umum (Youtube / Drive / Quizizz)</option>
-                    <option value="STORY">🚀 Link Storybook / Web App</option>
-                    <option value="HTML">💻 Kode Embed HTML (Prioritas)</option>
+                    <option value="LINK">迫 Media Umum (Youtube / Drive / Quizizz)</option>
+                    <option value="STORY">噫 Link Storybook / Web App</option>
+                    <option value="HTML">捗 Kode Embed HTML (Prioritas)</option>
                   </select>
                 </div>
                 
@@ -307,8 +316,8 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
   <script>
-    // --- KONFIGURASI ---
-    // GANTI URL INI DENGAN URL WEB APP ANDA SETELAH DEPLOY BACKEND
+    // --- KONFIGURASI PENTING ---
+    // GANTI URL DI BAWAH INI DENGAN HASIL DEPLOY TERBARU ANDA
     const API_URL = "https://script.google.com/macros/s/AKfycbzhrWjl2Dc0i8V45dD8vNXrt3gfmvEU1pZ5hZOELkTz6e29l68d2hsHfGQEjqTVYdY0/exec";
 
     // STATE UTAMA & PAGINATION
@@ -318,8 +327,8 @@
         users: [], 
         user: { name: "Tamu", role: "GUEST" }, 
         settings: [],
-        displayedLimit: 12,  // Default kartu awal
-        itemsPerPage: 12     // Jumlah kartu saat Load More
+        displayedLimit: 12,  
+        itemsPerPage: 12     
     };
     
     var ACTIVE_CONTENT = { type: null, data: null };
@@ -333,6 +342,7 @@
            var response = await fetch(API_URL + "?action=read");
            return await response.json();
         } else {
+           // Mengirim POST request ke Google Apps Script
            var response = await fetch(API_URL, {
              method: "POST",
              body: JSON.stringify({ action: action, payload: payload })
@@ -433,7 +443,6 @@
          return matchSearch && matchMapel && matchFase;
       });
 
-      // RESET PAGINATION SAAT FILTER BERUBAH
       STATE.displayedLimit = STATE.itemsPerPage;
       renderGaleri();
     }
@@ -449,12 +458,10 @@
       
       var favKey = 'GB_FAV_' + (STATE.user ? STATE.user.name : 'GUEST');
       var saved = JSON.parse(localStorage.getItem(favKey) || '[]');
-      
-      // LOGIC PAGINATION
       var dataToShow = STATE.filtered.slice(0, STATE.displayedLimit);
       
       dataToShow.forEach(function(item) {
-        var realIndex = STATE.allMedia.indexOf(item); // Index asli untuk edit/hapus
+        var realIndex = STATE.allMedia.indexOf(item); 
         var id = cleanStr(item[13]);
         var isApproved = item[9] === "DISETUJUI";
         var isOwner = (STATE.user.name === item[1]);
@@ -480,7 +487,6 @@
         c.insertAdjacentHTML('beforeend', html);
       });
 
-      // LOGIC TOMBOL LOAD MORE
       var btnMore = document.getElementById('loadMoreContainer');
       var infoText = document.getElementById('loadMoreInfo');
       if (STATE.filtered.length > STATE.displayedLimit) {
@@ -551,7 +557,7 @@
           ACTIVE_CONTENT = { type: 'HTML', data: rawHtml };
           var blob = new Blob([rawHtml], { type: 'text/html' });
           frame.src = URL.createObjectURL(blob);
-          frame.dataset.blob = frame.src; // Simpan untuk revoke nanti
+          frame.dataset.blob = frame.src; 
           return;
       }
       if (rawLink.length > 5) {
@@ -618,7 +624,6 @@
     }
 
     function prosesSimpan() {
-        // Validasi Sederhana
         var judul = document.getElementById('inJudul').value;
         if(!judul) { Swal.fire('Error', 'Judul wajib diisi', 'error'); return; }
 
@@ -641,15 +646,12 @@
             html: document.getElementById('inputSourceType').value === 'HTML' ? document.getElementById('inHtml').value : ""
         };
 
-        var mode = document.getElementById('formMode').value; // ADD or EDIT
-        var action = (mode === 'ADD') ? 'add' : 'edit'; // Backend logic support needed for edit
-        if(mode === 'EDIT') payload.id = document.getElementById('editRowIdx').value; // Pass ID for edit
+        var mode = document.getElementById('formMode').value;
+        var action = "add"; // Default action
+        if(mode === 'EDIT') { action = 'edit'; payload.id = document.getElementById('editRowIdx').value; }
 
-        // KARENA BACKEND "ADD" KITA SUDAH SIAP, KITA GUNAKAN LOGIC ADD DULU
-        // Untuk fitur EDIT, pastikan backend Anda menangani action='edit'
-        
         Swal.fire({title: 'Menyimpan...', didOpen:()=>{Swal.showLoading()}});
-        callApi('add', payload).then(res => {
+        callApi(action, payload).then(res => {
             if(res.status === 'success') {
                 Swal.fire('Berhasil', 'Karya berhasil disimpan!', 'success');
                 bootstrap.Modal.getInstance(document.getElementById('modalInput')).hide();
@@ -737,7 +739,7 @@
       var baseStyle = `<style>body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 10px; color: #333; } img { max-width: 100%; height: auto; } iframe { width: 100%; aspect-ratio: 16/9; border: none; }</style>`;
 
       if (type === 'STORY' || (type === 'LINK' && (val.includes('gemini.google.com') || val.includes('g.co')))) { 
-         doc.write(baseStyle + '<div style="text-align:center;color:#666;padding-top:20px;">祷 Storybook<br><small>Preview tersedia setelah dibuka</small></div>'); 
+         doc.write(baseStyle + '<div style="text-align:center;color:#666;padding-top:20px;">﨟樒･ｷ Storybook<br><small>Preview tersedia setelah dibuka</small></div>'); 
       } 
       else if(type==='HTML' && val.length > 5) { doc.write(baseStyle + val); } 
       else if (val.length > 5) {
@@ -804,13 +806,65 @@
         });
     }
     
+    // --- UPDATE: FUNGSI USER LIST & STATISTIK ---
     function loadUserList() { 
-        if(STATE.user.role!=='ADMIN')return; 
+        if(STATE.user.role !== 'ADMIN') return; 
+        document.getElementById('tableUsers').innerHTML = '<tr><td colspan="5" class="text-center py-4"><div class="spinner-border text-primary"></div></td></tr>';
+
         callApi('users').then(function(res){
-            STATE.users=res.data; 
-            var h=''; 
-            res.data.forEach(u=>{ h+=`<tr><td><div class="d-flex align-items-center"><div class="avatar-circle me-3">${u[0].charAt(0)}</div><div><div class="fw-bold">${u[0]}</div><small class="text-muted">${u[1]}</small></div></div></td><td class="font-monospace fw-bold">${u[2]}</td><td><span class="badge bg-secondary">${u[3]}</span></td><td class="text-center"><div class="d-flex justify-content-center gap-1"><button onclick="bukaEditUser('${u[2]}')" class="btn-soft btn-soft-primary"><i class="fas fa-pencil-alt"></i></button><button onclick="hapusUser('${u[2]}')" class="btn-soft btn-soft-danger"><i class="fas fa-trash"></i></button></div></td></tr>`; }); 
-            document.getElementById('tableUsers').innerHTML=h; 
+            STATE.users = res.data; 
+            
+            // Hitung Statistik
+            let karyaPerGuru = {};
+            let karyaPerSekolah = {};
+            
+            STATE.allMedia.forEach(media => {
+                let nama = media[1];
+                let sekolah = media[2] || "Tanpa Unit";
+                
+                if(!karyaPerGuru[nama]) karyaPerGuru[nama] = 0;
+                karyaPerGuru[nama]++;
+                
+                if(!karyaPerSekolah[sekolah]) karyaPerSekolah[sekolah] = 0;
+                karyaPerSekolah[sekolah]++;
+            });
+
+            // Render Widget Sekolah
+            let schoolHtml = '';
+            let sortedSchools = Object.entries(karyaPerSekolah).sort((a,b) => b[1] - a[1]);
+            
+            if(sortedSchools.length === 0) {
+                schoolHtml = '<div class="text-muted small ms-2">Belum ada data karya.</div>';
+            } else {
+                sortedSchools.forEach(([sekolah, jumlah]) => {
+                    schoolHtml += `
+                    <div class="school-card">
+                       <div class="school-icon"><i class="fas fa-school"></i></div>
+                       <div>
+                          <div class="fw-bold text-dark text-truncate" style="max-width:140px;" title="${sekolah}">${sekolah}</div>
+                          <div class="small text-muted fw-bold">${jumlah} Karya</div>
+                       </div>
+                    </div>`;
+                });
+            }
+            document.getElementById('schoolStatsGrid').innerHTML = schoolHtml;
+
+            // Render Tabel User
+            var h = ''; 
+            res.data.forEach(u => { 
+                let namaUser = u[0];
+                let sekolahUser = u[1];
+                let pinUser = u[2];
+                let roleUser = u[3];
+                let jumlahKarya = karyaPerGuru[namaUser] || 0;
+                let badgeKarya = jumlahKarya > 0 ? `<span class="badge bg-success rounded-pill px-3">${jumlahKarya}</span>` : `<span class="badge bg-light text-muted border rounded-pill px-3">0</span>`;
+
+                h += `<tr><td><div class="d-flex align-items-center"><div class="avatar-circle me-3">${namaUser.charAt(0)}</div><div><div class="fw-bold text-dark">${namaUser}</div><small class="text-muted"><i class="fas fa-building me-1"></i>${sekolahUser}</small></div></div></td>
+                <td class="text-center align-middle h5 mb-0">${badgeKarya}</td>
+                <td class="font-monospace fw-bold text-secondary">${pinUser}</td><td><span class="badge bg-secondary">${roleUser}</span></td>
+                <td class="text-center"><div class="d-flex justify-content-center gap-1"><button onclick="bukaEditUser('${pinUser}')" class="btn-soft btn-soft-primary"><i class="fas fa-pencil-alt"></i></button><button onclick="hapusUser('${pinUser}')" class="btn-soft btn-soft-danger"><i class="fas fa-trash"></i></button></div></td></tr>`; 
+            }); 
+            document.getElementById('tableUsers').innerHTML = h; 
         });
     }
     
