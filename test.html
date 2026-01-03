@@ -57,7 +57,16 @@
     
     .view-badge { position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.6); color: white; backdrop-filter: blur(2px); font-size: 0.65rem; padding: 2px 8px; border-radius: 6px; z-index: 5; font-weight: 700; }
     
-    .badge-approved { position: absolute; bottom: 8px; right: 8px; color: #38bdf8; background: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 6; }
+    /* UPDATED: Centang Biru Soft */
+    .badge-approved { 
+        position: absolute; bottom: 8px; right: 8px; 
+        color: #0288d1; /* Biru lebih tua untuk icon */
+        background: #e1f5fe; /* Biru sangat muda (soft) */
+        border: 1px solid #b3e5fc;
+        border-radius: 50%; width: 26px; height: 26px; 
+        display: flex; align-items: center; justify-content: center; 
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05); z-index: 6; 
+    }
     
     /* NEW: Status Pill for Owner/Admin */
     .status-pill { position: absolute; top: 8px; left: 8px; z-index: 20; padding: 4px 10px; border-radius: 20px; font-size: 0.65rem; font-weight: 800; color:white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); letter-spacing: 0.5px; }
@@ -130,6 +139,19 @@
     .admin-only { display: none !important; } 
     .fab-add { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 20px; background: #1e293b; color: white; border: none; font-size: 1.5rem; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3); transition: 0.3s; display: flex; align-items: center; justify-content: center; z-index: 1020; }
     .fab-add:hover { transform: scale(1.1) rotate(90deg); background: var(--primary); }
+    
+    /* NEW DASHBOARD PROFIL STYLES */
+    .profile-card { background: white; border-radius: 16px; border: 1px solid #e2e8f0; overflow: hidden; height: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+    .profile-header-bg { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); height: 120px; position: relative; }
+    .profile-avatar-wrapper { position: absolute; bottom: -40px; left: 50%; transform: translateX(-50%); }
+    .profile-avatar-lg { width: 90px; height: 90px; border-radius: 50%; border: 4px solid white; background: #f1f5f9; color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    .profile-stats-box { background: #f8fafc; border-radius: 12px; padding: 15px; text-align: center; border: 1px solid #e2e8f0; transition: 0.2s; }
+    .profile-stats-box:hover { background: #fff; border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(45,139,131,0.15); }
+    .prof-tab-link { color: #64748b; font-weight: 700; padding: 12px 20px; border-bottom: 2px solid transparent; cursor: pointer; transition: 0.2s; }
+    .prof-tab-link:hover { color: var(--primary); background: #f0fdfa; }
+    .prof-tab-link.active { color: var(--primary); border-bottom-color: var(--primary); background: #f0fdfa; }
+    
+    .medal-badge { font-size: 0.75rem; padding: 4px 12px; border-radius: 20px; font-weight: 800; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 5px; }
 
     /* PREVIEW OVERLAY */
     #previewOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none; flex-direction: column; z-index: 20000; }
@@ -237,58 +259,118 @@
     </div>
   </div>
   
-  <!-- VIEW: PROFILE -->
+  <!-- VIEW: PROFILE DASHBOARD -->
   <div id="view-profile" class="container mt-4 d-none">
-     <div class="row justify-content-center">
-         <div class="col-md-8 col-lg-6">
-             <div class="bg-white rounded-4 shadow-sm border overflow-hidden">
-                 <div class="bg-primary p-4 text-center text-white">
-                     <div class="avatar-circle mx-auto mb-2 bg-white text-primary fs-3" style="width: 80px; height: 80px;" id="prof-avatar">U</div>
-                     <h4 class="fw-bold mb-0" id="prof-name">Nama Guru</h4>
-                     <span class="badge bg-white text-primary mt-2" id="prof-role">GURU</span>
+     <div class="row g-4">
+         <!-- LEFT COLUMN: USER IDENTITY -->
+         <div class="col-lg-4">
+             <div class="profile-card text-center pb-4">
+                 <div class="profile-header-bg"></div>
+                 <div class="profile-avatar-wrapper">
+                     <div class="profile-avatar-lg" id="prof-avatar">U</div>
                  </div>
-                 
-                 <!-- STATISTIK KONTRIBUSI (NEW FEATURE) -->
-                 <div class="row g-0 border-bottom text-center">
-                    <div class="col-4 border-end py-3">
-                        <div class="h5 fw-800 mb-0 text-primary" id="prof-stat-karya">0</div>
-                        <div class="small text-muted fw-bold" style="font-size:0.7rem;">TOTAL KARYA</div>
-                    </div>
-                    <div class="col-4 border-end py-3">
-                        <div class="h5 fw-800 mb-0 text-success" id="prof-stat-views">0</div>
-                        <div class="small text-muted fw-bold" style="font-size:0.7rem;">TOTAL DILIHAT</div>
-                    </div>
-                    <div class="col-4 py-3">
-                        <div class="h5 fw-800 mb-0 text-warning" id="prof-stat-pending">0</div>
-                        <div class="small text-muted fw-bold" style="font-size:0.7rem;">PENDING</div>
-                    </div>
-                 </div>
-
-                 <div class="p-4">
-                     <!-- TOMBOL AKSES CEPAT (NEW FEATURE) -->
-                     <div class="d-grid gap-2 mb-4">
-                        <button onclick="filterSaya(); switchView('GALERI')" class="btn btn-outline-primary rounded-pill fw-bold"><i class="fas fa-folder-open me-2"></i> Kelola Karya Saya</button>
+                 <div style="margin-top: 50px;">
+                     <h5 class="fw-800 text-dark mb-0 px-3" id="prof-name">Nama Guru</h5>
+                     <div class="text-muted small fw-bold px-3 mb-2" id="prof-school">Unit Kerja</div>
+                     
+                     <div class="d-flex justify-content-center gap-2 mb-3">
+                         <span class="badge bg-soft-teal text-dark" id="prof-role">GURU</span>
+                         <span id="prof-medal"></span>
                      </div>
 
-                     <form id="formProfile" onsubmit="event.preventDefault(); simpanProfile();">
-                         <h6 class="fw-bold text-muted mb-3 border-bottom pb-2">Edit Data Diri</h6>
-                         <div class="mb-3">
-                             <label class="small fw-bold text-muted">Nama Lengkap</label>
-                             <input type="text" id="pName" class="form-control fw-bold" required>
+                     <!-- Rank Badge -->
+                     <div class="bg-light mx-4 p-2 rounded-3 border">
+                         <div class="small text-muted fw-bold mb-1">POSISI PERINGKAT</div>
+                         <div class="d-flex align-items-center justify-content-center gap-2">
+                             <i class="fas fa-trophy text-warning"></i>
+                             <span class="fw-800 text-dark fs-5" id="prof-rank"># -</span>
+                             <small class="text-muted">dari <span id="prof-total-user">0</span> Guru</small>
                          </div>
-                         <div class="mb-3">
-                             <label class="small fw-bold text-muted">Unit Kerja (Sekolah)</label>
-                             <input type="text" id="pSchool" class="form-control fw-bold" required>
+                     </div>
+                 </div>
+             </div>
+         </div>
+
+         <!-- RIGHT COLUMN: STATS & CONTENT -->
+         <div class="col-lg-8">
+             <!-- STATS ROW -->
+             <div class="row g-3 mb-4">
+                 <div class="col-4">
+                     <div class="profile-stats-box">
+                         <div class="h3 fw-800 text-primary mb-0" id="prof-stat-karya">0</div>
+                         <div class="small text-muted fw-bold">TOTAL KARYA</div>
+                     </div>
+                 </div>
+                 <div class="col-4">
+                     <div class="profile-stats-box">
+                         <div class="h3 fw-800 text-success mb-0" id="prof-stat-views">0</div>
+                         <div class="small text-muted fw-bold">DILIHAT</div>
+                     </div>
+                 </div>
+                 <div class="col-4">
+                     <div class="profile-stats-box">
+                         <div class="h3 fw-800 text-danger mb-0" id="prof-stat-likes">0</div>
+                         <div class="small text-muted fw-bold">DISUKAI</div>
+                     </div>
+                 </div>
+             </div>
+
+             <!-- TABS AREA -->
+             <div class="profile-card">
+                 <div class="d-flex border-bottom bg-white">
+                     <div class="prof-tab-link active" onclick="switchProfileTab('works')" id="tab-link-works"><i class="fas fa-folder-open me-2"></i>Daftar Karya Saya</div>
+                     <div class="prof-tab-link" onclick="switchProfileTab('edit')" id="tab-link-edit"><i class="fas fa-user-cog me-2"></i>Edit Profil</div>
+                 </div>
+                 
+                 <div class="p-0">
+                     <!-- TAB: WORKS -->
+                     <div id="prof-tab-works">
+                         <div class="table-responsive">
+                             <table class="table table-hover align-middle mb-0">
+                                 <thead class="bg-light">
+                                     <tr>
+                                         <th class="ps-4 py-3 small text-muted">DETAIL KARYA</th>
+                                         <th class="text-center small text-muted">STATS</th>
+                                         <th class="text-center small text-muted">STATUS</th>
+                                         <th class="text-center small text-muted pe-4">AKSI</th>
+                                     </tr>
+                                 </thead>
+                                 <tbody id="prof-works-list">
+                                     <!-- JS Generated -->
+                                 </tbody>
+                             </table>
                          </div>
-                         <div class="mb-4">
-                             <label class="small fw-bold text-muted">PIN Login (Ganti jika perlu)</label>
-                             <input type="text" id="pPin" class="form-control font-monospace" required>
-                             <input type="hidden" id="pOldPin">
+                         <div id="prof-empty-works" class="text-center py-5 d-none">
+                             <i class="fas fa-cloud-upload-alt fa-3x text-muted opacity-25 mb-3"></i>
+                             <p class="text-muted fw-bold">Belum ada karya yang diupload.</p>
+                             <button onclick="resetForm(); showModalInput()" class="btn btn-sm btn-primary rounded-pill fw-bold px-4">Upload Sekarang</button>
                          </div>
-                         <div class="d-grid">
-                             <button type="submit" class="btn btn-primary rounded-pill fw-bold py-2 shadow-sm">SIMPAN PERUBAHAN</button>
-                         </div>
-                     </form>
+                     </div>
+
+                     <!-- TAB: EDIT -->
+                     <div id="prof-tab-edit" class="d-none p-4">
+                         <form id="formProfile" onsubmit="event.preventDefault(); simpanProfile();">
+                             <div class="row">
+                                 <div class="col-md-6 mb-3">
+                                     <label class="small fw-bold text-muted">Nama Lengkap</label>
+                                     <input type="text" id="pName" class="form-control fw-bold" required>
+                                 </div>
+                                 <div class="col-md-6 mb-3">
+                                     <label class="small fw-bold text-muted">Unit Kerja</label>
+                                     <input type="text" id="pSchool" class="form-control fw-bold" required>
+                                 </div>
+                             </div>
+                             <div class="mb-4">
+                                 <label class="small fw-bold text-muted">PIN Login (Ganti jika perlu)</label>
+                                 <input type="text" id="pPin" class="form-control font-monospace bg-light" required>
+                                 <input type="hidden" id="pOldPin">
+                                 <div class="form-text small">Gunakan PIN ini untuk login selanjutnya.</div>
+                             </div>
+                             <div class="d-flex justify-content-end">
+                                 <button type="submit" class="btn btn-primary rounded-pill fw-bold px-5 shadow-sm">SIMPAN PERUBAHAN</button>
+                             </div>
+                         </form>
+                     </div>
                  </div>
              </div>
          </div>
@@ -642,8 +724,8 @@
         var iconLove = isSaved ? 'fas fa-heart text-danger' : 'far fa-heart';
         
         // --- LOGIKA TAMPILAN STATUS ---
-        // Jika Publik: Hanya tampilkan checkmark jika DISETUJUI
-        var checkMark = (isApproved && !isOwner && !isAdmin) ? '<div class="badge-approved"><i class="fas fa-check-circle"></i></div>' : '';
+        // Jika Publik: Hanya tampilkan checkmark jika DISETUJUI (Updated Soft Blue)
+        var checkMark = (isApproved && !isOwner && !isAdmin) ? '<div class="badge-approved"><i class="fas fa-check"></i></div>' : '';
         
         // --- LOGIKA PEMILIK / ADMIN ---
         // Menampilkan Badge Status & Feedback Box
@@ -964,30 +1046,90 @@
         
         document.getElementById('prof-avatar').innerText = STATE.user.name.charAt(0);
         document.getElementById('prof-name').innerText = STATE.user.name;
+        document.getElementById('prof-school').innerText = STATE.user.school;
         document.getElementById('prof-role').innerText = STATE.user.role;
         document.getElementById('pName').value = STATE.user.name;
         document.getElementById('pSchool').value = STATE.user.school;
         
-        // Load Statistics
+        // 1. CALCULATE STATS
         var myMedia = STATE.allMedia.filter(m => m[1] === STATE.user.name);
         var totalKarya = myMedia.length;
         var pendingKarya = myMedia.filter(m => m[9] === 'BARU').length;
-        // Hitung total views (index 14)
         var totalViews = myMedia.reduce((acc, curr) => acc + (parseInt(curr[14]) || 0), 0);
+        var totalLikes = 0; // Currently API doesn't return likes count per item separately in array, assuming not implemented fully yet or implicit.
 
         document.getElementById('prof-stat-karya').innerText = totalKarya;
         document.getElementById('prof-stat-views').innerText = totalViews;
-        document.getElementById('prof-stat-pending').innerText = pendingKarya;
+        document.getElementById('prof-stat-likes').innerText = "-"; // Placeholder
+
+        // 2. CALCULATE RANK & MEDAL
+        // We need all users for rank. If STATE.users is empty, rank will be accurate only if we fetch users first.
+        // For performance, we calculate roughly based on media owners if STATE.users is empty
+        var allTeachers = {};
+        STATE.allMedia.forEach(m => { var n = m[1]; allTeachers[n] = (allTeachers[n] || 0) + 1; });
+        var ranked = Object.entries(allTeachers).sort((a,b) => b[1] - a[1]);
+        var myRank = ranked.findIndex(r => r[0] === STATE.user.name) + 1;
+        var totalTeachers = Object.keys(allTeachers).length;
+        
+        document.getElementById('prof-rank').innerText = myRank > 0 ? `#${myRank}` : "-";
+        document.getElementById('prof-total-user').innerText = totalTeachers;
+
+        // Medal Logic
+        var medalHtml = '';
+        if (totalKarya >= 50) medalHtml = '<span class="medal-badge bg-warning text-dark"><i class="fas fa-crown"></i> SUHU</span>';
+        else if (totalKarya >= 20) medalHtml = '<span class="medal-badge bg-secondary text-white"><i class="fas fa-medal"></i> SENIOR</span>';
+        else if (totalKarya >= 5) medalHtml = '<span class="medal-badge bg-info text-white"><i class="fas fa-star"></i> AKTIF</span>';
+        else medalHtml = '<span class="medal-badge bg-light text-muted"><i class="fas fa-seedling"></i> PEMULA</span>';
+        document.getElementById('prof-medal').innerHTML = medalHtml;
+
+        // 3. RENDER WORK LIST
+        var listHtml = '';
+        if(myMedia.length === 0) {
+            document.getElementById('prof-empty-works').classList.remove('d-none');
+            document.getElementById('prof-works-list').innerHTML = '';
+        } else {
+            document.getElementById('prof-empty-works').classList.add('d-none');
+            myMedia.forEach((m) => {
+                var realIndex = STATE.allMedia.indexOf(m);
+                var statusBadge = m[9] === 'DISETUJUI' ? '<span class="badge bg-success">Tayang</span>' : (m[9] === 'REVISI' ? '<span class="badge bg-danger">Revisi</span>' : '<span class="badge bg-warning text-dark">Pending</span>');
+                listHtml += `
+                <tr>
+                    <td class="ps-4">
+                        <div class="fw-bold text-dark text-truncate" style="max-width: 200px;">${cleanStr(m[5])}</div>
+                        <div class="small text-muted">${cleanStr(m[6])} • ${cleanStr(m[11])}</div>
+                    </td>
+                    <td class="text-center small text-muted">
+                        <div><i class="fas fa-eye me-1"></i> ${m[14]||0}</div>
+                    </td>
+                    <td class="text-center">${statusBadge}</td>
+                    <td class="text-center pe-4">
+                        <button onclick="bukaEdit(${realIndex})" class="btn btn-sm btn-light border text-primary" title="Edit"><i class="fas fa-pencil-alt"></i></button>
+                        <button onclick="hapusKarya(${realIndex})" class="btn btn-sm btn-light border text-danger ms-1" title="Hapus"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>`;
+            });
+            document.getElementById('prof-works-list').innerHTML = listHtml;
+        }
 
         // Cek PIN
         if(STATE.user.pin) {
             document.getElementById('pOldPin').value = STATE.user.pin;
             document.getElementById('pPin').value = STATE.user.pin;
-        } else {
-             Swal.fire('Info', 'Sesi data tidak lengkap. Mohon login ulang untuk mengedit profil.', 'warning');
         }
+        
+        switchProfileTab('works'); // Default tab
     }
     
+    function switchProfileTab(tab) {
+        document.querySelectorAll('.prof-tab-link').forEach(el => el.classList.remove('active'));
+        document.getElementById('tab-link-'+tab).classList.add('active');
+        
+        document.getElementById('prof-tab-works').classList.add('d-none');
+        document.getElementById('prof-tab-edit').classList.add('d-none');
+        
+        document.getElementById('prof-tab-'+tab).classList.remove('d-none');
+    }
+
     function simpanProfile() {
         var p = {
             nama: document.getElementById('pName').value,
