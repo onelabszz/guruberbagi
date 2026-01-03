@@ -429,12 +429,14 @@
     async function api(action, payload=null) {
        // Caching Logic: Jika action READ, cek LocalStorage
        if(action==='read'){ 
-           const c=localStorage.getItem(CACHE_KEY); 
-           if(c){
-               const j=JSON.parse(c);
-               // Jika cache masih valid (< 5 menit), pakai data cache
-               if(Date.now()-j.ts < CACHE_DURATION) return j.data;
-           } 
+           try {
+               const c=localStorage.getItem(CACHE_KEY); 
+               if(c){
+                   const j=JSON.parse(c);
+                   // Jika cache masih valid (< 5 menit), pakai data cache
+                   if(Date.now()-j.ts < CACHE_DURATION) return j.data;
+               } 
+           } catch(e) { console.log("Cache read error", e); }
        }
        
        // Jika ada aksi tulis (Simpan/Hapus), hapus cache agar data terupdate
@@ -447,7 +449,11 @@
          
          // Jika berhasil baca data baru, simpan ke cache
          if(action==='read'&&res.status==='success') {
-             localStorage.setItem(CACHE_KEY, JSON.stringify({ts:Date.now(),data:res}));
+             try {
+                localStorage.setItem(CACHE_KEY, JSON.stringify({ts:Date.now(),data:res}));
+             } catch (quotaErr) {
+                console.warn("LocalStorage penuh, cache dinonaktifkan sementara.");
+             }
          }
          return res;
        } catch(e) { console.error(e); return {status:'error',message:e.toString()}; }
