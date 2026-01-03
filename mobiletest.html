@@ -25,7 +25,7 @@
       background-color: var(--bg-body); 
       font-family: 'Plus Jakarta Sans', sans-serif; 
       color: var(--text-main); 
-      padding-top: 115px; /* Adjusted for Header + Tabs */
+      padding-top: 115px; 
       padding-bottom: 90px;
     }
 
@@ -48,7 +48,7 @@
     .nav-pills-custom .nav-link { color: var(--text-muted); font-weight: 600; font-size: 0.8rem; padding: 6px 12px; border-radius: 50rem; transition: all 0.2s; }
     .nav-pills-custom .nav-link.active { background-color: white; color: var(--primary); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
-    /* --- SEARCH BAR FIX (FIXED POSITION) --- */
+    /* --- SEARCH BAR FIX --- */
     #searchBar {
         position: fixed; top: 114px; left: 0; right: 0; 
         background: white; z-index: 1015; 
@@ -118,7 +118,7 @@
     .profile-stats-box { background: #f8fafc; border-radius: 12px; padding: 10px 5px; text-align: center; border: 1px solid #e2e8f0; }
     .medal-badge { font-size: 0.7rem; padding: 4px 10px; border-radius: 20px; font-weight: 800; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 5px; background: #f1f5f9; color: #64748b; }
 
-    /* --- BUTTON EFFECT (Native Feel) --- */
+    /* --- BUTTON EFFECT --- */
     .btn-press-effect:active { transform: scale(0.95); transition: transform 0.1s; }
 
     /* --- FAB --- */
@@ -410,7 +410,7 @@
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxCTYyM2VjFQzfLKKIcYevkivH4TerMrU7jYakvJxR75_yXULW_YmKFy7nYrdBhnOAq/exec";
-    const CACHE_KEY = 'gb_cache_data';
+    const CACHE_KEY = 'gb_cache_data'; // Kunci Cache yang konsisten
     const CACHE_DURATION = 5 * 60 * 1000; // 5 Menit Cache
 
     let APP = {
@@ -427,16 +427,17 @@
     };
 
     async function api(action, payload=null) {
-       // Caching Logic (Match index.html)
+       // Caching Logic: Jika action READ, cek LocalStorage
        if(action==='read'){ 
            const c=localStorage.getItem(CACHE_KEY); 
            if(c){
                const j=JSON.parse(c);
+               // Jika cache masih valid (< 5 menit), pakai data cache
                if(Date.now()-j.ts < CACHE_DURATION) return j.data;
            } 
        }
        
-       // Write operations invalidate cache
+       // Jika ada aksi tulis (Simpan/Hapus), hapus cache agar data terupdate
        if(['simpan','hapus','updateKurasi','simpanUser','hapusUser'].includes(action)) localStorage.removeItem(CACHE_KEY);
        
        try {
@@ -444,6 +445,7 @@
          if(action==='read') url+="?action=read"; else opts={method:"POST",body:JSON.stringify({action,payload})};
          const req=await fetch(url,opts); const res=await req.json();
          
+         // Jika berhasil baca data baru, simpan ke cache
          if(action==='read'&&res.status==='success') {
              localStorage.setItem(CACHE_KEY, JSON.stringify({ts:Date.now(),data:res}));
          }
@@ -482,7 +484,7 @@
        document.getElementById('view-profile').classList.toggle('d-none', viewName !== 'PROFILE');
        document.getElementById('fabAdd').classList.toggle('d-none', viewName === 'ADMIN' || APP.user.role === 'GUEST' || viewName === 'PROFILE');
        if(viewName === 'PROFILE') loadProfile();
-       document.getElementById('searchBar').classList.add('d-none'); // Auto hide search on switch
+       document.getElementById('searchBar').classList.add('d-none'); 
     }
     
     function switchTab(tab) {
@@ -530,7 +532,6 @@
           let thumbHtml = `<div class="m-thumb" style="background:${color}"><div class="m-thumb-icon"><i class="fas ${icon}"></i><span>${j}</span></div></div>`;
           const ytId = getYoutubeId(item[8]); if(ytId) thumbHtml = `<div class="m-thumb"><img src="https://img.youtube.com/vi/${ytId}/mqdefault.jpg"></div>`;
 
-          // STATUS LOGIC
           let statusBadge = '';
           if (status === 'DISETUJUI') statusBadge = `<div class="badge-approved-soft"><i class="fas fa-check"></i></div>`;
           else if (isMy || APP.user.role !== 'GUEST') {
@@ -538,13 +539,12 @@
              else if(status === 'REVISI') statusBadge = `<span class="m-status st-rev">REVISI</span>`;
           }
           
-          // FEEDBACK LOGIC
           let feedbackHtml = '';
           if((isMy || ['ADMIN','MODERATOR'].includes(APP.user.role)) && item[12]) {
-              feedbackHtml = `<div class="feedback-box-mini"><i class="fas fa-comment-dots"></i> ${item[12]}</div>`;
+              feedbackHtml = `<div class="feedback-box-mini"><i class="fas fa-comment-dots me-1"></i>${item[12]}</div>`;
           }
 
-          html += `<div class="m-card" onclick="showDetail('${id}')"><div class="m-card-inner"><button class="btn-fav ${isFav?'is-fav':''}" onclick="toggleFavorite(event, '${id}')"><i class="${isFav?'fas':'far'} fa-heart"></i></button>${thumbHtml}<div class="m-content"><div class="m-title">${title}</div><div class="m-meta"><i class="fas fa-user-circle me-1"></i> ${guru}</div><span class="m-badge badge-mapel">${mapel}</span></div>${statusBadge}</div>${feedbackHtml}</div>`;
+          html += `<div class="m-card flex-wrap" onclick="showDetail('${id}')"><div style="display:flex; width:100%; gap:12px; align-items:start;"><button class="btn-fav ${isFav?'is-fav':''}" onclick="toggleFavorite(event, '${id}')"><i class="${isFav?'fas':'far'} fa-heart"></i></button>${thumbHtml}<div class="m-content"><div class="m-title">${title}</div><div class="m-meta"><i class="fas fa-user-circle me-1"></i> ${guru}</div><span class="m-badge badge-mapel">${mapel}</span></div>${statusBadge}</div>${feedbackHtml}</div>`;
        });
        container.innerHTML = html;
        document.getElementById('btnLoadMore').classList.toggle('d-none', APP.filtered.length <= sliced.length);
@@ -596,13 +596,11 @@
        new bootstrap.Modal(document.getElementById('modalDetail')).show();
     }
     
-    // SHARE LOGIC (Added Feature)
     function shareContent() {
         if(!APP.currentDetailId) return;
         const item = APP.data.find(i => i[13] === APP.currentDetailId);
         const url = item[8] && item[8].includes('http') ? item[8] : window.location.href;
         const text = `Cek karya "${item[5]}" oleh ${item[1]} di Guru Berbagi!`;
-        
         if (navigator.share) {
             navigator.share({ title: item[5], text: text, url: url }).catch(console.error);
         } else {
