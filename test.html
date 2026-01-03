@@ -247,8 +247,31 @@
                      <h4 class="fw-bold mb-0" id="prof-name">Nama Guru</h4>
                      <span class="badge bg-white text-primary mt-2" id="prof-role">GURU</span>
                  </div>
+                 
+                 <!-- STATISTIK KONTRIBUSI (NEW FEATURE) -->
+                 <div class="row g-0 border-bottom text-center">
+                    <div class="col-4 border-end py-3">
+                        <div class="h5 fw-800 mb-0 text-primary" id="prof-stat-karya">0</div>
+                        <div class="small text-muted fw-bold" style="font-size:0.7rem;">TOTAL KARYA</div>
+                    </div>
+                    <div class="col-4 border-end py-3">
+                        <div class="h5 fw-800 mb-0 text-success" id="prof-stat-views">0</div>
+                        <div class="small text-muted fw-bold" style="font-size:0.7rem;">TOTAL DILIHAT</div>
+                    </div>
+                    <div class="col-4 py-3">
+                        <div class="h5 fw-800 mb-0 text-warning" id="prof-stat-pending">0</div>
+                        <div class="small text-muted fw-bold" style="font-size:0.7rem;">PENDING</div>
+                    </div>
+                 </div>
+
                  <div class="p-4">
+                     <!-- TOMBOL AKSES CEPAT (NEW FEATURE) -->
+                     <div class="d-grid gap-2 mb-4">
+                        <button onclick="filterSaya(); switchView('GALERI')" class="btn btn-outline-primary rounded-pill fw-bold"><i class="fas fa-folder-open me-2"></i> Kelola Karya Saya</button>
+                     </div>
+
                      <form id="formProfile" onsubmit="event.preventDefault(); simpanProfile();">
+                         <h6 class="fw-bold text-muted mb-3 border-bottom pb-2">Edit Data Diri</h6>
                          <div class="mb-3">
                              <label class="small fw-bold text-muted">Nama Lengkap</label>
                              <input type="text" id="pName" class="form-control fw-bold" required>
@@ -938,24 +961,29 @@
     // --- PROFILE ---
     function loadProfile() {
         if(!STATE.user || STATE.user.role === 'GUEST') return;
+        
         document.getElementById('prof-avatar').innerText = STATE.user.name.charAt(0);
         document.getElementById('prof-name').innerText = STATE.user.name;
         document.getElementById('prof-role').innerText = STATE.user.role;
         document.getElementById('pName').value = STATE.user.name;
         document.getElementById('pSchool').value = STATE.user.school;
-        // Kita tidak menyimpan PIN di session untuk keamanan penuh, tapi user harus ingat PIN lama untuk ganti
-        // Atau asumsikan user login pakai PIN, maka kita simpan PIN di session saat login?
-        // Di fungsi loginModal, res.user disimpan. Mari kita cek strukturnya.
-        // Biasanya respons API login mengembalikan {name, school, role, pin?}.
-        // Jika tidak ada PIN di session, user harus input PIN lama. Tapi demi kemudahan, kita anggap Edit Profile = Update User logic.
-        // Kita gunakan 'oldPin' yang diinput user atau ambil dari session jika ada.
         
-        // Cek apakah object user punya PIN
+        // Load Statistics
+        var myMedia = STATE.allMedia.filter(m => m[1] === STATE.user.name);
+        var totalKarya = myMedia.length;
+        var pendingKarya = myMedia.filter(m => m[9] === 'BARU').length;
+        // Hitung total views (index 14)
+        var totalViews = myMedia.reduce((acc, curr) => acc + (parseInt(curr[14]) || 0), 0);
+
+        document.getElementById('prof-stat-karya').innerText = totalKarya;
+        document.getElementById('prof-stat-views').innerText = totalViews;
+        document.getElementById('prof-stat-pending').innerText = pendingKarya;
+
+        // Cek PIN
         if(STATE.user.pin) {
             document.getElementById('pOldPin').value = STATE.user.pin;
             document.getElementById('pPin').value = STATE.user.pin;
         } else {
-             // Fallback jika session tidak simpan PIN (harus login ulang sebenarnya)
              Swal.fire('Info', 'Sesi data tidak lengkap. Mohon login ulang untuk mengedit profil.', 'warning');
         }
     }
