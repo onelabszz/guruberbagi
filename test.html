@@ -148,6 +148,8 @@
     
     .transition-all { transition: all 0.3s ease; }
     .transition-all:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(45, 139, 131, 0.2) !important; }
+    
+    .cursor-pointer { cursor: pointer; }
   </style>
 </head>
 <body>
@@ -184,7 +186,11 @@
         <button id="btnDashboard" class="btn btn-warning btn-sm rounded-pill fw-bold d-none shadow-sm text-dark" onclick="switchView('ADMIN')"><i class="fas fa-chart-pie me-1"></i> Dashboard</button>
         <button id="btnLogin" class="btn btn-outline-primary btn-sm rounded-pill fw-bold px-4" onclick="loginModal()">Login Guru</button>
         <div id="userPanel" class="d-none d-flex align-items-center gap-3">
-          <div class="text-end lh-1"><div id="uName" class="fw-bold text-dark" style="font-size:0.85rem;">User</div><div id="uRole" class="badge bg-secondary" style="font-size:0.55rem;">GURU</div></div>
+          <div class="text-end lh-1 cursor-pointer" onclick="switchView('PROFILE')">
+            <div id="uName" class="fw-bold text-dark" style="font-size:0.85rem;">User</div>
+            <div id="uRole" class="badge bg-secondary" style="font-size:0.55rem;">GURU</div>
+          </div>
+          <button onclick="switchView('PROFILE')" class="btn btn-light btn-sm rounded-circle border text-primary" title="Profil Saya"><i class="fas fa-user-circle"></i></button>
           <button onclick="logout()" class="btn btn-light btn-sm rounded-circle border text-danger" title="Logout"><i class="fas fa-power-off"></i></button>
         </div>
       </div>
@@ -230,6 +236,41 @@
        <div class="small text-muted mt-2" id="loadMoreInfo"></div>
     </div>
   </div>
+  
+  <!-- VIEW: PROFILE -->
+  <div id="view-profile" class="container mt-4 d-none">
+     <div class="row justify-content-center">
+         <div class="col-md-8 col-lg-6">
+             <div class="bg-white rounded-4 shadow-sm border overflow-hidden">
+                 <div class="bg-primary p-4 text-center text-white">
+                     <div class="avatar-circle mx-auto mb-2 bg-white text-primary fs-3" style="width: 80px; height: 80px;" id="prof-avatar">U</div>
+                     <h4 class="fw-bold mb-0" id="prof-name">Nama Guru</h4>
+                     <span class="badge bg-white text-primary mt-2" id="prof-role">GURU</span>
+                 </div>
+                 <div class="p-4">
+                     <form id="formProfile" onsubmit="event.preventDefault(); simpanProfile();">
+                         <div class="mb-3">
+                             <label class="small fw-bold text-muted">Nama Lengkap</label>
+                             <input type="text" id="pName" class="form-control fw-bold" required>
+                         </div>
+                         <div class="mb-3">
+                             <label class="small fw-bold text-muted">Unit Kerja (Sekolah)</label>
+                             <input type="text" id="pSchool" class="form-control fw-bold" required>
+                         </div>
+                         <div class="mb-4">
+                             <label class="small fw-bold text-muted">PIN Login (Ganti jika perlu)</label>
+                             <input type="text" id="pPin" class="form-control font-monospace" required>
+                             <input type="hidden" id="pOldPin">
+                         </div>
+                         <div class="d-grid">
+                             <button type="submit" class="btn btn-primary rounded-pill fw-bold py-2 shadow-sm">SIMPAN PERUBAHAN</button>
+                         </div>
+                     </form>
+                 </div>
+             </div>
+         </div>
+     </div>
+  </div>
 
   <!-- VIEW: ADMIN DASHBOARD -->
   <div id="view-admin" class="container mt-4 d-none">
@@ -255,7 +296,10 @@
 
       <div class="tab-content">
         <div class="tab-pane fade show active" id="tab-media">
-          <input type="text" class="form-control rounded-pill px-4 mb-3 border-secondary bg-light" placeholder="Cari karya di database..." oninput="searchAdminTable(this.value)">
+          <div class="d-flex flex-column flex-md-row gap-3 justify-content-between mb-3">
+             <input type="text" class="form-control rounded-pill px-4 border-secondary bg-light" placeholder="Cari karya di database..." oninput="searchAdminTable(this.value)">
+             <button onclick="setujuiSemua()" class="btn btn-success rounded-pill fw-bold text-nowrap px-4 shadow-sm"><i class="fas fa-check-double me-2"></i> Setujui Semua Pending</button>
+          </div>
           <div class="table-responsive rounded-3 border">
             <table class="table pretty-table table-hover align-middle mb-0">
               <thead><tr><th class="ps-3">INFO KARYA</th><th>GURU</th><th class="text-center">STATUS</th><th class="text-center">AKSI</th></tr></thead>
@@ -335,6 +379,10 @@
             <input type="hidden" id="formMode" value="ADD"><input type="hidden" id="editRowIdx">
             <div class="row h-100">
               <div class="col-lg-7 modal-left-col border-end pe-4">
+                <div id="feedbackAlert" class="alert alert-warning d-none mb-3 border-warning">
+                   <div class="fw-bold text-warning small mb-1"><i class="fas fa-comment-dots me-2"></i>CATATAN MODERATOR (Perlu Revisi):</div>
+                   <div id="feedbackMsg" class="small text-dark fw-bold"></div>
+                </div>
                 <div class="mb-3"><label class="small fw-bold mb-1 text-muted">Judul Media <span class="text-danger">*</span></label><input type="text" id="inJudul" class="form-control fw-bold bg-light" placeholder="Judul karya..."></div>
                 <div class="row">
                   <div class="col-md-6 mb-3"><label class="small fw-bold mb-1 text-muted">Mata Pelajaran <span class="text-danger">*</span></label><select id="inMapel" class="form-select" onchange="checkDropdown('inMapel','manMapel',this.value)"></select><input type="text" id="manMapel" class="form-control mt-2 d-none" placeholder="Tulis mapel..." required></div>
@@ -391,7 +439,7 @@
   
   <script>
     // --- KONFIGURASI ---
-    const API_URL = "https://script.google.com/macros/s/AKfycbzhrWjl2Dc0i8V45dD8vNXrt3gfmvEU1pZ5hZOELkTz6e29l68d2hsHfGQEjqTVYdY0/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbxCTYyM2VjFQzfLKKIcYevkivH4TerMrU7jYakvJxR75_yXULW_YmKFy7nYrdBhnOAq/exec";
     const CACHE_KEY_DATA = 'guruBerbagi_data_cache';
     const CACHE_DURATION = 5 * 60 * 1000; // 5 Menit Cache
 
@@ -435,7 +483,7 @@
            return json;
         } else {
            // Write operations invalidate cache
-           if(['add', 'hapus', 'updateKurasi'].includes(action)) {
+           if(['simpan', 'hapus', 'updateKurasi', 'simpanUser', 'hapusUser'].includes(action)) {
                localStorage.removeItem(CACHE_KEY_DATA);
            }
            
@@ -485,21 +533,30 @@
     }
 
     function switchView(viewName) {
-      var g = document.getElementById('view-galeri'), a = document.getElementById('view-admin'), s = document.getElementById('searchWrapper');
+      var g = document.getElementById('view-galeri');
+      var a = document.getElementById('view-admin');
+      var p = document.getElementById('view-profile');
+      var s = document.getElementById('searchWrapper');
+      
+      g.classList.add('d-none'); a.classList.add('d-none'); p.classList.add('d-none');
+      document.getElementById('btnHome').classList.remove('d-none');
+      document.getElementById('btnDashboard').classList.toggle('d-none', !(STATE.user.role === 'ADMIN' || STATE.user.role === 'MODERATOR'));
+      document.getElementById('btnAdd').classList.add('d-none');
+      
       if (viewName === 'ADMIN') {
-        g.classList.add('d-none'); a.classList.remove('d-none');
-        document.getElementById('btnHome').classList.remove('d-none');
+        a.classList.remove('d-none');
         document.getElementById('btnDashboard').classList.add('d-none');
-        document.getElementById('btnAdd').classList.add('d-none');
         s.style.visibility = 'hidden';
         renderTableAdmin(STATE.allMedia);
+      } else if (viewName === 'PROFILE') {
+        p.classList.remove('d-none');
+        s.style.visibility = 'hidden';
+        loadProfile();
       } else {
-        g.classList.remove('d-none'); a.classList.add('d-none');
+        // GALERI
+        g.classList.remove('d-none');
         document.getElementById('btnHome').classList.add('d-none');
-        if(STATE.user.role !== 'GUEST') {
-           document.getElementById('btnDashboard').classList.toggle('d-none', !(STATE.user.role === 'ADMIN' || STATE.user.role === 'MODERATOR'));
-           document.getElementById('btnAdd').classList.remove('d-none');
-        }
+        if(STATE.user.role !== 'GUEST') document.getElementById('btnAdd').classList.remove('d-none');
         s.style.visibility = 'visible';
       }
     }
@@ -671,22 +728,26 @@
     function tutupPreview() { if (document.fullscreenElement) tutupFullscreen(); var overlay = document.getElementById('previewOverlay'), frame = document.getElementById('previewFrame'); overlay.style.display = 'none'; frame.src = ""; if(frame.dataset.blob) { URL.revokeObjectURL(frame.dataset.blob); frame.dataset.blob = ""; } }
 
     function showModalInput() { if (!modalInputInstance) modalInputInstance = new bootstrap.Modal(document.getElementById('modalInput'), {backdrop:'static', keyboard:false}); modalInputInstance.show(); }
-    function resetForm() { document.getElementById('modalForm').reset(); document.getElementById('formMode').value="ADD"; document.getElementById('inputSourceType').value = 'LINK'; toggleInputSource('LINK'); updateLivePreview(); toggleKaih(false); document.getElementById('manMapel').classList.add('d-none'); document.getElementById('manJenis').classList.add('d-none'); }
+    function resetForm() { document.getElementById('modalForm').reset(); document.getElementById('formMode').value="ADD"; document.getElementById('inputSourceType').value = 'LINK'; toggleInputSource('LINK'); updateLivePreview(); toggleKaih(false); document.getElementById('manMapel').classList.add('d-none'); document.getElementById('manJenis').classList.add('d-none'); document.getElementById('feedbackAlert').classList.add('d-none'); }
 
     function prosesSimpan() {
         var judul = document.getElementById('inJudul').value; if(!judul) { Swal.fire('Error', 'Judul wajib diisi', 'error'); return; }
         var mapel = document.getElementById('inMapel').value; if(mapel === 'LAINNYA') mapel = document.getElementById('manMapel').value;
         var jenis = document.getElementById('inJenis').value; if(jenis === 'LAINNYA') jenis = document.getElementById('manJenis').value;
+        var mode = document.getElementById('formMode').value;
         var payload = {
-            user: STATE.user.name, school: STATE.user.school || "-", judul: judul, mapel: mapel, jenis: jenis,
-            fase: document.getElementById('inFase').value, sem: document.getElementById('inSem').value,
-            kaih: document.getElementById('checkKaih').checked ? document.getElementById('inKaihType').value : "",
-            link: document.getElementById('inputSourceType').value === 'STORY' ? document.getElementById('inLinkStory').value : document.getElementById('inLink').value,
-            html: document.getElementById('inputSourceType').value === 'HTML' ? document.getElementById('inHtml').value : ""
+            nama: STATE.user.name, sekolah: STATE.user.school || "-", judul: judul, mapel: mapel, jenis: jenis,
+            fase: document.getElementById('inFase').value, 
+            semester: document.getElementById('inSem').value,
+            kaihType: document.getElementById('checkKaih').checked ? document.getElementById('inKaihType').value : "",
+            linkLuar: document.getElementById('inputSourceType').value === 'STORY' ? document.getElementById('inLinkStory').value : document.getElementById('inLink').value,
+            kodeHtml: document.getElementById('inputSourceType').value === 'HTML' ? document.getElementById('inHtml').value : "",
+            mode: mode
         };
-        var mode = document.getElementById('formMode').value; if(mode === 'EDIT') payload.id = document.getElementById('editRowIdx').value;
+        if(mode === 'EDIT') payload.idUnik = document.getElementById('editRowIdx').value;
+        
         Swal.fire({title: 'Menyimpan...', didOpen:()=>{Swal.showLoading()}});
-        callApi('add', payload).then(res => { if(res.status === 'success') { Swal.fire('Berhasil', 'Karya berhasil disimpan!', 'success'); bootstrap.Modal.getInstance(document.getElementById('modalInput')).hide(); loadData(); } else { Swal.fire('Gagal', res.message, 'error'); } });
+        callApi('simpan', payload).then(res => { if(res.status === 'success') { Swal.fire('Berhasil', 'Karya berhasil disimpan!', 'success'); bootstrap.Modal.getInstance(document.getElementById('modalInput')).hide(); loadData(); } else { Swal.fire('Gagal', res.message, 'error'); } });
     }
 
     function bukaEdit(index) {
@@ -699,6 +760,16 @@
       else { document.getElementById('inputSourceType').value = 'LINK'; toggleInputSource('LINK'); document.getElementById('inLink').value = d[8]; }
       setValOrOther('inMapel', d[6], 'manMapel'); setValOrOther('inJenis', d[11], 'manJenis');
       var isKaih = d[10] && d[10] !== ""; document.getElementById('checkKaih').checked = isKaih; toggleKaih(isKaih); if(isKaih) document.getElementById('inKaihType').value = d[10];
+      
+      // Feedback display logic
+      var fb = d[12];
+      if(fb && fb.trim().length > 0) {
+          document.getElementById('feedbackAlert').classList.remove('d-none');
+          document.getElementById('feedbackMsg').innerText = fb;
+      } else {
+          document.getElementById('feedbackAlert').classList.add('d-none');
+      }
+      
       updateLivePreview(); showModalInput();
     }
 
@@ -766,6 +837,23 @@
     function bukaKurasi(id,st,fb) { document.getElementById('kurasiId').value=id; document.getElementById('kurasiStatus').value=st; document.getElementById('kurasiFeedback').value=fb; new bootstrap.Modal('#modalKurasi').show(); }
     function simpanKurasi() { callApi('updateKurasi', { id: document.getElementById('kurasiId').value, status: document.getElementById('kurasiStatus').value, feedback: document.getElementById('kurasiFeedback').value }).then(function(){ Swal.fire('Sukses','','success');loadData();bootstrap.Modal.getInstance(document.getElementById('modalKurasi')).hide(); }); }
     
+    // Fungsi Setujui Semua (NEW)
+    async function setujuiSemua() {
+        var pending = STATE.allMedia.filter(m => m[9] === 'BARU');
+        if(pending.length === 0) { Swal.fire('Info', 'Tidak ada karya status BARU.', 'info'); return; }
+        
+        var result = await Swal.fire({title: `Setujui ${pending.length} Karya?`, text: "Semua karya status BARU akan diubah menjadi DISETUJUI.", icon: 'question', showCancelButton: true});
+        if(result.isConfirmed) {
+            Swal.fire({title: 'Memproses...', didOpen:()=>{Swal.showLoading()}});
+            // Client-side batch loop because backend might not handle array payload
+            for (let i = 0; i < pending.length; i++) {
+                await callApi('updateKurasi', { id: pending[i][13], status: 'DISETUJUI', feedback: '' });
+            }
+            Swal.fire('Sukses', 'Semua karya pending telah disetujui.', 'success');
+            loadData();
+        }
+    }
+
     // --- FUNGSI ADMIN: USER, SEKOLAH, GURU ---
 
     function showModalInputUser() { new bootstrap.Modal(document.getElementById('modalUser')).show(); }
@@ -786,7 +874,7 @@
                 <td class="text-center"><span class="badge bg-light text-dark border px-3">${jml} Karya</span></td>
                 <td class="font-monospace fw-bold text-muted">${u[2]}</td>
                 <td><span class="badge ${badgeRole}">${u[3]}</span></td>
-                <td class="text-center"><div class="d-flex justify-content-center gap-1"><button onclick="bukaEditUser('${u[2]}')" class="btn-soft btn-soft-primary"><i class="fas fa-pencil-alt"></i></button><button onclick="hapusUser('${u[2]}')" class="btn-soft btn-soft-danger"><i class="fas fa-trash"></i></button></div></td>
+                <td class="text-center"><div class="d-flex justify-content-center gap-1"><button onclick="bukaEditUser('${u[2]}')" class="btn-soft btn-soft-primary"><i class="fas fa-edit"></i></button><button onclick="hapusUser('${u[2]}')" class="btn-soft btn-soft-danger"><i class="fas fa-trash"></i></button></div></td>
                 </tr>`; 
             }); 
             document.getElementById('tableUsers').innerHTML=h; 
@@ -847,6 +935,52 @@
         document.getElementById('tableRankTeacher').innerHTML = h;
     }
     
+    // --- PROFILE ---
+    function loadProfile() {
+        if(!STATE.user || STATE.user.role === 'GUEST') return;
+        document.getElementById('prof-avatar').innerText = STATE.user.name.charAt(0);
+        document.getElementById('prof-name').innerText = STATE.user.name;
+        document.getElementById('prof-role').innerText = STATE.user.role;
+        document.getElementById('pName').value = STATE.user.name;
+        document.getElementById('pSchool').value = STATE.user.school;
+        // Kita tidak menyimpan PIN di session untuk keamanan penuh, tapi user harus ingat PIN lama untuk ganti
+        // Atau asumsikan user login pakai PIN, maka kita simpan PIN di session saat login?
+        // Di fungsi loginModal, res.user disimpan. Mari kita cek strukturnya.
+        // Biasanya respons API login mengembalikan {name, school, role, pin?}.
+        // Jika tidak ada PIN di session, user harus input PIN lama. Tapi demi kemudahan, kita anggap Edit Profile = Update User logic.
+        // Kita gunakan 'oldPin' yang diinput user atau ambil dari session jika ada.
+        
+        // Cek apakah object user punya PIN
+        if(STATE.user.pin) {
+            document.getElementById('pOldPin').value = STATE.user.pin;
+            document.getElementById('pPin').value = STATE.user.pin;
+        } else {
+             // Fallback jika session tidak simpan PIN (harus login ulang sebenarnya)
+             Swal.fire('Info', 'Sesi data tidak lengkap. Mohon login ulang untuk mengedit profil.', 'warning');
+        }
+    }
+    
+    function simpanProfile() {
+        var p = {
+            nama: document.getElementById('pName').value,
+            sekolah: document.getElementById('pSchool').value,
+            pin: document.getElementById('pPin').value,
+            role: STATE.user.role, // Role tidak berubah
+            oldPin: document.getElementById('pOldPin').value
+        };
+        
+        Swal.fire({title: 'Menyimpan Profil...', didOpen:()=>{Swal.showLoading()}});
+        callApi('simpanUser', p).then(function(res){ 
+            if(res.status==='success'){ 
+                Swal.fire('Sukses','Profil diperbarui. Silakan login ulang.','success').then(() => {
+                    logout();
+                }); 
+            } else { 
+                Swal.fire('Error',res.message,'error'); 
+            } 
+        });
+    }
+
     function resetUserForm() { document.getElementById('formUser').reset(); document.getElementById('userMode').value="ADD"; }
     function bukaEditUser(pin) { var u=STATE.users.find(x=>x[2].toString()===pin.toString()); if(!u)return; document.getElementById('userMode').value="EDIT"; document.getElementById('oldPin').value=pin; document.getElementById('userName').value=u[0]; document.getElementById('userSchool').value=u[1]; document.getElementById('userPin').value=u[2]; document.getElementById('userRole').value=u[3]; new bootstrap.Modal('#modalUser').show(); }
     function prosesSimpanUser() { 
