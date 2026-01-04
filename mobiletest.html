@@ -154,6 +154,10 @@
     .d-none { display: none !important; }
     .bg-purple { background-color: #9333ea !important; color: white; }
     .bg-indigo { background-color: #4f46e5 !important; color: white; }
+
+    /* Profile Tabs */
+    .nav-pills-profile .nav-link { color: #64748b; background: #f1f5f9; border-radius: 50rem; padding: 6px 14px; font-size: 0.8rem; font-weight: 700; margin-right: 6px; }
+    .nav-pills-profile .nav-link.active { background: var(--primary); color: white; }
   </style>
 </head>
 <body>
@@ -221,10 +225,10 @@
           </div>
         </div>
         
-        <h6 class="fw-bold text-muted small mt-4">NAVIGASI</h6>
-        <div class="list-group list-group-flush mb-3">
-           <button id="menuDashboard" onclick="switchView('ADMIN'); hideMenu();" class="list-group-item list-group-item-action border-0 px-0 d-none"><i class="fas fa-chart-pie me-2 text-warning"></i> Dashboard Monitoring</button>
-        </div>
+        <!-- RESTORED: Admin Dashboard Button in Menu -->
+        <button id="menuDashboardItem" class="btn btn-warning w-100 rounded-pill fw-bold mb-4 d-none" onclick="switchTab('ADMIN'); hideMenu();">
+           <i class="fas fa-chart-pie me-2"></i> Dashboard Pusat
+        </button>
 
         <h6 class="fw-bold text-muted small mt-3">FILTER TAMBAHAN</h6>
         <div class="mb-3">
@@ -272,7 +276,7 @@
                </div>
            </div>
        </div>
-       <div class="row g-2 mb-4">
+       <div class="row g-2 mb-3">
            <div class="col-4">
                <div class="profile-stats-box">
                    <div class="h4 fw-800 text-primary mb-0" id="prof-stat-karya">0</div>
@@ -292,64 +296,81 @@
                </div>
            </div>
        </div>
-       <h6 class="fw-bold text-muted small px-2 mb-3"><i class="fas fa-folder-open me-2"></i>DAFTAR KARYA SAYA</h6>
-       <div id="prof-works-list"></div>
-       <div id="prof-empty-works" class="text-center py-5 d-none">
-           <i class="fas fa-cloud-upload-alt fa-3x text-muted opacity-25 mb-3"></i>
-           <p class="text-muted fw-bold small">Belum ada karya yang diupload.</p>
-           <button onclick="openInputModal()" class="btn btn-sm btn-primary rounded-pill fw-bold px-4 btn-press-effect">Upload Sekarang</button>
+
+       <!-- PROFILE TABS -->
+       <ul class="nav nav-pills nav-pills-profile mb-3 border-bottom pb-3" id="pills-tab" role="tablist">
+         <li class="nav-item" role="presentation">
+           <button class="nav-link active" id="pills-karya-tab" data-bs-toggle="pill" data-bs-target="#pills-karya" type="button">Karya Saya</button>
+         </li>
+         <li class="nav-item" role="presentation" id="tab-dashboard-li" style="display:none;">
+           <button class="nav-link" id="pills-dashboard-tab" data-bs-toggle="pill" data-bs-target="#pills-dashboard" type="button" onclick="updateStats()">Monitoring</button>
+         </li>
+       </ul>
+
+       <div class="tab-content" id="pills-tabContent">
+          <!-- TAB: KARYA -->
+          <div class="tab-pane fade show active" id="pills-karya">
+               <div id="prof-works-list"></div>
+               <div id="prof-empty-works" class="text-center py-5 d-none">
+                   <i class="fas fa-cloud-upload-alt fa-3x text-muted opacity-25 mb-3"></i>
+                   <p class="text-muted fw-bold small">Belum ada karya yang diupload.</p>
+                   <button onclick="openInputModal()" class="btn btn-sm btn-primary rounded-pill fw-bold px-4 btn-press-effect">Upload Sekarang</button>
+               </div>
+          </div>
+
+          <!-- TAB: DASHBOARD -->
+          <div class="tab-pane fade" id="pills-dashboard">
+             <div class="bg-white rounded-3 border p-3">
+               <div class="d-flex justify-content-between align-items-center mb-3">
+                 <h5 class="fw-bold mb-0">Monitoring</h5>
+                 <span class="badge bg-warning text-dark" id="admRoleBadge">ADMIN</span>
+               </div>
+               <div class="row g-2 mb-4">
+                 <div class="col-6"><div class="stat-card flex-column align-items-start"><div class="stat-label">Total Karya</div><div class="stat-val" id="statTotal">0</div></div></div>
+                 <div class="col-6"><div class="stat-card flex-column align-items-start border-warning"><div class="stat-label text-warning">Menunggu</div><div class="stat-val text-warning" id="statPending">0</div></div></div>
+                 <div class="col-6"><div class="stat-card flex-column align-items-start border-success"><div class="stat-label text-success">Disetujui</div><div class="stat-val text-success" id="statApproved">0</div></div></div>
+                 <div class="col-6"><div class="stat-card flex-column align-items-start"><div class="stat-label">Total Guru</div><div class="stat-val" id="statUsers">0</div></div></div>
+               </div>
+               <div class="bg-light rounded-3 border p-1 mb-3">
+                 <div class="nav nav-pills nav-fill" style="font-size:0.75rem;">
+                    <button class="nav-link active btn-sm" data-bs-toggle="tab" data-bs-target="#adm-karya">Karya</button>
+                    <button id="tabLinkUsers" class="nav-link btn-sm" data-bs-toggle="tab" data-bs-target="#adm-user" onclick="loadUserList()">Guru</button>
+                    <button class="nav-link btn-sm global-only" data-bs-toggle="tab" data-bs-target="#adm-rank-school" onclick="loadSchoolStats()">Sekolah</button>
+                    <button class="nav-link btn-sm global-only" data-bs-toggle="tab" data-bs-target="#adm-rank-teacher" onclick="loadTeacherStats()">Top Guru</button>
+                 </div>
+               </div>
+               <div class="tab-content">
+                 <div class="tab-pane fade show active" id="adm-karya">
+                    <div class="d-flex gap-2 mb-2">
+                        <input type="text" class="form-control form-control-sm" placeholder="Cari..." id="searchAdmKarya" oninput="adminFilter()">
+                        <button class="btn btn-sm btn-secondary" onclick="fetchData()"><i class="fas fa-sync-alt"></i></button>
+                    </div>
+                    <div class="d-flex gap-2 mb-3">
+                        <select id="admFilterStatus" class="form-select form-select-sm" onchange="adminFilter()"><option value="">Status</option><option value="BARU">Menunggu</option><option value="DISETUJUI">Tayang</option><option value="REVISI">Revisi</option></select>
+                        <select id="admFilterMapel" class="form-select form-select-sm" onchange="adminFilter()"><option value="">Mapel</option></select>
+                    </div>
+                    <div class="d-grid mb-3"><button onclick="setujuiSemua()" class="btn btn-success btn-sm fw-bold admin-only">SETUJUI SEMUA PENDING</button></div>
+                    <div id="admin-list-container"></div>
+                 </div>
+                 <div class="tab-pane fade" id="adm-user">
+                    <button class="btn btn-primary w-100 rounded-pill mb-3 fw-bold btn-press-effect" onclick="showUserModal('ADD')"><i class="fas fa-plus me-2"></i> Tambah User</button>
+                    <input type="text" class="form-control mb-3 form-control-sm" placeholder="Cari nama..." oninput="loadUserList(this.value)">
+                    <div id="user-list-container"></div>
+                 </div>
+                 <div class="tab-pane fade" id="adm-rank-school">
+                    <button class="btn btn-outline-success w-100 rounded-pill mb-3" onclick="loadSchoolStats()"><i class="fas fa-sync-alt me-2"></i> Refresh</button>
+                    <div id="school-rank-container"></div>
+                 </div>
+                 <div class="tab-pane fade" id="adm-rank-teacher">
+                    <button class="btn btn-outline-success w-100 rounded-pill mb-3" onclick="loadTeacherStats()"><i class="fas fa-sync-alt me-2"></i> Refresh</button>
+                    <div id="teacher-rank-container"></div>
+                 </div>
+               </div>
+             </div>
+          </div>
        </div>
     </div>
 
-    <!-- VIEW: ADMIN DASHBOARD -->
-    <div id="view-admin" class="d-none">
-       <button onclick="switchView('GALERI')" class="btn btn-sm btn-light mb-3"><i class="fas fa-arrow-left"></i> Kembali</button>
-       <div class="d-flex justify-content-between align-items-center mb-3">
-         <h5 class="fw-bold mb-0">Monitoring</h5>
-         <span class="badge bg-warning text-dark" id="admRoleBadge">ADMIN</span>
-       </div>
-       <div class="row g-2 mb-4">
-         <div class="col-6"><div class="stat-card flex-column align-items-start"><div class="stat-label">Total Karya</div><div class="stat-val" id="statTotal">0</div></div></div>
-         <div class="col-6"><div class="stat-card flex-column align-items-start border-warning"><div class="stat-label text-warning">Menunggu</div><div class="stat-val text-warning" id="statPending">0</div></div></div>
-         <div class="col-6"><div class="stat-card flex-column align-items-start border-success"><div class="stat-label text-success">Disetujui</div><div class="stat-val text-success" id="statApproved">0</div></div></div>
-         <div class="col-6"><div class="stat-card flex-column align-items-start"><div class="stat-label">Total Guru</div><div class="stat-val" id="statUsers">0</div></div></div>
-       </div>
-       <div class="bg-white rounded-3 border p-1 mb-3">
-         <div class="nav nav-pills nav-fill" style="font-size:0.8rem;">
-            <button class="nav-link active btn-sm" data-bs-toggle="tab" data-bs-target="#adm-karya">Karya</button>
-            <button id="tabLinkUsers" class="nav-link btn-sm" data-bs-toggle="tab" data-bs-target="#adm-user" onclick="loadUserList()">Guru</button>
-            <button class="nav-link btn-sm global-only" data-bs-toggle="tab" data-bs-target="#adm-rank-school" onclick="loadSchoolStats()">Sekolah</button>
-            <button class="nav-link btn-sm global-only" data-bs-toggle="tab" data-bs-target="#adm-rank-teacher" onclick="loadTeacherStats()">Top Guru</button>
-         </div>
-       </div>
-       <div class="tab-content">
-         <div class="tab-pane fade show active" id="adm-karya">
-            <div class="d-flex gap-2 mb-2">
-                <input type="text" class="form-control" placeholder="Cari..." id="searchAdmKarya" oninput="adminFilter()">
-                <button class="btn btn-secondary" onclick="fetchData()"><i class="fas fa-sync-alt"></i></button>
-            </div>
-            <div class="d-flex gap-2 mb-3">
-                <select id="admFilterStatus" class="form-select form-select-sm" onchange="adminFilter()"><option value="">Status</option><option value="BARU">Menunggu</option><option value="DISETUJUI">Tayang</option><option value="REVISI">Revisi</option></select>
-                <select id="admFilterMapel" class="form-select form-select-sm" onchange="adminFilter()"><option value="">Mapel</option></select>
-            </div>
-            <div class="d-grid mb-3"><button onclick="setujuiSemua()" class="btn btn-success btn-sm fw-bold admin-only">SETUJUI SEMUA PENDING</button></div>
-            <div id="admin-list-container"></div>
-         </div>
-         <div class="tab-pane fade" id="adm-user">
-            <button class="btn btn-primary w-100 rounded-pill mb-3 fw-bold btn-press-effect" onclick="showUserModal('ADD')"><i class="fas fa-plus me-2"></i> Tambah User</button>
-            <input type="text" class="form-control mb-3" placeholder="Cari nama..." oninput="loadUserList(this.value)">
-            <div id="user-list-container"></div>
-         </div>
-         <div class="tab-pane fade" id="adm-rank-school">
-            <button class="btn btn-outline-success w-100 rounded-pill mb-3" onclick="loadSchoolStats()"><i class="fas fa-sync-alt me-2"></i> Refresh</button>
-            <div id="school-rank-container"></div>
-         </div>
-         <div class="tab-pane fade" id="adm-rank-teacher">
-            <button class="btn btn-outline-success w-100 rounded-pill mb-3" onclick="loadTeacherStats()"><i class="fas fa-sync-alt me-2"></i> Refresh</button>
-            <div id="teacher-rank-container"></div>
-         </div>
-       </div>
-    </div>
   </div>
 
   <!-- FAB -->
@@ -467,14 +488,14 @@
           document.getElementById('loader').classList.add('d-none');
           if(res.status === 'success') {
              APP.data = res.media; APP.settings = res.settings;
-             populateSelects(); applyFilters(); updateStats();
+             populateSelects(); applyFilters(); 
+             if(['KEPSEK','OPS','ADMIN','MODERATOR'].includes(APP.user.role)) updateStats();
           }
        });
     }
 
     function updateUI() {
        const isGuest = APP.user.role === 'GUEST'; 
-       const allowedRoles = ['ADMIN','MODERATOR','KEPSEK','OPS'];
        
        document.getElementById('guestPanel').classList.toggle('d-none', !isGuest);
        document.getElementById('userPanel').classList.toggle('d-none', isGuest);
@@ -485,27 +506,55 @@
           document.getElementById('uAvatar').innerText = APP.user.name.charAt(0);
           document.getElementById('uRole').innerText = APP.user.role; 
           
-          if(allowedRoles.includes(APP.user.role)) {
-              document.getElementById('menuDashboard').classList.remove('d-none');
+          // Flexible Role Logic
+          const role = (APP.user.role || "").toUpperCase();
+          const isAdmin = role.includes('ADMIN');
+          const isModerator = role.includes('MODERATOR');
+          const isKepala = role.includes('KEPALA');
+          const isOperator = role.includes('OPERATOR') || role.includes('OPS');
+          
+          const hasDashboardAccess = isAdmin || isModerator || isKepala || isOperator;
+          const isGlobalAdmin = isAdmin || isModerator;
+
+          if(hasDashboardAccess) {
               document.getElementById('admRoleBadge').innerText = APP.user.role;
+              
+              // Handle Dashboard Tab Visibility
+              document.getElementById('tab-dashboard-li').style.display = 'block';
+
               // Toggle elements based on role scope
-              const isGlobalAdmin = ['ADMIN', 'MODERATOR'].includes(APP.user.role);
-              document.querySelectorAll('.admin-only').forEach(el => el.style.setProperty('display', APP.user.role === 'ADMIN' ? 'block' : 'none', 'important'));
+              document.querySelectorAll('.admin-only').forEach(el => el.style.setProperty('display', isAdmin ? 'block' : 'none', 'important'));
               document.querySelectorAll('.global-only').forEach(el => el.style.setProperty('display', isGlobalAdmin ? 'block' : 'none', 'important'));
           } else {
-              document.getElementById('menuDashboard').classList.add('d-none');
+              document.getElementById('tab-dashboard-li').style.display = 'none';
           }
+          
+          // RESTORED: Admin Dashboard Button in Menu
+          var menuDash = document.getElementById('menuDashboardItem');
+          if(menuDash) menuDash.classList.toggle('d-none', !isGlobalAdmin);
        }
-       document.getElementById('tabLinkUsers').classList.toggle('d-none', !allowedRoles.includes(APP.user.role));
+       
+       // Handle "Guru" tab visibility in Admin Panel
+       const role = (APP.user.role || "").toUpperCase();
+       const canManageUsers = role.includes('ADMIN') || role.includes('KEPALA') || role.includes('OPERATOR') || role.includes('OPS');
+       document.getElementById('tabLinkUsers').classList.toggle('d-none', !canManageUsers);
     }
 
     function switchView(viewName) {
+       // Support 'ADMIN' view alias for Mobile (redirects to Profile -> Dashboard Tab)
+       if(viewName === 'ADMIN') {
+           viewName = 'PROFILE';
+           // Activate Dashboard Tab
+           setTimeout(() => {
+               document.getElementById('pills-dashboard-tab').click();
+               updateStats();
+           }, 100);
+       }
+
        document.getElementById('view-galeri').classList.toggle('d-none', !(viewName === 'GALERI' || viewName === 'FAV'));
-       document.getElementById('view-admin').classList.toggle('d-none', viewName !== 'ADMIN');
        document.getElementById('view-profile').classList.toggle('d-none', viewName !== 'PROFILE');
-       document.getElementById('fabAdd').classList.toggle('d-none', viewName === 'ADMIN' || APP.user.role === 'GUEST' || viewName === 'PROFILE');
+       document.getElementById('fabAdd').classList.toggle('d-none', APP.user.role === 'GUEST' || viewName === 'PROFILE');
        if(viewName === 'PROFILE') loadProfile();
-       if(viewName === 'ADMIN') updateStats(); // Refresh stats for dashboard
        document.getElementById('searchBar').classList.add('d-none'); 
     }
     
@@ -515,6 +564,10 @@
         if(tab === 'ALL') { document.getElementById('tab-all').classList.add('active'); switchView('GALERI'); }
         if(tab === 'PROFILE') { if(APP.user.role === 'GUEST') { loginModal(); return; } document.getElementById('tab-mine').classList.add('active'); switchView('PROFILE'); }
         if(tab === 'FAV') { document.getElementById('tab-fav').classList.add('active'); switchView('GALERI'); applyFilters(); }
+        
+        // Custom: Admin tab click (handled by button directly, but if needed via logic)
+        if(tab === 'ADMIN') { if(APP.user.role === 'GUEST') return; document.getElementById('tab-mine').classList.add('active'); switchView('ADMIN'); }
+        
         if(tab === 'ALL') applyFilters();
     }
 
@@ -681,13 +734,24 @@
 
     function updateStats() { 
         var data = APP.data;
+        const role = (APP.user.role || "").toUpperCase();
+        
         // Filter stats if KEPSEK/OPS
-        if(['KEPSEK','OPS'].includes(APP.user.role)) {
+        if(role.includes('KEPALA') || role.includes('OPERATOR') || role.includes('OPS')) {
             data = data.filter(m => m[2] === APP.user.school);
+            if(APP.users.length === 0) api('users').then(res => { APP.users = res.data; document.getElementById('statUsers').innerText = APP.users.filter(u => u[1] === APP.user.school).length; });
+            else document.getElementById('statUsers').innerText = APP.users.filter(u => u[1] === APP.user.school).length;
+        } else if (role.includes('ADMIN')) {
+             if(APP.users.length === 0) api('users').then(res => { APP.users = res.data; document.getElementById('statUsers').innerText = res.data.length; });
+             else document.getElementById('statUsers').innerText = APP.users.length;
         }
+
         document.getElementById('statTotal').innerText = data.length; 
         document.getElementById('statPending').innerText = data.filter(i => i[9] === 'BARU').length; 
         document.getElementById('statApproved').innerText = data.filter(i => i[9] === 'DISETUJUI').length; 
+        
+        // Also render list if needed
+        if(document.getElementById('admin-list-container').innerHTML === '') adminFilter();
     }
     function loadSchoolStats() { if(!APP.users.length) api('users').then(res => { APP.users = res.data; calcSchool(); }); else calcSchool(); }
     function calcSchool() {
@@ -711,14 +775,16 @@
        const q = document.getElementById('searchAdmKarya').value.toLowerCase(); const fStat = document.getElementById('admFilterStatus').value; const fMapel = document.getElementById('admFilterMapel').value;
        
        let list = APP.data;
+       const role = (APP.user.role || "").toUpperCase();
+       
        // Filter list if KEPSEK/OPS
-       if(['KEPSEK','OPS'].includes(APP.user.role)) {
+       if(role.includes('KEPALA') || role.includes('OPERATOR') || role.includes('OPS')) {
            list = list.filter(m => m[2] === APP.user.school);
        }
 
        list = list.filter(i => (i[5]+' '+i[1]).toLowerCase().includes(q) && (fStat?i[9]===fStat:true) && (fMapel?i[6]===fMapel:true));
        let html = '';
-       const canDelete = !['KEPSEK','OPS'].includes(APP.user.role);
+       const canDelete = !(role.includes('KEPALA') || role.includes('OPERATOR') || role.includes('OPS'));
 
        list.forEach(i => { 
            let badge = i[9]==='DISETUJUI'?'bg-success':(i[9]==='REVISI'?'bg-danger':'bg-warning text-dark'); 
@@ -737,7 +803,8 @@
     function renderUsers(q='') {
        // Filter list if KEPSEK/OPS
        let list = APP.users;
-       if(['KEPSEK','OPS'].includes(APP.user.role)) {
+       const role = (APP.user.role || "").toUpperCase();
+       if(role.includes('KEPALA') || role.includes('OPERATOR') || role.includes('OPS')) {
            list = list.filter(u => u[1] === APP.user.school);
            document.getElementById('statUsers').innerText = list.length;
        } else {
@@ -746,7 +813,7 @@
 
        list = list.filter(u => (u[0]+' '+u[1]).toLowerCase().includes(q.toLowerCase()));
        let html = ''; 
-       const canEdit = APP.user.role === 'ADMIN' || ['KEPSEK','OPS'].includes(APP.user.role);
+       const canEdit = role.includes('ADMIN') || role.includes('KEPALA') || role.includes('OPERATOR') || role.includes('OPS');
 
        list.forEach((u, idx) => { 
            let btns = canEdit ? `<button class="btn btn-sm btn-light border text-warning" onclick="showUserModal('EDIT', '${u[2]}')"><i class="fas fa-pen"></i></button><button class="btn btn-sm btn-light border text-danger" onclick="deleteUser('${u[2]}', '${u[0]}')"><i class="fas fa-trash"></i></button>` : '';
