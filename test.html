@@ -688,8 +688,9 @@
       var isAdminOrMod = role.includes('ADMIN') || role.includes('MODERATOR');
 
       dataToShow.forEach(function(item) {
-        var realIndex = STATE.allMedia.indexOf(item);
-        var id = cleanStr(item[13]), status = item[9], feedback = cleanStr(item[12]);
+        var realIndex = STATE.allMedia.indexOf(item); 
+        var id = cleanStr(item[13]); 
+        var status = item[9], feedback = cleanStr(item[12]);
         var isApproved = status === "DISETUJUI";
         var isOwner = (STATE.user.name === item[1]);
         var isSaved = saved.includes(id);
@@ -703,7 +704,11 @@
              if (feedback) feedbackHtml = `<div class="feedback-box"><i class="fas fa-comment-dots"></i> <b>Catatan:</b> ${feedback}</div>`;
         }
 
-        var editBtns = (isOwner || isAdminOrMod) ? `<button onclick="event.stopPropagation(); bukaEdit(${realIndex})" class="btn-icon" title="Edit"><i class="fas fa-pencil-alt"></i></button><button onclick="event.stopPropagation(); hapusKarya(${realIndex})" class="btn-icon danger" title="Hapus"><i class="fas fa-trash"></i></button>` : '';
+        var editBtns = (isOwner || isAdminOrMod) ? `
+            <button onclick="event.stopPropagation(); bukaEdit('${id}')" class="btn-icon" title="Edit"><i class="fas fa-pencil-alt"></i></button>
+            <button onclick="event.stopPropagation(); hapusKarya('${id}')" class="btn-icon danger" title="Hapus"><i class="fas fa-trash"></i></button>
+        ` : '';
+
         var html = '<div class="col-6 col-md-4 col-lg-3 d-flex"><div class="card-karya w-100"><div class="card-thumb">' + getThumbnailHtml(cleanStr(item[11]), item[8]) + checkMark + ownerInfoHtml + '<div class="view-badge"><i class="fas fa-eye me-1"></i> ' + (item[14]||0) + '</div><button onclick="event.stopPropagation(); toggleSimpan(\'' + id + '\')" class="btn-wishlist '+(isSaved?'active':'')+'"><i class="' + (isSaved ? 'fas fa-heart text-danger' : 'far fa-heart') + '"></i></button></div><div class="card-body-mp"><div class="mp-tags"><span class="badge-pill bg-soft-teal">' + cleanStr(item[6]) + '</span><span class="badge-pill bg-soft-blue">' + cleanStr(item[3]) + '</span></div><div class="mp-title" title="'+cleanStr(item[5])+'">' + cleanStr(item[5]) + '</div>' + (item[10] ? '<div class="kaih-compact"><i class="fas fa-star text-warning"></i>'+cleanStr(item[10])+'</div>' : '') + '<div class="guru-info"><div class="guru-avatar">' + cleanStr(item[1]).charAt(0) + '</div><div style="overflow:hidden; line-height:1.2;"><div class="text-truncate fw-bold" style="font-size:0.75rem">' + cleanStr(item[1]) + '</div><div class="text-muted text-truncate" style="font-size:0.65rem">' + cleanStr(item[2]) + '</div></div></div>' + feedbackHtml + '<div class="action-row"><button onclick="bukaPreview(' + realIndex + ')" class="btn-open">BUKA KARYA</button>' + editBtns + '</div></div></div></div>';
         c.insertAdjacentHTML('beforeend', html);
       });
@@ -756,16 +761,36 @@
         callApi('simpan', payload).then(res => { if(res.status === 'success') { Swal.fire('Berhasil', 'Tersimpan!', 'success'); bootstrap.Modal.getInstance(document.getElementById('modalInput')).hide(); loadData(); } else { Swal.fire('Gagal', res.message, 'error'); } });
     }
 
-    function bukaEdit(index) {
-      var d = STATE.allMedia[index]; if(!d) return;
-      document.getElementById('formMode').value = "EDIT"; document.getElementById('editRowIdx').value = d[13];
-      document.getElementById('inJudul').value = d[5]; document.getElementById('inFase').value = d[3]; document.getElementById('inSem').value = d[4];
+    function bukaEdit(id) {
+      // Find item by ID string
+      var d = STATE.allMedia.find(x => x[13] === id); 
+      if(!d) return;
+      
+      document.getElementById('formMode').value = "EDIT"; 
+      document.getElementById('editRowIdx').value = id; // Simpan ID, bukan index array
+
+      document.getElementById('inJudul').value = d[5]; 
+      document.getElementById('inFase').value = d[3]; 
+      document.getElementById('inSem').value = d[4];
+      
       var hasHtml = (d[7] && d[7].length > 5), hasLink = (d[8] && d[8].length > 5);
-      if(hasHtml) { document.getElementById('inputSourceType').value = 'HTML'; toggleInputSource('HTML'); document.getElementById('inHtml').value = d[7]; } else if (hasLink && d[8].includes('gemini')) { document.getElementById('inputSourceType').value = 'STORY'; toggleInputSource('STORY'); document.getElementById('inLinkStory').value = d[8]; } else { document.getElementById('inputSourceType').value = 'LINK'; toggleInputSource('LINK'); document.getElementById('inLink').value = d[8]; }
-      setValOrOther('inMapel', d[6], 'manMapel'); setValOrOther('inJenis', d[11], 'manJenis');
-      var isKaih = d[10] && d[10] !== ""; document.getElementById('checkKaih').checked = isKaih; toggleKaih(isKaih); if(isKaih) document.getElementById('inKaihType').value = d[10];
-      if(d[12]) { document.getElementById('feedbackAlert').classList.remove('d-none'); document.getElementById('feedbackMsg').innerText = d[12]; } else document.getElementById('feedbackAlert').classList.add('d-none');
-      updateLivePreview(); showModalInput();
+      if(hasHtml) { document.getElementById('inputSourceType').value = 'HTML'; toggleInputSource('HTML'); document.getElementById('inHtml').value = d[7]; } 
+      else if (hasLink && d[8].includes('gemini')) { document.getElementById('inputSourceType').value = 'STORY'; toggleInputSource('STORY'); document.getElementById('inLinkStory').value = d[8]; } 
+      else { document.getElementById('inputSourceType').value = 'LINK'; toggleInputSource('LINK'); document.getElementById('inLink').value = d[8]; }
+      
+      setValOrOther('inMapel', d[6], 'manMapel'); 
+      setValOrOther('inJenis', d[11], 'manJenis');
+      
+      var isKaih = d[10] && d[10] !== ""; 
+      document.getElementById('checkKaih').checked = isKaih; 
+      toggleKaih(isKaih); 
+      if(isKaih) document.getElementById('inKaihType').value = d[10];
+      
+      if(d[12]) { document.getElementById('feedbackAlert').classList.remove('d-none'); document.getElementById('feedbackMsg').innerText = d[12]; } 
+      else document.getElementById('feedbackAlert').classList.add('d-none');
+      
+      updateLivePreview(); 
+      showModalInput();
     }
 
     function setValOrOther(elId, val, manId) { var el = document.getElementById(elId); if(Array.from(el.options).some(o => o.value === val)) { el.value = val; checkDropdown(elId, manId, val); } else { el.value = 'LAINNYA'; checkDropdown(elId, manId, 'LAINNYA'); document.getElementById(manId).value = val; } }
@@ -791,7 +816,25 @@
       else doc.write(baseStyle + '<div style="padding-top:40px;color:#ccc;">Preview</div>'); doc.close(); 
     }
 
-    function hapusKarya(index) { var item = STATE.allMedia[index]; if(!item) return; Swal.fire({title:'Hapus?',icon:'warning',showCancelButton:true}).then(r=>{ if(r.isConfirmed) { callApi('hapus', {id: item[13]}).then(function(){ loadData() }); } }); }
+    function hapusKarya(id) { 
+        // ID based deletion
+        Swal.fire({
+            title: 'Hapus Karya?',
+            text: "Karya yang dihapus tidak dapat dikembalikan.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, Hapus!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                callApi('hapus', {id: id}).then(function(){ 
+                    Swal.fire('Terhapus!', 'Karya telah dihapus.', 'success');
+                    loadData(); 
+                }); 
+            }
+        });
+    }
     function toggleSimpan(id) { var k='GB_FAV_'+(STATE.user?STATE.user.name:'GUEST'),s=JSON.parse(localStorage.getItem(k)||'[]'); if(s.includes(id))s=s.filter(i=>i!==id);else s.push(id); localStorage.setItem(k,JSON.stringify(s)); renderGaleri(); }
     
     function loginModal() { Swal.fire({title:'PIN Guru',input:'password'}).then(r=>{ if(r.value) { Swal.fire({title: 'Login...', didOpen:()=>{Swal.showLoading()}}); callApi('login', {pin: r.value}).then(function(res){ if(res.status==='success'){ localStorage.setItem('guruBerbagiUser',JSON.stringify(res.user)); STATE.user = res.user; Swal.fire({icon:'success', title:'Berhasil Login', timer:800, showConfirmButton:false}).then(softReset); } else { Swal.fire('Gagal',res.message,'error'); } }); } }); }
@@ -801,23 +844,44 @@
       var html = '';
       var role = (STATE.user.role || "").toUpperCase();
       var isSchoolAdmin = role.includes('KEPALA') || role.includes('OPERATOR') || role.includes('OPS');
+      var isAdmin = role.includes('ADMIN'); // Global admin
       
       // Filter data for school admins
       if (isSchoolAdmin) {
           data = data.filter(m => m[2] === STATE.user.school);
       }
 
+      if(data.length === 0) {
+          document.getElementById('tableMedia').innerHTML = `<tr><td colspan="4" class="text-center py-5 text-muted"><i class="fas fa-folder-open fa-2x mb-3 opacity-25"></i><br>Tidak ada data karya ditemukan.</td></tr>`;
+          return;
+      }
+
       data.forEach(item => {
-        var st = item[9], badge = st === 'DISETUJUI' ? 'bg-success' : (st === 'REVISI' ? 'bg-danger' : 'bg-warning text-dark');
-        var btns = `<button onclick="bukaKurasi('${item[13]}','${item[9]}','${cleanStr(item[12])}')" class="btn-soft btn-soft-primary"><i class="fas fa-edit"></i></button>`;
-        if(!isSchoolAdmin) btns += `<button onclick="hapusKarya('${item[13]}')" class="btn-soft btn-soft-danger"><i class="fas fa-trash"></i></button>`;
+        var id = item[13]; // ID Unik
+        var st = item[9];
+        var badge = st === 'DISETUJUI' ? 'bg-success' : (st === 'REVISI' ? 'bg-danger' : 'bg-warning text-dark');
         
-        html += `<tr><td class="ps-3"><div class="fw-bold text-dark">${cleanStr(item[5])}</div><div class="small text-muted">${cleanStr(item[11])}</div></td>
-        <td><div class="fw-bold">${cleanStr(item[1])}</div><div class="small">${cleanStr(item[2])}</div></td>
-        <td class="text-center"><span class="badge ${badge}">${st}</span></td>
-        <td class="text-center"><div class="d-flex justify-content-center gap-1">${btns}</div></td></tr>`;
+        // Tombol Aksi Dashboard
+        var btns = `<button onclick="bukaKurasi('${id}','${st}','${cleanStr(item[12])}')" class="btn-soft btn-soft-primary" title="Kurasi/Edit Status"><i class="fas fa-edit"></i></button>`;
+        
+        // Tombol Hapus hanya untuk Admin Pusat atau Pemilik Sekolah
+        if(isAdmin || isSchoolAdmin) {
+            btns += `<button onclick="hapusKarya('${id}')" class="btn-soft btn-soft-danger" title="Hapus Karya"><i class="fas fa-trash"></i></button>`;
+        }
+        
+        html += `<tr>
+            <td class="ps-3">
+                <div class="fw-bold text-dark text-truncate" style="max-width: 250px;">${cleanStr(item[5])}</div>
+                <div class="small text-muted">${cleanStr(item[11])} • ${cleanStr(item[6])}</div>
+            </td>
+            <td>
+                <div class="fw-bold text-dark">${cleanStr(item[1])}</div>
+                <div class="small text-muted text-truncate" style="max-width: 150px;">${cleanStr(item[2])}</div>
+            </td>
+            <td class="text-center"><span class="badge ${badge}">${st}</span></td>
+            <td class="text-center"><div class="d-flex justify-content-center gap-1">${btns}</div></td>
+        </tr>`;
       });
-      if(data.length === 0) html = `<tr><td colspan="4" class="text-center py-4 text-muted">Tidak ada data karya sekolah Anda.</td></tr>`;
       document.getElementById('tableMedia').innerHTML = html;
     }
     function searchAdminTable(val) { var q = val.toLowerCase(); renderTableAdmin(STATE.allMedia.filter(i => (i[5]||"").toLowerCase().includes(q) || (i[1]||"").toLowerCase().includes(q))); }
@@ -839,45 +903,76 @@
     function showModalInputUser() { new bootstrap.Modal(document.getElementById('modalUser')).show(); }
     function bukaEditUser(pin) { var u=STATE.users.find(x=>x[2].toString()===pin.toString()); if(!u)return; document.getElementById('userMode').value="EDIT"; document.getElementById('oldPin').value=pin; document.getElementById('userName').value=u[0]; document.getElementById('userSchool').value=u[1]; document.getElementById('userPin').value=u[2]; document.getElementById('userRole').value=u[3]; new bootstrap.Modal('#modalUser').show(); }
     function prosesSimpanUser() { var p={nama:document.getElementById('userName').value,sekolah:document.getElementById('userSchool').value,pin:document.getElementById('userPin').value,role:document.getElementById('userRole').value,oldPin:document.getElementById('oldPin').value}; callApi('simpanUser', p).then(function(res){ if(res.status==='success'){ Swal.fire('Sukses','','success'); loadUserList(); bootstrap.Modal.getInstance(document.getElementById('modalUser')).hide(); } else { Swal.fire('Error',res.message,'error'); } }); }
-    function hapusUser(p) { Swal.fire({title:'Hapus User?',icon:'warning',showCancelButton:true}).then(r=>{if(r.isConfirmed) callApi('hapusUser', {pin: p}).then(function(){ loadUserList() }); });}
+    function hapusUser(p, n) { Swal.fire({title:'Hapus '+n+'?',icon:'warning',showCancelButton:true}).then(r=>{if(r.isConfirmed) callApi('hapusUser', {pin: p}).then(function(){ loadUserList() }); });}
     
     function loadUserList() { 
         var role = (STATE.user.role || "").toUpperCase();
         var canManage = role.includes('ADMIN') || role.includes('KEPALA') || role.includes('OPERATOR') || role.includes('OPS');
         if(!canManage) return; 
         
-        var karyaCount = {}; STATE.allMedia.forEach(m => { var n = m[1]; karyaCount[n] = (karyaCount[n] || 0) + 1; });
+        // Hitung jumlah karya per user
+        var karyaCount = {}; 
+        STATE.allMedia.forEach(m => { var n = m[1]; karyaCount[n] = (karyaCount[n] || 0) + 1; });
+        
         callApi('users').then(function(res){
-            STATE.users=res.data; 
-            var h=''; 
+            STATE.users = res.data; 
+            var html = ''; 
             var isSchoolAdmin = role.includes('KEPALA') || role.includes('OPERATOR') || role.includes('OPS');
             
-            // Filter users based on role
+            // Filter user sesuai sekolah jika bukan Global Admin
             var displayUsers = STATE.users;
             if(isSchoolAdmin) {
                 displayUsers = STATE.users.filter(u => u[1] === STATE.user.school);
-                document.getElementById('statUsers').innerText = displayUsers.length; 
-            } else {
-                document.getElementById('statUsers').innerText = STATE.users.length;
             }
+            document.getElementById('statUsers').innerText = displayUsers.length;
 
-            displayUsers.forEach(u=>{ 
-                var nama = u[0], jml = karyaCount[nama] || 0;
-                var uRoleUpper = (u[3]||"").toUpperCase();
-                var badgeRole = uRoleUpper.includes('ADMIN')?'bg-danger': (uRoleUpper.includes('OPERATOR')?'bg-purple': (uRoleUpper.includes('KEPALA')?'bg-indigo':'bg-secondary'));
-                
-                var canEdit = role.includes('ADMIN') || (isSchoolAdmin && uRoleUpper === 'GURU');
-                var btns = canEdit ? `<button onclick="bukaEditUser('${u[2]}')" class="btn-soft btn-soft-primary"><i class="fas fa-edit"></i></button><button onclick="hapusUser('${u[2]}')" class="btn-soft btn-soft-danger"><i class="fas fa-trash"></i></button>` : `<small class="text-muted">No Action</small>`;
+            if(displayUsers.length === 0) {
+                html = `<tr><td colspan="5" class="text-center py-4 text-muted">Belum ada data guru.</td></tr>`;
+            } else {
+                displayUsers.forEach(u => { 
+                    var nama = u[0], sekolah = u[1], pin = u[2], uRole = u[3];
+                    var jml = karyaCount[nama] || 0;
+                    var uRoleUpper = (uRole||"").toUpperCase();
+                    
+                    var badgeRole = 'bg-secondary';
+                    if(uRoleUpper.includes('ADMIN')) badgeRole = 'bg-danger';
+                    else if(uRoleUpper.includes('OPERATOR') || uRoleUpper.includes('OPS')) badgeRole = 'bg-purple';
+                    else if(uRoleUpper.includes('KEPALA')) badgeRole = 'bg-indigo';
+                    
+                    // Logic tombol aksi
+                    var canEdit = role.includes('ADMIN') || (isSchoolAdmin && uRoleUpper === 'GURU');
+                    var btns = '';
+                    
+                    if (canEdit) {
+                        btns = `
+                        <button onclick="bukaEditUser('${pin}')" class="btn-soft btn-soft-primary" title="Edit Data">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="hapusUser('${pin}', '${cleanStr(nama)}')" class="btn-soft btn-soft-danger" title="Hapus User">
+                            <i class="fas fa-trash"></i>
+                        </button>`;
+                    } else {
+                        btns = `<span class="text-muted small"><i class="fas fa-lock"></i></span>`;
+                    }
 
-                h+=`<tr>
-                <td><div class="d-flex align-items-center"><div class="avatar-circle me-3">${nama.charAt(0)}</div><div><div class="fw-bold">${cleanStr(nama)}</div><small class="text-muted">${cleanStr(u[1])}</small></div></div></td>
-                <td class="text-center"><span class="badge bg-light text-dark border px-3">${jml} Karya</span></td>
-                <td class="font-monospace fw-bold text-muted">${u[2]}</td>
-                <td><span class="badge ${badgeRole}">${u[3]}</span></td>
-                <td class="text-center"><div class="d-flex justify-content-center gap-1">${btns}</div></td>
-                </tr>`; 
-            }); 
-            document.getElementById('tableUsers').innerHTML=h; 
+                    html += `<tr>
+                    <td class="ps-4">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar-circle me-3">${nama.charAt(0)}</div>
+                            <div>
+                                <div class="fw-bold text-dark">${cleanStr(nama)}</div>
+                                <small class="text-muted">${cleanStr(sekolah)}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="text-center"><span class="badge bg-light text-dark border px-3">${jml} Karya</span></td>
+                    <td class="font-monospace fw-bold text-muted">${pin}</td>
+                    <td><span class="badge ${badgeRole}">${uRole}</span></td>
+                    <td class="text-center"><div class="d-flex justify-content-center gap-1">${btns}</div></td>
+                    </tr>`; 
+                });
+            }
+            document.getElementById('tableUsers').innerHTML = html; 
         });
     }
     
@@ -922,11 +1017,18 @@
           empty.classList.add('d-none');
           var h = '';
           myMedia.forEach(m => {
+              var id = m[13]; // ID UNIK
               var st = m[9], badge = st==='DISETUJUI'?'bg-success':(st==='REVISI'?'bg-danger':'bg-warning text-dark');
-              h += `<tr><td class="ps-4"><div class="fw-bold">${cleanStr(m[5])}</div><div class="small text-muted">${cleanStr(m[6])}</div></td>
+              
+              h += `<tr><td class="ps-4"><div class="fw-bold text-dark text-truncate" style="max-width:250px;">${cleanStr(m[5])}</div><div class="small text-muted">${cleanStr(m[6])}</div></td>
               <td class="text-center small text-muted"><i class="fas fa-eye me-1"></i>${m[14]||0}</td>
               <td class="text-center"><span class="badge ${badge}">${st}</span></td>
-              <td class="text-center pe-4"><button onclick="bukaEdit('${m[13]}')" class="btn btn-sm btn-light border text-primary"><i class="fas fa-pen"></i></button></td></tr>`;
+              <td class="text-center pe-4">
+                  <div class="d-flex justify-content-end gap-2">
+                      <button onclick="bukaEdit('${id}')" class="btn btn-sm btn-light border text-primary" title="Edit"><i class="fas fa-pen"></i></button>
+                      <button onclick="hapusKarya('${id}')" class="btn btn-sm btn-light border text-danger" title="Hapus"><i class="fas fa-trash"></i></button>
+                  </div>
+              </td></tr>`;
           });
           list.innerHTML = h;
       }
