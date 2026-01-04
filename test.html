@@ -282,7 +282,7 @@
             <div class="tab-pane fade show active" id="tab-media">
               <div class="d-flex flex-column flex-md-row gap-2 justify-content-between mb-3">
                  <input type="text" class="form-control form-control-sm rounded-pill px-3 bg-light" placeholder="Cari karya..." oninput="searchAdminTable(this.value)">
-                 <button onclick="setujuiSemua()" class="btn btn-sm btn-success rounded-pill fw-bold text-nowrap px-3 admin-only"><i class="fas fa-check-double me-1"></i> Setujui Semua</button>
+                 <button id="btnApproveAll" onclick="setujuiSemua()" class="btn btn-sm btn-success rounded-pill fw-bold text-nowrap px-3 admin-only"><i class="fas fa-check-double me-1"></i> Setujui Semua</button>
               </div>
               <div class="table-responsive rounded-3 border">
                 <table class="table pretty-table table-hover align-middle mb-0">
@@ -295,7 +295,7 @@
             <div class="tab-pane fade" id="tab-users">
               <div class="d-flex justify-content-between align-items-center mb-3">
                 <h6 class="fw-bold text-muted mb-0 ps-2">Guru Terdaftar</h6>
-                <button class="btn btn-primary btn-sm rounded-pill fw-bold px-3 shadow-sm" onclick="resetUserForm(); showModalInputUser()"><i class="fas fa-plus me-1"></i>Tambah</button>
+                <button id="btnAddUser" class="btn btn-primary btn-sm rounded-pill fw-bold px-3 shadow-sm" onclick="resetUserForm(); showModalInputUser()"><i class="fas fa-plus me-1"></i>Tambah</button>
               </div>
               <div class="table-container table-responsive rounded-3 border">
                 <table class="table pretty-table table-hover align-middle mb-0">
@@ -565,6 +565,7 @@
         else badge.className = 'badge px-3 py-2 rounded-pill bg-primary';
         
         // Tab Visibility Logic
+        // Tab User Management only for Admin, Kepsek, Operator
         var canManageUsers = isAdmin || isKepala || isOperator;
 
         document.querySelectorAll('.admin-only').forEach(el => el.style.setProperty('display', isAdmin ? 'block' : 'none', 'important'));
@@ -648,10 +649,10 @@
                 document.getElementById('statUsers').innerText = STATE.users.filter(u => u[1] === STATE.user.school).length;
             }
         } else {
-             // For Global Admin
-             if(isAdmin && STATE.users.length === 0) {
+             // For Global Admin & Moderator
+             if((isAdmin || isModerator) && STATE.users.length === 0) {
                  callApi('users').then(res => { STATE.users = res.data; document.getElementById('statUsers').innerText = res.data.length; });
-             } else if (isAdmin) {
+             } else if (isAdmin || isModerator) {
                  document.getElementById('statUsers').innerText = STATE.users.length;
              }
         }
@@ -704,10 +705,15 @@
              if (feedback) feedbackHtml = `<div class="feedback-box"><i class="fas fa-comment-dots"></i> <b>Catatan:</b> ${feedback}</div>`;
         }
 
-        var editBtns = (isOwner || isAdminOrMod) ? `
+        var editBtns = '';
+        // Only owner and ADMIN can delete/edit from gallery view. 
+        // MODERATOR only edit status from Dashboard.
+        if (isOwner || role.includes('ADMIN')) {
+           editBtns = `
             <button onclick="event.stopPropagation(); bukaEdit('${id}')" class="btn-icon" title="Edit"><i class="fas fa-pencil-alt"></i></button>
             <button onclick="event.stopPropagation(); hapusKarya('${id}')" class="btn-icon danger" title="Hapus"><i class="fas fa-trash"></i></button>
-        ` : '';
+           `;
+        }
 
         var html = '<div class="col-6 col-md-4 col-lg-3 d-flex"><div class="card-karya w-100"><div class="card-thumb">' + getThumbnailHtml(cleanStr(item[11]), item[8]) + checkMark + ownerInfoHtml + '<div class="view-badge"><i class="fas fa-eye me-1"></i> ' + (item[14]||0) + '</div><button onclick="event.stopPropagation(); toggleSimpan(\'' + id + '\')" class="btn-wishlist '+(isSaved?'active':'')+'"><i class="' + (isSaved ? 'fas fa-heart text-danger' : 'far fa-heart') + '"></i></button></div><div class="card-body-mp"><div class="mp-tags"><span class="badge-pill bg-soft-teal">' + cleanStr(item[6]) + '</span><span class="badge-pill bg-soft-blue">' + cleanStr(item[3]) + '</span></div><div class="mp-title" title="'+cleanStr(item[5])+'">' + cleanStr(item[5]) + '</div>' + (item[10] ? '<div class="kaih-compact"><i class="fas fa-star text-warning"></i>'+cleanStr(item[10])+'</div>' : '') + '<div class="guru-info"><div class="guru-avatar">' + cleanStr(item[1]).charAt(0) + '</div><div style="overflow:hidden; line-height:1.2;"><div class="text-truncate fw-bold" style="font-size:0.75rem">' + cleanStr(item[1]) + '</div><div class="text-muted text-truncate" style="font-size:0.65rem">' + cleanStr(item[2]) + '</div></div></div>' + feedbackHtml + '<div class="action-row"><button onclick="bukaPreview(' + realIndex + ')" class="btn-open">BUKA KARYA</button>' + editBtns + '</div></div></div></div>';
         c.insertAdjacentHTML('beforeend', html);
@@ -843,8 +849,9 @@
     function renderTableAdmin(data) {
       var html = '';
       var role = (STATE.user.role || "").toUpperCase();
+      var isAdmin = role.includes('ADMIN'); 
+      var isModerator = role.includes('MODERATOR');
       var isSchoolAdmin = role.includes('KEPALA') || role.includes('OPERATOR') || role.includes('OPS');
-      var isAdmin = role.includes('ADMIN'); // Global admin
       
       // Filter data for school admins
       if (isSchoolAdmin) {
@@ -861,12 +868,20 @@
         var st = item[9];
         var badge = st === 'DISETUJUI' ? 'bg-success' : (st === 'REVISI' ? 'bg-danger' : 'bg-warning text-dark');
         
-        // Tombol Aksi Dashboard
-        var btns = `<button onclick="bukaKurasi('${id}','${st}','${cleanStr(item[12])}')" class="btn-soft btn-soft-primary" title="Kurasi/Edit Status"><i class="fas fa-edit"></i></button>`;
+        // Logika Tombol Aksi Dashboard
+        var btns = '';
         
-        // Tombol Hapus hanya untuk Admin Pusat atau Pemilik Sekolah
-        if(isAdmin || isSchoolAdmin) {
-            btns += `<button onclick="hapusKarya('${id}')" class="btn-soft btn-soft-danger" title="Hapus Karya"><i class="fas fa-trash"></i></button>`;
+        // KS/OPS hanya monitoring (Read Only)
+        if (isSchoolAdmin) {
+             btns = '<span class="text-muted small"><i class="fas fa-eye"></i> View Only</span>';
+        } else {
+             // Admin & Moderator bisa Kurasi
+             btns += `<button onclick="bukaKurasi('${id}','${st}','${cleanStr(item[12])}')" class="btn-soft btn-soft-primary" title="Kurasi/Edit Status"><i class="fas fa-edit"></i></button>`;
+             
+             // Hanya Admin yang bisa Hapus
+             if (isAdmin) {
+                 btns += `<button onclick="hapusKarya('${id}')" class="btn-soft btn-soft-danger" title="Hapus Karya"><i class="fas fa-trash"></i></button>`;
+             }
         }
         
         html += `<tr>
@@ -918,6 +933,7 @@
             STATE.users = res.data; 
             var html = ''; 
             var isSchoolAdmin = role.includes('KEPALA') || role.includes('OPERATOR') || role.includes('OPS');
+            var isAdmin = role.includes('ADMIN');
             
             // Filter user sesuai sekolah jika bukan Global Admin
             var displayUsers = STATE.users;
@@ -925,6 +941,12 @@
                 displayUsers = STATE.users.filter(u => u[1] === STATE.user.school);
             }
             document.getElementById('statUsers').innerText = displayUsers.length;
+            
+            // Sembunyikan tombol Tambah User untuk KS/OPS (Monitoring Only)
+            var btnAdd = document.getElementById('btnAddUser');
+            if(btnAdd) {
+                btnAdd.style.display = isAdmin ? 'block' : 'none';
+            }
 
             if(displayUsers.length === 0) {
                 html = `<tr><td colspan="5" class="text-center py-4 text-muted">Belum ada data guru.</td></tr>`;
@@ -939,11 +961,11 @@
                     else if(uRoleUpper.includes('OPERATOR') || uRoleUpper.includes('OPS')) badgeRole = 'bg-purple';
                     else if(uRoleUpper.includes('KEPALA')) badgeRole = 'bg-indigo';
                     
-                    // Logic tombol aksi
-                    var canEdit = role.includes('ADMIN') || (isSchoolAdmin && uRoleUpper === 'GURU');
+                    // Logic tombol aksi row user
+                    // Hanya ADMIN yang bisa Edit/Hapus User
                     var btns = '';
                     
-                    if (canEdit) {
+                    if (isAdmin) {
                         btns = `
                         <button onclick="bukaEditUser('${pin}')" class="btn-soft btn-soft-primary" title="Edit Data">
                             <i class="fas fa-edit"></i>
@@ -952,6 +974,7 @@
                             <i class="fas fa-trash"></i>
                         </button>`;
                     } else {
+                        // KS/OPS View Only
                         btns = `<span class="text-muted small"><i class="fas fa-lock"></i></span>`;
                     }
 
@@ -1036,11 +1059,28 @@
     
     function loadSchoolStats() { if(!APP.users) APP.users=[]; if(!APP.users.length) callApi('users').then(res => { STATE.users = res.data; calcSchool(); }); else calcSchool(); }
     function calcSchool() {
-        let stats = {}; STATE.users.forEach(u => { let s=u[1]||"Tanpa Sekolah"; if(!stats[s]) stats[s]={g:0,k:0}; stats[s].g++; });
-        STATE.allMedia.forEach(m => { let s=m[2]||"Tanpa Sekolah"; if(!stats[s]) stats[s]={g:0,k:0}; stats[s].k++; });
-        let arr = Object.keys(stats).map(k => ({n:k, g:stats[k].g, k:stats[k].k})).sort((a,b) => b.k - a.k);
+        let stats = {}; 
+        
+        // Normalize school names (uppercase, trim)
+        const norm = (s) => (s || "TANPA SEKOLAH").toString().trim().toUpperCase();
+
+        STATE.users.forEach(u => { 
+            let rawS = u[1] || "Tanpa Sekolah";
+            let s = norm(rawS); 
+            if(!stats[s]) stats[s]={name: rawS, g:0, k:0}; 
+            stats[s].g++; 
+        });
+        
+        STATE.allMedia.forEach(m => { 
+            let rawS = m[2] || "Tanpa Sekolah";
+            let s = norm(rawS); 
+            if(!stats[s]) stats[s]={name: rawS, g:0, k:0}; 
+            stats[s].k++; 
+        });
+        
+        let arr = Object.values(stats).sort((a,b) => b.k - a.k);
         let h = '';
-        arr.forEach((x,i) => { let rank = i<3 ? `<span class="rank-badge rank-${i+1}">${i+1}</span>` : `<span class="rank-badge rank-other">${i+1}</span>`; h += `<tr><td>${rank}</td><td>${x.n}</td><td class="text-center">${x.g}</td><td class="text-center fw-bold">${x.k}</td></tr>`; });
+        arr.forEach((x,i) => { let rank = i<3 ? `<span class="rank-badge rank-${i+1}">${i+1}</span>` : `<span class="rank-badge rank-other">${i+1}</span>`; h += `<tr><td>${rank}</td><td>${x.name}</td><td class="text-center">${x.g}</td><td class="text-center fw-bold">${x.k}</td></tr>`; });
         document.getElementById('tableRankSchool').innerHTML = h;
     }
     function loadTeacherStats() {
