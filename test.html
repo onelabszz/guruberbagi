@@ -57,18 +57,15 @@
     
     .view-badge { position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.6); color: white; backdrop-filter: blur(2px); font-size: 0.65rem; padding: 2px 8px; border-radius: 6px; z-index: 5; font-weight: 700; }
     
-    /* UPDATED: Centang Biru Soft */
     .badge-approved { 
         position: absolute; bottom: 8px; right: 8px; 
-        color: #0288d1; /* Biru lebih tua untuk icon */
-        background: #e1f5fe; /* Biru sangat muda (soft) */
+        color: #0288d1; background: #e1f5fe;
         border: 1px solid #b3e5fc;
         border-radius: 50%; width: 26px; height: 26px; 
         display: flex; align-items: center; justify-content: center; 
         box-shadow: 0 2px 5px rgba(0,0,0,0.05); z-index: 6; 
     }
     
-    /* NEW: Status Pill for Owner/Admin */
     .status-pill { position: absolute; top: 8px; left: 8px; z-index: 20; padding: 4px 10px; border-radius: 20px; font-size: 0.65rem; font-weight: 800; color:white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); letter-spacing: 0.5px; }
     
     .kaih-compact { display: inline-flex; align-items: center; gap: 4px; font-size: 0.65rem; color: #b45309; background-color: #fffbeb; padding: 3px 8px; border-radius: 20px; font-weight: 700; margin-top: 6px; border: 1px solid #fcd34d; width: fit-content; }
@@ -87,7 +84,6 @@
     .guru-info { display: flex; align-items: center; gap: 10px; margin-top: auto; padding-top: 12px; border-top: 1px dashed #e2e8f0; }
     .guru-avatar { width: 32px; height: 32px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.8rem; color: #64748b; }
     
-    /* NEW: Feedback Box for Owner */
     .feedback-box { background: #fff1f2; border: 1px solid #fecdd3; border-radius: 8px; padding: 8px 10px; margin-top: 8px; font-size: 0.75rem; color: #9f1239; line-height: 1.3; }
     .feedback-box i { color: #e11d48; margin-right: 4px; }
 
@@ -128,7 +124,6 @@
     .btn-soft-danger { background: #fee2e2; color: #991b1b; }
     .btn-soft-danger:hover { background: #ef4444; color: white; transform: translateY(-2px); }
 
-    /* RANKING */
     .rank-badge { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: 800; font-size: 0.8rem; }
     .rank-1 { background: #fef3c7; color: #d97706; border: 1px solid #fcd34d; }
     .rank-2 { background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; }
@@ -140,20 +135,14 @@
     .fab-add { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 20px; background: #1e293b; color: white; border: none; font-size: 1.5rem; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3); transition: 0.3s; display: flex; align-items: center; justify-content: center; z-index: 1020; }
     .fab-add:hover { transform: scale(1.1) rotate(90deg); background: var(--primary); }
     
-    /* NEW DASHBOARD PROFIL STYLES */
     .profile-card { background: white; border-radius: 16px; border: 1px solid #e2e8f0; overflow: hidden; height: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.02); position: relative; }
     .profile-header-bg { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); height: 120px; }
-    
-    /* Fixed Avatar Positioning: 75px from top relative to card (120px header - 45px half avatar) */
     .profile-avatar-wrapper { position: absolute; top: 75px; left: 50%; transform: translateX(-50%); z-index: 10; }
-    
     .profile-avatar-lg { width: 90px; height: 90px; border-radius: 50%; border: 4px solid white; background: #f1f5f9; color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
     .profile-stats-box { background: #f8fafc; border-radius: 12px; padding: 15px; text-align: center; border: 1px solid #e2e8f0; transition: 0.2s; }
     .profile-stats-box:hover { background: #fff; border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(45,139,131,0.15); }
-    
     .medal-badge { font-size: 0.75rem; padding: 4px 12px; border-radius: 20px; font-weight: 800; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 5px; }
 
-    /* PREVIEW OVERLAY */
     #previewOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none; flex-direction: column; z-index: 20000; }
     .preview-head { background: #111; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; color: white; border-bottom: 1px solid #333; flex-shrink: 0; position: relative; opacity: 1; transition: opacity 0.3s ease; }
     #previewOverlay:fullscreen .preview-head { position: absolute; top: 0; left: 0; width: 100%; background: rgba(0,0,0,0.8); border-bottom: none; z-index: 20001; opacity: 0; }
@@ -164,7 +153,6 @@
     @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     #previewFrame { flex-grow: 1; width: 100%; height: 100%; border: none; background: #fff; }
 
-    /* MODAL */
     .preview-box { width: 100%; height: 100%; min-height: 350px; border: 2px dashed #cbd5e1; border-radius: 12px; overflow: hidden; background: #f8fafc; position: relative; }
     .preview-placeholder { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #94a3b8; font-weight: 700; text-align: center; }
     
@@ -172,6 +160,9 @@
     .transition-all:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(45, 139, 131, 0.2) !important; }
     
     .cursor-pointer { cursor: pointer; }
+    /* Role Badges */
+    .bg-purple { background-color: #9333ea !important; color: white; }
+    .bg-indigo { background-color: #4f46e5 !important; color: white; }
   </style>
 </head>
 <body>
@@ -262,7 +253,6 @@
   <!-- VIEW: PROFILE DASHBOARD -->
   <div id="view-profile" class="container mt-4 d-none">
      <div class="row g-4">
-         <!-- LEFT COLUMN: USER IDENTITY -->
          <div class="col-lg-4">
              <div class="profile-card text-center pb-4">
                  <div class="profile-header-bg"></div>
@@ -278,7 +268,6 @@
                          <span id="prof-medal"></span>
                      </div>
 
-                     <!-- Rank Badge -->
                      <div class="bg-light mx-4 p-2 rounded-3 border">
                          <div class="small text-muted fw-bold mb-1">POSISI PERINGKAT</div>
                          <div class="d-flex align-items-center justify-content-center gap-2">
@@ -291,31 +280,13 @@
              </div>
          </div>
 
-         <!-- RIGHT COLUMN: STATS & CONTENT -->
          <div class="col-lg-8">
-             <!-- STATS ROW -->
              <div class="row g-3 mb-4">
-                 <div class="col-4">
-                     <div class="profile-stats-box">
-                         <div class="h3 fw-800 text-primary mb-0" id="prof-stat-karya">0</div>
-                         <div class="small text-muted fw-bold">TOTAL KARYA</div>
-                     </div>
-                 </div>
-                 <div class="col-4">
-                     <div class="profile-stats-box">
-                         <div class="h3 fw-800 text-success mb-0" id="prof-stat-views">0</div>
-                         <div class="small text-muted fw-bold">DILIHAT</div>
-                     </div>
-                 </div>
-                 <div class="col-4">
-                     <div class="profile-stats-box">
-                         <div class="h3 fw-800 text-danger mb-0" id="prof-stat-likes">0</div>
-                         <div class="small text-muted fw-bold">DISUKAI</div>
-                     </div>
-                 </div>
+                 <div class="col-4"><div class="profile-stats-box"><div class="h3 fw-800 text-primary mb-0" id="prof-stat-karya">0</div><div class="small text-muted fw-bold">TOTAL KARYA</div></div></div>
+                 <div class="col-4"><div class="profile-stats-box"><div class="h3 fw-800 text-success mb-0" id="prof-stat-views">0</div><div class="small text-muted fw-bold">DILIHAT</div></div></div>
+                 <div class="col-4"><div class="profile-stats-box"><div class="h3 fw-800 text-danger mb-0" id="prof-stat-likes">0</div><div class="small text-muted fw-bold">DISUKAI</div></div></div>
              </div>
 
-             <!-- CONTENT LIST -->
              <div class="profile-card">
                  <div class="p-3 border-bottom bg-white fw-bold text-dark">
                      <i class="fas fa-folder-open me-2 text-primary"></i>Daftar Karya Saya
@@ -325,17 +296,8 @@
                      <div id="prof-works-container">
                          <div class="table-responsive">
                              <table class="table table-hover align-middle mb-0">
-                                 <thead class="bg-light">
-                                     <tr>
-                                         <th class="ps-4 py-3 small text-muted">DETAIL KARYA</th>
-                                         <th class="text-center small text-muted">STATS</th>
-                                         <th class="text-center small text-muted">STATUS</th>
-                                         <th class="text-center small text-muted pe-4">AKSI</th>
-                                     </tr>
-                                 </thead>
-                                 <tbody id="prof-works-list">
-                                     <!-- JS Generated -->
-                                 </tbody>
+                                 <thead class="bg-light"><tr><th class="ps-4 py-3 small text-muted">DETAIL KARYA</th><th class="text-center small text-muted">STATS</th><th class="text-center small text-muted">STATUS</th><th class="text-center small text-muted pe-4">AKSI</th></tr></thead>
+                                 <tbody id="prof-works-list"></tbody>
                              </table>
                          </div>
                          <div id="prof-empty-works" class="text-center py-5 d-none">
@@ -353,7 +315,7 @@
   <!-- VIEW: ADMIN DASHBOARD -->
   <div id="view-admin" class="container mt-4 d-none">
     <div class="dashboard-header">
-      <div><h4 class="fw-800 mb-0 text-dark">Dashboard Admin</h4><small class="text-muted">Kelola data dan kurasi karya guru</small></div>
+      <div><h4 class="fw-800 mb-0 text-dark">Dashboard Monitoring</h4><small class="text-muted" id="dashSubTitle">Pantau data dan aktivitas karya</small></div>
       <div id="adminRoleBadge" class="badge bg-primary px-3 py-2 rounded-pill">ROLE</div>
     </div>
     
@@ -366,17 +328,17 @@
     
     <div class="bg-white p-4 border rounded-4 shadow-sm">
       <ul class="nav nav-tabs mb-4 border-bottom-0" id="adminTabs">
-        <li class="nav-item"><button class="nav-link active fw-bold border" data-bs-toggle="tab" data-bs-target="#tab-media">Kurasi Karya</button></li>
+        <li class="nav-item"><button class="nav-link active fw-bold border" data-bs-toggle="tab" data-bs-target="#tab-media">Monitoring Karya</button></li>
         <li class="nav-item admin-only ms-2"><button class="nav-link fw-bold border" data-bs-toggle="tab" data-bs-target="#tab-users" onclick="loadUserList()">Manajemen Akun</button></li>
-        <li class="nav-item admin-only ms-2"><button class="nav-link fw-bold border" data-bs-toggle="tab" data-bs-target="#tab-rank-school" onclick="loadSchoolStats()">Top Sekolah</button></li>
-        <li class="nav-item admin-only ms-2"><button class="nav-link fw-bold border" data-bs-toggle="tab" data-bs-target="#tab-rank-teacher" onclick="loadTeacherStats()">Top Guru</button></li>
+        <li class="nav-item global-only ms-2"><button class="nav-link fw-bold border" data-bs-toggle="tab" data-bs-target="#tab-rank-school" onclick="loadSchoolStats()">Top Sekolah</button></li>
+        <li class="nav-item global-only ms-2"><button class="nav-link fw-bold border" data-bs-toggle="tab" data-bs-target="#tab-rank-teacher" onclick="loadTeacherStats()">Top Guru</button></li>
       </ul>
 
       <div class="tab-content">
         <div class="tab-pane fade show active" id="tab-media">
           <div class="d-flex flex-column flex-md-row gap-3 justify-content-between mb-3">
              <input type="text" class="form-control rounded-pill px-4 border-secondary bg-light" placeholder="Cari karya di database..." oninput="searchAdminTable(this.value)">
-             <button onclick="setujuiSemua()" class="btn btn-success rounded-pill fw-bold text-nowrap px-4 shadow-sm"><i class="fas fa-check-double me-2"></i> Setujui Semua Pending</button>
+             <button onclick="setujuiSemua()" class="btn btn-success rounded-pill fw-bold text-nowrap px-4 shadow-sm admin-only"><i class="fas fa-check-double me-2"></i> Setujui Semua Pending</button>
           </div>
           <div class="table-responsive rounded-3 border">
             <table class="table pretty-table table-hover align-middle mb-0">
@@ -389,11 +351,11 @@
         <div class="tab-pane fade" id="tab-users">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h6 class="fw-bold text-muted mb-0 ps-2">Daftar Guru Terdaftar</h6>
-            <button class="btn btn-primary btn-sm rounded-pill fw-bold px-4 shadow-sm" onclick="resetUserForm(); showModalInputUser()"><i class="fas fa-plus me-2"></i>Tambah Guru</button>
+            <button class="btn btn-primary btn-sm rounded-pill fw-bold px-4 shadow-sm" onclick="resetUserForm(); showModalInputUser()"><i class="fas fa-plus me-2"></i>Tambah User</button>
           </div>
           <div class="table-container table-responsive rounded-3 border">
             <table class="table pretty-table table-hover align-middle mb-0">
-              <thead><tr><th class="ps-4">NAMA GURU</th><th class="text-center">PRODUKTIVITAS</th><th>PIN AKSES</th><th>PERAN</th><th class="text-center">AKSI</th></tr></thead>
+              <thead><tr><th class="ps-4">NAMA PENGGUNA</th><th class="text-center">PRODUKTIVITAS</th><th>PIN AKSES</th><th>PERAN</th><th class="text-center">AKSI</th></tr></thead>
               <tbody id="tableUsers"></tbody>
             </table>
           </div>
@@ -405,18 +367,7 @@
               <button class="btn btn-outline-success btn-sm rounded-pill fw-bold px-3" onclick="loadSchoolStats()"><i class="fas fa-sync-alt me-1"></i> Refresh</button>
            </div>
            <div class="table-responsive rounded-3 border">
-              <table class="table pretty-table table-hover align-middle mb-0">
-                 <thead class="bg-light">
-                    <tr>
-                       <th class="text-center" style="width: 50px;">#</th>
-                       <th class="ps-3">SATUAN PENDIDIKAN</th>
-                       <th class="text-center">JML GURU</th>
-                       <th class="text-center">TOTAL KARYA</th>
-                       <th class="text-center">PERSENTASE</th>
-                    </tr>
-                 </thead>
-                 <tbody id="tableRankSchool"></tbody>
-              </table>
+              <table class="table pretty-table table-hover align-middle mb-0"><thead class="bg-light"><tr><th class="text-center" style="width: 50px;">#</th><th class="ps-3">SATUAN PENDIDIKAN</th><th class="text-center">JML GURU</th><th class="text-center">TOTAL KARYA</th><th class="text-center">PERSENTASE</th></tr></thead><tbody id="tableRankSchool"></tbody></table>
            </div>
         </div>
 
@@ -426,18 +377,7 @@
               <button class="btn btn-outline-success btn-sm rounded-pill fw-bold px-3" onclick="loadTeacherStats()"><i class="fas fa-sync-alt me-1"></i> Refresh</button>
            </div>
            <div class="table-responsive rounded-3 border">
-              <table class="table pretty-table table-hover align-middle mb-0">
-                 <thead class="bg-light">
-                    <tr>
-                       <th class="text-center" style="width: 50px;">#</th>
-                       <th class="ps-3">NAMA GURU</th>
-                       <th class="ps-3">UNIT KERJA</th>
-                       <th class="text-center">TOTAL KARYA</th>
-                       <th class="text-center">MEDALI</th>
-                    </tr>
-                 </thead>
-                 <tbody id="tableRankTeacher"></tbody>
-              </table>
+              <table class="table pretty-table table-hover align-middle mb-0"><thead class="bg-light"><tr><th class="text-center" style="width: 50px;">#</th><th class="ps-3">NAMA GURU</th><th class="ps-3">UNIT KERJA</th><th class="text-center">TOTAL KARYA</th><th class="text-center">MEDALI</th></tr></thead><tbody id="tableRankTeacher"></tbody></table>
            </div>
         </div>
 
@@ -507,7 +447,7 @@
   </div>
 
   <!-- MODAL: USER -->
-  <div class="modal fade" id="modalUser" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 rounded-4 shadow"><div class="modal-header"><h5 class="fw-bold text-primary">Data Guru</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="formUser"><input type="hidden" id="userMode" value="ADD"><input type="hidden" id="oldPin"><div class="mb-3"><label class="small fw-bold">Nama Lengkap</label><input type="text" id="userName" class="form-control"></div><div class="mb-3"><label class="small fw-bold">Unit Kerja (Sekolah)</label><input type="text" id="userSchool" class="form-control"></div><div class="row"><div class="col-6"><label class="small fw-bold">PIN Login</label><input type="text" id="userPin" class="form-control"></div><div class="col-6"><label class="small fw-bold">Hak Akses</label><select id="userRole" class="form-select"><option value="GURU">GURU</option><option value="MODERATOR">MODERATOR</option><option value="ADMIN">ADMIN</option></select></div></div></form></div><div class="modal-footer"><button onclick="prosesSimpanUser()" class="btn btn-primary w-100 fw-bold rounded-pill">SIMPAN DATA</button></div></div></div></div>
+  <div class="modal fade" id="modalUser" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 rounded-4 shadow"><div class="modal-header"><h5 class="fw-bold text-primary">Data Pengguna</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="formUser"><input type="hidden" id="userMode" value="ADD"><input type="hidden" id="oldPin"><div class="mb-3"><label class="small fw-bold">Nama Lengkap</label><input type="text" id="userName" class="form-control"></div><div class="mb-3"><label class="small fw-bold">Unit Kerja (Sekolah)</label><input type="text" id="userSchool" class="form-control"></div><div class="row"><div class="col-6"><label class="small fw-bold">PIN Login</label><input type="text" id="userPin" class="form-control"></div><div class="col-6"><label class="small fw-bold">Peran (Role)</label><select id="userRole" class="form-select"><option value="GURU">GURU</option><option value="KEPSEK">KEPALA SEKOLAH</option><option value="OPS">OPERATOR SEKOLAH</option><option value="MODERATOR">MODERATOR</option><option value="ADMIN">ADMIN</option></select></div></div></form></div><div class="modal-footer"><button onclick="prosesSimpanUser()" class="btn btn-primary w-100 fw-bold rounded-pill">SIMPAN DATA</button></div></div></div></div>
   
   <!-- MODAL: KURASI -->
   <div class="modal fade" id="modalKurasi" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 rounded-4 shadow"><div class="modal-header border-bottom-0"><h5 class="fw-bold text-primary">Kurasi Karya</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="kurasiId"><div class="mb-3"><label class="small fw-bold">Status Persetujuan</label><select id="kurasiStatus" class="form-select"><option value="BARU">BARU (Pending)</option><option value="DISETUJUI">DISETUJUI (Tampil)</option><option value="REVISI">REVISI (Perlu Perbaikan)</option></select></div><div class="mb-3"><label class="small fw-bold">Catatan / Feedback</label><textarea id="kurasiFeedback" class="form-control" rows="4" placeholder="Tulis masukan untuk guru..."></textarea></div></div><div class="modal-footer border-top-0"><button onclick="simpanKurasi()" class="btn btn-primary w-100 fw-bold rounded-pill">UPDATE STATUS</button></div></div></div></div>
@@ -536,45 +476,28 @@
     async function callApi(action, payload = null) {
       try {
         if (action === 'read') {
-           // Implement Caching for Read
-           const cached = localStorage.getItem(CACHE_KEY_DATA);
-           if (cached) {
-               const { timestamp, data } = JSON.parse(cached);
-               if (new Date().getTime() - timestamp < CACHE_DURATION) {
-                   console.log("Serving from Cache");
-                   return data;
+           try {
+               const cached = localStorage.getItem(CACHE_KEY_DATA);
+               if (cached) {
+                   const { timestamp, data } = JSON.parse(cached);
+                   if (new Date().getTime() - timestamp < CACHE_DURATION) return data;
                }
-           }
+           } catch(e) { console.log('Cache error'); }
            
-           // Network Call
            var response = await fetch(API_URL + "?action=read");
            var json = await response.json();
-           
            if(json.status === 'success') {
-               try {
-                   localStorage.setItem(CACHE_KEY_DATA, JSON.stringify({
-                       timestamp: new Date().getTime(),
-                       data: json
-                   }));
-               } catch(e) { console.warn("Cache full"); }
+               try { localStorage.setItem(CACHE_KEY_DATA, JSON.stringify({ timestamp: new Date().getTime(), data: json })); } catch(e) { console.warn("Quota exceeded"); }
            }
            return json;
         } else {
-           // Write operations invalidate cache
-           if(['simpan', 'hapus', 'updateKurasi', 'simpanUser', 'hapusUser'].includes(action)) {
-               localStorage.removeItem(CACHE_KEY_DATA);
-           }
-           
-           var response = await fetch(API_URL, {
-             method: "POST",
-             body: JSON.stringify({ action: action, payload: payload })
-           });
+           if(['simpan', 'hapus', 'updateKurasi', 'simpanUser', 'hapusUser'].includes(action)) { localStorage.removeItem(CACHE_KEY_DATA); }
+           var response = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: action, payload: payload }) });
            return await response.json();
         }
       } catch (e) { console.error("API Error:", e); return { status: "error", message: e.toString() }; }
     }
 
-    // INIT
     window.onload = function() { initApp(); };
     function initApp() {
       try { var saved = localStorage.getItem('guruBerbagiUser'); if (saved) { STATE.user = JSON.parse(saved); updateUserInterface(); } } catch(e) {}
@@ -600,40 +523,49 @@
         document.getElementById('btnAdd').classList.remove('d-none');
         document.getElementById('btnFilterMy').classList.remove('d-none');
       }
-      if (STATE.user.role === 'ADMIN' || STATE.user.role === 'MODERATOR') {
+      
+      // Update Dashboard Access: Admin, Moderator, Kepsek, Ops
+      var allowedRoles = ['ADMIN', 'MODERATOR', 'KEPSEK', 'OPS'];
+      if (allowedRoles.includes(STATE.user.role)) {
         btnDash.classList.remove('d-none');
         document.getElementById('adminRoleBadge').innerText = STATE.user.role;
-        var adminOnlyEls = document.querySelectorAll('.admin-only');
-        adminOnlyEls.forEach(function(el) { 
-           el.style.setProperty('display', STATE.user.role === 'ADMIN' ? 'block' : 'none', 'important'); 
-        });
+        
+        // Atur warna badge role
+        var badge = document.getElementById('adminRoleBadge');
+        badge.className = 'badge px-3 py-2 rounded-pill ' + (STATE.user.role === 'OPS' ? 'bg-purple' : (STATE.user.role === 'KEPSEK' ? 'bg-indigo' : 'bg-primary'));
+        
+        // Visibility Logic for Dashboard Tabs
+        var isAdminOrMod = ['ADMIN', 'MODERATOR'].includes(STATE.user.role);
+        var isSchoolAdmin = ['KEPSEK', 'OPS'].includes(STATE.user.role);
+
+        document.querySelectorAll('.admin-only').forEach(el => el.style.setProperty('display', STATE.user.role === 'ADMIN' ? 'block' : 'none', 'important'));
+        document.querySelectorAll('.global-only').forEach(el => el.style.setProperty('display', isAdminOrMod ? 'block' : 'none', 'important'));
+        
+        if(isSchoolAdmin) {
+             document.getElementById('dashSubTitle').innerText = "Pantau aktivitas di " + STATE.user.school;
+             // Tab Users ditampilkan untuk Kepsek/Ops
+             document.querySelector('[data-bs-target="#tab-users"]').parentElement.style.display = 'block'; 
+        } else {
+             document.getElementById('dashSubTitle').innerText = "Pantau data dan aktivitas karya";
+        }
       }
     }
 
     function switchView(viewName) {
-      var g = document.getElementById('view-galeri');
-      var a = document.getElementById('view-admin');
-      var p = document.getElementById('view-profile');
-      var s = document.getElementById('searchWrapper');
-      
+      var g = document.getElementById('view-galeri'), a = document.getElementById('view-admin'), p = document.getElementById('view-profile'), s = document.getElementById('searchWrapper');
       g.classList.add('d-none'); a.classList.add('d-none'); p.classList.add('d-none');
       document.getElementById('btnHome').classList.remove('d-none');
-      document.getElementById('btnDashboard').classList.toggle('d-none', !(STATE.user.role === 'ADMIN' || STATE.user.role === 'MODERATOR'));
+      document.getElementById('btnDashboard').classList.toggle('d-none', !(['ADMIN','MODERATOR','KEPSEK','OPS'].includes(STATE.user.role)));
       document.getElementById('btnAdd').classList.add('d-none');
       
       if (viewName === 'ADMIN') {
-        a.classList.remove('d-none');
-        document.getElementById('btnDashboard').classList.add('d-none');
-        s.style.visibility = 'hidden';
+        a.classList.remove('d-none'); document.getElementById('btnDashboard').classList.add('d-none'); s.style.visibility = 'hidden';
         renderTableAdmin(STATE.allMedia);
+        updateDashboardStats(); 
       } else if (viewName === 'PROFILE') {
-        p.classList.remove('d-none');
-        s.style.visibility = 'hidden';
-        loadProfile();
+        p.classList.remove('d-none'); s.style.visibility = 'hidden'; loadProfile();
       } else {
-        // GALERI
-        g.classList.remove('d-none');
-        document.getElementById('btnHome').classList.add('d-none');
+        g.classList.remove('d-none'); document.getElementById('btnHome').classList.add('d-none');
         if(STATE.user.role !== 'GUEST') document.getElementById('btnAdd').classList.remove('d-none');
         s.style.visibility = 'visible';
       }
@@ -643,38 +575,54 @@
       callApi('read').then(function(res) {
         if(res && res.status === "success") {
           STATE.allMedia = res.media; STATE.settings = res.settings;
-          populateDropdowns(); 
-          applyFilters();      
-          document.getElementById('statTotal').innerText = res.media.length;
-          document.getElementById('statPending').innerText = res.media.filter(function(i){ return i[9] === "BARU" }).length;
-          document.getElementById('statApproved').innerText = res.media.filter(function(i){ return i[9] === "DISETUJUI" }).length;
+          populateDropdowns(); applyFilters(); updateDashboardStats();
         }
         document.getElementById('loader').style.display = 'none';
       });
     }
-
-    // --- SEARCH & FILTER (DEBOUNCED) ---
-    function handleSearchInput(val) {
-        if (searchTimeout) clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-            applyFilters();
-        }, 400); // 400ms Debounce
+    
+    function updateDashboardStats() {
+        var data = STATE.allMedia;
+        var role = STATE.user.role;
+        // Filter data for KEPSEK/OPS
+        if (['KEPSEK', 'OPS'].includes(role)) {
+            data = data.filter(m => m[2] === STATE.user.school);
+            // Fetch users immediately to show count on dashboard
+            if(STATE.users.length === 0) {
+                callApi('users').then(res => { 
+                    STATE.users = res.data;
+                    document.getElementById('statUsers').innerText = STATE.users.filter(u => u[1] === STATE.user.school).length;
+                });
+            } else {
+                document.getElementById('statUsers').innerText = STATE.users.filter(u => u[1] === STATE.user.school).length;
+            }
+        } else {
+             // For Admin, fetch all users count if not already fetched
+             if(role === 'ADMIN' && STATE.users.length === 0) {
+                 callApi('users').then(res => { STATE.users = res.data; document.getElementById('statUsers').innerText = res.data.length; });
+             } else if (role === 'ADMIN') {
+                 document.getElementById('statUsers').innerText = STATE.users.length;
+             }
+        }
+        
+        document.getElementById('statTotal').innerText = data.length;
+        document.getElementById('statPending').innerText = data.filter(i => i[9] === "BARU").length;
+        document.getElementById('statApproved').innerText = data.filter(i => i[9] === "DISETUJUI").length;
     }
 
+    // --- SEARCH & FILTER ---
+    function handleSearchInput(val) { if (searchTimeout) clearTimeout(searchTimeout); searchTimeout = setTimeout(() => { applyFilters(); }, 400); }
     function applyFilters() {
       var q = document.getElementById('searchInput').value.toLowerCase();
       var fMapel = document.getElementById('filterMapel').value;
       var fFase = document.getElementById('filterFase').value;
       STATE.filtered = STATE.allMedia.filter(function(i) {
          var haystack = (i[5]+" "+i[1]+" "+i[2]+" "+i[3]+" "+i[6]+" "+i[11]).toLowerCase();
-         var matches = haystack.indexOf(q)!==-1 && ((fMapel==="") || (i[6]===fMapel)) && ((fFase==="") || (i[3]===fFase));
-         // SEMUA KARYA MUNCUL (Tanpa filter status)
-         return matches;
+         return haystack.indexOf(q)!==-1 && ((fMapel==="") || (i[6]===fMapel)) && ((fFase==="") || (i[3]===fFase));
       });
       STATE.displayedLimit = STATE.itemsPerPage;
       renderGaleri();
     }
-
     function loadMoreItems() { STATE.displayedLimit += STATE.itemsPerPage; renderGaleri(); }
 
     function renderGaleri() {
@@ -685,54 +633,25 @@
       
       dataToShow.forEach(function(item) {
         var realIndex = STATE.allMedia.indexOf(item);
-        var id = cleanStr(item[13]);
-        var status = item[9]; // BARU, REVISI, DISETUJUI
-        var feedback = cleanStr(item[12]); // Kolom Feedback
-        
+        var id = cleanStr(item[13]), status = item[9], feedback = cleanStr(item[12]);
         var isApproved = status === "DISETUJUI";
         var isOwner = (STATE.user.name === item[1]);
-        var isAdmin = (STATE.user.role === 'ADMIN' || STATE.user.role === 'MODERATOR');
+        var isAdmin = ['ADMIN','MODERATOR'].includes(STATE.user.role);
         var isSaved = saved.includes(id);
         
-        var iconLove = isSaved ? 'fas fa-heart text-danger' : 'far fa-heart';
-        
-        // --- LOGIKA TAMPILAN STATUS ---
-        // Jika Publik: Hanya tampilkan checkmark jika DISETUJUI (Updated Soft Blue)
         var checkMark = (isApproved && !isOwner && !isAdmin) ? '<div class="badge-approved"><i class="fas fa-check"></i></div>' : '';
-        
-        // --- LOGIKA PEMILIK / ADMIN ---
-        // Menampilkan Badge Status & Feedback Box
-        var ownerInfoHtml = '';
-        var feedbackHtml = '';
+        var ownerInfoHtml = '', feedbackHtml = '';
 
         if (isOwner || isAdmin) {
-             // 1. Badge Status (Menggantikan Checkmark publik)
              var badgeClass = status === 'DISETUJUI' ? 'bg-success' : (status === 'REVISI' ? 'bg-danger' : 'bg-warning text-dark');
-             var badgeText = status === 'BARU' ? 'MENUNGGU' : status;
-             // Letakkan di pojok kiri atas thumbnail
-             ownerInfoHtml = `<div class="status-pill ${badgeClass}">${badgeText}</div>`;
-
-             // 2. Kotak Komentar / Feedback (Jika ada)
-             if (feedback) {
-                 feedbackHtml = `<div class="feedback-box"><i class="fas fa-comment-dots"></i> <b>Catatan:</b> ${feedback}</div>`;
-             }
+             ownerInfoHtml = `<div class="status-pill ${badgeClass}">${status==='BARU'?'MENUNGGU':status}</div>`;
+             if (feedback) feedbackHtml = `<div class="feedback-box"><i class="fas fa-comment-dots"></i> <b>Catatan:</b> ${feedback}</div>`;
         }
 
-        var kaihHtml = item[10] ? '<div class="kaih-compact"><i class="fas fa-star text-warning"></i>'+cleanStr(item[10])+'</div>' : '';
         var editBtns = (isOwner || isAdmin) ? `<button onclick="event.stopPropagation(); bukaEdit(${realIndex})" class="btn-icon" title="Edit"><i class="fas fa-pencil-alt"></i></button><button onclick="event.stopPropagation(); hapusKarya(${realIndex})" class="btn-icon danger" title="Hapus"><i class="fas fa-trash"></i></button>` : '';
-
-        var finalQrLink = cleanStr(item[8]);
-        if (!finalQrLink || finalQrLink.length < 5) {
-            var htmlVal = cleanStr(item[7]); var extractSrc = htmlVal.match(/src\s*=\s*["']([^"']+)["']/i);
-            if (extractSrc && extractSrc[1]) finalQrLink = extractSrc[1];
-        }
-        var qrBtn = (finalQrLink && finalQrLink.length > 5) ? `<button onclick="event.stopPropagation(); showQR('${finalQrLink}')" class="btn-icon" title="QR Code"><i class="fas fa-qrcode"></i></button>` : '';
-
-        // Template HTML Kartu
-        var html = '<div class="col-6 col-md-4 col-lg-3 d-flex"><div class="card-karya w-100"><div class="card-thumb">' + getThumbnailHtml(cleanStr(item[11]), item[8]) + checkMark + ownerInfoHtml + '<div class="view-badge"><i class="fas fa-eye me-1"></i> ' + (item[14]||0) + '</div><button onclick="event.stopPropagation(); toggleSimpan(\'' + id + '\')" class="btn-wishlist '+(isSaved?'active':'')+'"><i class="' + iconLove + '"></i></button></div><div class="card-body-mp"><div class="mp-tags"><span class="badge-pill bg-soft-teal">' + cleanStr(item[6]) + '</span><span class="badge-pill bg-soft-blue">' + cleanStr(item[3]) + '</span><span class="badge-pill bg-soft-purple">' + cleanStr(item[4]) + '</span></div><div class="mp-title" title="'+cleanStr(item[5])+'">' + cleanStr(item[5]) + '</div>' + kaihHtml + '<div class="guru-info"><div class="guru-avatar">' + cleanStr(item[1]).charAt(0) + '</div><div style="overflow:hidden; line-height:1.2;"><div class="text-truncate fw-bold" style="font-size:0.75rem">' + cleanStr(item[1]) + '</div><div class="text-muted text-truncate" style="font-size:0.65rem">' + cleanStr(item[2]) + '</div></div></div>' + feedbackHtml + '<div class="action-row"><button onclick="bukaPreview(' + realIndex + ')" class="btn-open">BUKA KARYA</button>' + qrBtn + editBtns + '</div></div></div></div>';
+        var html = '<div class="col-6 col-md-4 col-lg-3 d-flex"><div class="card-karya w-100"><div class="card-thumb">' + getThumbnailHtml(cleanStr(item[11]), item[8]) + checkMark + ownerInfoHtml + '<div class="view-badge"><i class="fas fa-eye me-1"></i> ' + (item[14]||0) + '</div><button onclick="event.stopPropagation(); toggleSimpan(\'' + id + '\')" class="btn-wishlist '+(isSaved?'active':'')+'"><i class="' + (isSaved ? 'fas fa-heart text-danger' : 'far fa-heart') + '"></i></button></div><div class="card-body-mp"><div class="mp-tags"><span class="badge-pill bg-soft-teal">' + cleanStr(item[6]) + '</span><span class="badge-pill bg-soft-blue">' + cleanStr(item[3]) + '</span></div><div class="mp-title" title="'+cleanStr(item[5])+'">' + cleanStr(item[5]) + '</div>' + (item[10] ? '<div class="kaih-compact"><i class="fas fa-star text-warning"></i>'+cleanStr(item[10])+'</div>' : '') + '<div class="guru-info"><div class="guru-avatar">' + cleanStr(item[1]).charAt(0) + '</div><div style="overflow:hidden; line-height:1.2;"><div class="text-truncate fw-bold" style="font-size:0.75rem">' + cleanStr(item[1]) + '</div><div class="text-muted text-truncate" style="font-size:0.65rem">' + cleanStr(item[2]) + '</div></div></div>' + feedbackHtml + '<div class="action-row"><button onclick="bukaPreview(' + realIndex + ')" class="btn-open">BUKA KARYA</button>' + editBtns + '</div></div></div></div>';
         c.insertAdjacentHTML('beforeend', html);
       });
-
       var btnMore = document.getElementById('loadMoreContainer');
       if (STATE.filtered.length > STATE.displayedLimit) { btnMore.classList.remove('d-none'); document.getElementById('loadMoreInfo').innerText = `Menampilkan ${dataToShow.length} dari ${STATE.filtered.length} karya`; } else { btnMore.classList.add('d-none'); }
       if (STATE.filtered.length === 0) c.innerHTML = `<div class="col-12 text-center py-5 text-muted"><i class="fas fa-search fa-3x mb-3 text-secondary opacity-25"></i><br>Tidak ada karya ditemukan.</div>`;
@@ -751,59 +670,22 @@
     }
 
     // --- SHARE & PREVIEW ---
-    function shareContent() {
-       if (ACTIVE_CONTENT.data) {
-           var url = ACTIVE_CONTENT.type === 'LINK' ? ACTIVE_CONTENT.data : window.location.href;
-           var title = document.getElementById('previewTitle').innerText || "Guru Berbagi";
-           if (navigator.share) {
-               navigator.share({ title: title, text: 'Cek karya ini di Guru Berbagi!', url: url }).catch(console.error);
-           } else {
-               navigator.clipboard.writeText(url);
-               Swal.fire({icon: 'success', title: 'Link Disalin', text: url, timer: 1500, showConfirmButton: false});
-           }
-       }
-    }
-
+    function shareContent() { if (ACTIVE_CONTENT.data) { var url = ACTIVE_CONTENT.type === 'LINK' ? ACTIVE_CONTENT.data : window.location.href; if (navigator.share) { navigator.share({ title: 'Guru Berbagi', url: url }); } else { navigator.clipboard.writeText(url); Swal.fire({icon:'success', title:'Link Disalin', timer:1500, showConfirmButton:false}); } } }
     function bukaPreview(index) {
       var item = STATE.allMedia[index]; if(!item) return;
-      var rawHtml = (item[7] || "").trim(), rawLink = (item[8] || "").trim(), id = item[13];
-      callApi('view', { id: id });
+      var rawHtml = (item[7] || "").trim(), rawLink = (item[8] || "").trim(), id = item[13]; callApi('view', { id: id });
       document.getElementById('previewTitle').innerText = cleanStr(item[5]);
       var overlay = document.getElementById('previewOverlay'), frame = document.getElementById('previewFrame');
-      if (rawLink && (rawLink.indexOf('gemini.google.com')!==-1 || rawLink.indexOf('g.co')!==-1)) {
-          ACTIVE_CONTENT = { type: 'GEMINI', data: rawLink };
-          var finalUrl = rawLink.includes('gemini.google.com/share') ? rawLink.replace('gemini.google.com/share', 'g.co/gemini/share') : rawLink;
-          window.open(finalUrl, '_blank'); return;
-      }
+      if (rawLink && (rawLink.indexOf('gemini')!==-1 || rawLink.indexOf('g.co')!==-1)) { ACTIVE_CONTENT = { type: 'GEMINI', data: rawLink }; window.open(rawLink, '_blank'); return; }
       overlay.style.display = 'flex'; frame.style.display = 'block'; frame.src = "about:blank";
-      if (rawHtml.length > 10) {
-          ACTIVE_CONTENT = { type: 'HTML', data: rawHtml };
-          var blob = new Blob([rawHtml], { type: 'text/html' }); frame.src = URL.createObjectURL(blob); frame.dataset.blob = frame.src; return;
-      }
-      if (rawLink.length > 5) {
-          ACTIVE_CONTENT = { type: 'LINK', data: rawLink };
-          var finalUrl = rawLink, ytId = getYoutubeId(rawLink);
-          if (ytId) { finalUrl = "https://www.youtube.com/embed/" + ytId + "?autoplay=1&rel=0&modestbranding=1"; } 
-          else if (finalUrl.indexOf('drive.google.com') !== -1) { finalUrl = finalUrl.replace(/\/view.*/, '/preview').replace(/\/edit.*/, '/preview'); }
-          frame.src = finalUrl; return;
-      }
-      Swal.fire('Info', 'Konten kosong.', 'info'); tutupPreview();
+      if (rawHtml.length > 10) { ACTIVE_CONTENT = { type: 'HTML', data: rawHtml }; var blob = new Blob([rawHtml], { type: 'text/html' }); frame.src = URL.createObjectURL(blob); frame.dataset.blob = frame.src; return; }
+      if (rawLink.length > 5) { ACTIVE_CONTENT = { type: 'LINK', data: rawLink }; var finalUrl = rawLink, ytId = getYoutubeId(rawLink); if (ytId) finalUrl = "https://www.youtube.com/embed/" + ytId + "?autoplay=1"; else if (finalUrl.indexOf('drive.google.com') !== -1) finalUrl = finalUrl.replace(/\/view.*/, '/preview').replace(/\/edit.*/, '/preview'); frame.src = finalUrl; return; }
+      tutupPreview();
     }
-
-    function smartFullscreen() {
-      var elem = document.getElementById("previewOverlay"); var req = elem.requestFullscreen || elem.webkitRequestFullscreen || elem.msRequestFullscreen;
-      if (req) { var promise = req.call(elem); if (promise && typeof promise.catch === 'function') { promise.catch(function(err) { fallbackTabBaru(); }); } } else { fallbackTabBaru(); }
-    }
-    function fallbackTabBaru() {
-      Swal.fire({ title: 'Mode Tab Baru', text: 'Membuka konten di tab baru agar tampilan maksimal.', icon: 'info', timer: 1500, showConfirmButton: false });
-      setTimeout(function() {
-        if (!ACTIVE_CONTENT.data) return;
-        if (ACTIVE_CONTENT.type === 'HTML') { var win = window.open("", "_blank"); if (win) { win.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Layar Penuh</title><style>body{margin:0;padding:0;overflow-y:auto;} #content{width:100%;min-height:100vh;border:none;}</style></head><body><div id="content">' + ACTIVE_CONTENT.data + '</div></body></html>'); win.document.close(); } } 
-        else if (ACTIVE_CONTENT.type === 'LINK') { var ytId = getYoutubeId(ACTIVE_CONTENT.data); window.open(ytId ? "https://www.youtube.com/embed/"+ytId+"?autoplay=1" : ACTIVE_CONTENT.data, '_blank'); }
-      }, 500);
-    }
-    function tutupFullscreen() { if (document.exitFullscreen) document.exitFullscreen(); else if (document.webkitExitFullscreen) document.webkitExitFullscreen(); else if (document.msExitFullscreen) document.msExitFullscreen(); }
-    function tutupPreview() { if (document.fullscreenElement) tutupFullscreen(); var overlay = document.getElementById('previewOverlay'), frame = document.getElementById('previewFrame'); overlay.style.display = 'none'; frame.src = ""; if(frame.dataset.blob) { URL.revokeObjectURL(frame.dataset.blob); frame.dataset.blob = ""; } }
+    function smartFullscreen() { var elem = document.getElementById("previewOverlay"); if (elem.requestFullscreen) elem.requestFullscreen(); else fallbackTabBaru(); }
+    function fallbackTabBaru() { if (ACTIVE_CONTENT.data) window.open(ACTIVE_CONTENT.type === 'LINK' ? ACTIVE_CONTENT.data : "", '_blank'); }
+    function tutupFullscreen() { if (document.exitFullscreen) document.exitFullscreen(); }
+    function tutupPreview() { if (document.fullscreenElement) tutupFullscreen(); var overlay = document.getElementById('previewOverlay'), frame = document.getElementById('previewFrame'); overlay.style.display = 'none'; frame.src = ""; if(frame.dataset.blob) URL.revokeObjectURL(frame.dataset.blob); }
 
     function showModalInput() { if (!modalInputInstance) modalInputInstance = new bootstrap.Modal(document.getElementById('modalInput'), {backdrop:'static', keyboard:false}); modalInputInstance.show(); }
     function resetForm() { document.getElementById('modalForm').reset(); document.getElementById('formMode').value="ADD"; document.getElementById('inputSourceType').value = 'LINK'; toggleInputSource('LINK'); updateLivePreview(); toggleKaih(false); document.getElementById('manMapel').classList.add('d-none'); document.getElementById('manJenis').classList.add('d-none'); document.getElementById('feedbackAlert').classList.add('d-none'); }
@@ -813,19 +695,10 @@
         var mapel = document.getElementById('inMapel').value; if(mapel === 'LAINNYA') mapel = document.getElementById('manMapel').value;
         var jenis = document.getElementById('inJenis').value; if(jenis === 'LAINNYA') jenis = document.getElementById('manJenis').value;
         var mode = document.getElementById('formMode').value;
-        var payload = {
-            nama: STATE.user.name, sekolah: STATE.user.school || "-", judul: judul, mapel: mapel, jenis: jenis,
-            fase: document.getElementById('inFase').value, 
-            semester: document.getElementById('inSem').value,
-            kaihType: document.getElementById('checkKaih').checked ? document.getElementById('inKaihType').value : "",
-            linkLuar: document.getElementById('inputSourceType').value === 'STORY' ? document.getElementById('inLinkStory').value : document.getElementById('inLink').value,
-            kodeHtml: document.getElementById('inputSourceType').value === 'HTML' ? document.getElementById('inHtml').value : "",
-            mode: mode
-        };
+        var payload = { nama: STATE.user.name, sekolah: STATE.user.school || "-", judul: judul, mapel: mapel, jenis: jenis, fase: document.getElementById('inFase').value, semester: document.getElementById('inSem').value, kaihType: document.getElementById('checkKaih').checked ? document.getElementById('inKaihType').value : "", linkLuar: document.getElementById('inputSourceType').value === 'STORY' ? document.getElementById('inLinkStory').value : document.getElementById('inLink').value, kodeHtml: document.getElementById('inputSourceType').value === 'HTML' ? document.getElementById('inHtml').value : "", mode: mode };
         if(mode === 'EDIT') payload.idUnik = document.getElementById('editRowIdx').value;
-        
         Swal.fire({title: 'Menyimpan...', didOpen:()=>{Swal.showLoading()}});
-        callApi('simpan', payload).then(res => { if(res.status === 'success') { Swal.fire('Berhasil', 'Karya berhasil disimpan!', 'success'); bootstrap.Modal.getInstance(document.getElementById('modalInput')).hide(); loadData(); } else { Swal.fire('Gagal', res.message, 'error'); } });
+        callApi('simpan', payload).then(res => { if(res.status === 'success') { Swal.fire('Berhasil', 'Tersimpan!', 'success'); bootstrap.Modal.getInstance(document.getElementById('modalInput')).hide(); loadData(); } else { Swal.fire('Gagal', res.message, 'error'); } });
     }
 
     function bukaEdit(index) {
@@ -833,21 +706,10 @@
       document.getElementById('formMode').value = "EDIT"; document.getElementById('editRowIdx').value = d[13];
       document.getElementById('inJudul').value = d[5]; document.getElementById('inFase').value = d[3]; document.getElementById('inSem').value = d[4];
       var hasHtml = (d[7] && d[7].length > 5), hasLink = (d[8] && d[8].length > 5);
-      if(hasHtml) { document.getElementById('inputSourceType').value = 'HTML'; toggleInputSource('HTML'); document.getElementById('inHtml').value = d[7]; } 
-      else if (hasLink && (d[8].includes('g.co') || d[8].includes('gemini'))) { document.getElementById('inputSourceType').value = 'STORY'; toggleInputSource('STORY'); document.getElementById('inLinkStory').value = d[8]; } 
-      else { document.getElementById('inputSourceType').value = 'LINK'; toggleInputSource('LINK'); document.getElementById('inLink').value = d[8]; }
+      if(hasHtml) { document.getElementById('inputSourceType').value = 'HTML'; toggleInputSource('HTML'); document.getElementById('inHtml').value = d[7]; } else if (hasLink && d[8].includes('gemini')) { document.getElementById('inputSourceType').value = 'STORY'; toggleInputSource('STORY'); document.getElementById('inLinkStory').value = d[8]; } else { document.getElementById('inputSourceType').value = 'LINK'; toggleInputSource('LINK'); document.getElementById('inLink').value = d[8]; }
       setValOrOther('inMapel', d[6], 'manMapel'); setValOrOther('inJenis', d[11], 'manJenis');
       var isKaih = d[10] && d[10] !== ""; document.getElementById('checkKaih').checked = isKaih; toggleKaih(isKaih); if(isKaih) document.getElementById('inKaihType').value = d[10];
-      
-      // Feedback display logic
-      var fb = d[12];
-      if(fb && fb.trim().length > 0) {
-          document.getElementById('feedbackAlert').classList.remove('d-none');
-          document.getElementById('feedbackMsg').innerText = fb;
-      } else {
-          document.getElementById('feedbackAlert').classList.add('d-none');
-      }
-      
+      if(d[12]) { document.getElementById('feedbackAlert').classList.remove('d-none'); document.getElementById('feedbackMsg').innerText = d[12]; } else document.getElementById('feedbackAlert').classList.add('d-none');
       updateLivePreview(); showModalInput();
     }
 
@@ -867,47 +729,39 @@
       var type = document.getElementById('inputSourceType').value, val = "";
       if(type==='LINK') val = document.getElementById('inLink').value; else if(type==='STORY') val = document.getElementById('inLinkStory').value; else if(type==='HTML') val = document.getElementById('inHtml').value;
       var doc = document.getElementById('miniPreviewFrame').contentDocument; doc.open();
-      var baseStyle = `<style>body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 10px; color: #333; } img { max-width: 100%; height: auto; } iframe { width: 100%; aspect-ratio: 16/9; border: none; }</style>`;
-      if (type === 'STORY' || (type === 'LINK' && (val.includes('gemini.google.com') || val.includes('g.co')))) { doc.write(baseStyle + '<div style="text-align:center;color:#666;padding-top:20px;">📖 Storybook<br><small>Preview tersedia setelah dibuka</small></div>'); } 
-      else if(type==='HTML' && val.length > 5) { doc.write(baseStyle + val); } 
-      else if (val.length > 5) { var ytId = getYoutubeId(val); var src = ytId ? "https://www.youtube.com/embed/"+ytId : val; doc.write(`<body style="margin:0;overflow:hidden;"><iframe src="${src}" style="width:100%;height:100%;border:none;"></iframe></body>`); } 
-      else { doc.write('<div style="text-align:center;color:#ccc;font-family:sans-serif;padding-top:40px;">Preview</div>'); } doc.close(); 
+      var baseStyle = `<style>body { font-family: sans-serif; margin: 0; padding: 10px; color: #333; text-align:center; } img { max-width: 100%; }</style>`;
+      if (type === 'STORY' || (type === 'LINK' && (val.includes('gemini') || val.includes('g.co')))) doc.write(baseStyle + '<div style="padding-top:20px;">📖 Storybook<br><small>Preview tersedia setelah dibuka</small></div>'); 
+      else if(type==='HTML' && val.length > 5) doc.write(baseStyle + val); 
+      else if (val.length > 5) { var ytId = getYoutubeId(val); var src = ytId ? "https://www.youtube.com/embed/"+ytId : val; doc.write(`<iframe src="${src}" style="width:100%;height:100%;border:none;"></iframe>`); } 
+      else doc.write(baseStyle + '<div style="padding-top:40px;color:#ccc;">Preview</div>'); doc.close(); 
     }
 
-    function hapusKarya(index) { 
-        var item = STATE.allMedia[index]; if(!item) return;
-        Swal.fire({title:'Hapus?',icon:'warning',showCancelButton:true}).then(r=>{ if(r.isConfirmed) { callApi('hapus', {id: item[13]}).then(function(){ loadData() }); } });
-    }
-
+    function hapusKarya(index) { var item = STATE.allMedia[index]; if(!item) return; Swal.fire({title:'Hapus?',icon:'warning',showCancelButton:true}).then(r=>{ if(r.isConfirmed) { callApi('hapus', {id: item[13]}).then(function(){ loadData() }); } }); }
     function toggleSimpan(id) { var k='GB_FAV_'+(STATE.user?STATE.user.name:'GUEST'),s=JSON.parse(localStorage.getItem(k)||'[]'); if(s.includes(id))s=s.filter(i=>i!==id);else s.push(id); localStorage.setItem(k,JSON.stringify(s)); renderGaleri(); }
-    function showQR(link) { Swal.fire({ title: 'Scan', html: `<img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(link)}" class="img-fluid"><br><a href="${link}" target="_blank" class="btn btn-sm btn-link mt-2">Buka Link</a>`, showConfirmButton: false, showCloseButton: true }); }
-
-    function loginModal() { 
-      Swal.fire({title:'PIN Guru',input:'password'}).then(r=>{ 
-        if(r.value) {
-          Swal.fire({title: 'Login...', didOpen:()=>{Swal.showLoading()}});
-          callApi('login', {pin: r.value}).then(function(res){
-             if(res.status==='success'){ 
-                localStorage.setItem('guruBerbagiUser',JSON.stringify(res.user)); STATE.user = res.user;
-                Swal.fire({icon:'success', title:'Berhasil Login', timer:800, showConfirmButton:false}).then(softReset); 
-             } else {
-                Swal.fire('Gagal',res.message,'error');
-             }
-          });
-        }
-      }); 
-    }
+    
+    function loginModal() { Swal.fire({title:'PIN Guru',input:'password'}).then(r=>{ if(r.value) { Swal.fire({title: 'Login...', didOpen:()=>{Swal.showLoading()}}); callApi('login', {pin: r.value}).then(function(res){ if(res.status==='success'){ localStorage.setItem('guruBerbagiUser',JSON.stringify(res.user)); STATE.user = res.user; Swal.fire({icon:'success', title:'Berhasil Login', timer:800, showConfirmButton:false}).then(softReset); } else { Swal.fire('Gagal',res.message,'error'); } }); } }); }
     function logout() { localStorage.removeItem('guruBerbagiUser'); STATE.user = { name: "Tamu", role: "GUEST" }; softReset(); }
 
     function renderTableAdmin(data) {
       var html = '';
+      var isSchoolAdmin = ['KEPSEK', 'OPS'].includes(STATE.user.role);
+      
+      // Filter data for school admins
+      if (isSchoolAdmin) {
+          data = data.filter(m => m[2] === STATE.user.school);
+      }
+
       data.forEach(item => {
         var st = item[9], badge = st === 'DISETUJUI' ? 'bg-success' : (st === 'REVISI' ? 'bg-danger' : 'bg-warning text-dark');
+        var btns = `<button onclick="bukaKurasi('${item[13]}','${item[9]}','${cleanStr(item[12])}')" class="btn-soft btn-soft-primary"><i class="fas fa-edit"></i></button>`;
+        if(!isSchoolAdmin) btns += `<button onclick="hapusKarya('${item[13]}')" class="btn-soft btn-soft-danger"><i class="fas fa-trash"></i></button>`;
+        
         html += `<tr><td class="ps-3"><div class="fw-bold text-dark">${cleanStr(item[5])}</div><div class="small text-muted">${cleanStr(item[11])}</div></td>
         <td><div class="fw-bold">${cleanStr(item[1])}</div><div class="small">${cleanStr(item[2])}</div></td>
         <td class="text-center"><span class="badge ${badge}">${st}</span></td>
-        <td class="text-center"><div class="d-flex justify-content-center gap-1"><button onclick="bukaKurasi('${item[13]}','${item[9]}','${cleanStr(item[12])}')" class="btn-soft btn-soft-primary"><i class="fas fa-edit"></i></button><button onclick="hapusKarya('${item[13]}')" class="btn-soft btn-soft-danger"><i class="fas fa-trash"></i></button></div></td></tr>`;
+        <td class="text-center"><div class="d-flex justify-content-center gap-1">${btns}</div></td></tr>`;
       });
+      if(data.length === 0) html = `<tr><td colspan="4" class="text-center py-4 text-muted">Tidak ada data karya sekolah Anda.</td></tr>`;
       document.getElementById('tableMedia').innerHTML = html;
     }
     function searchAdminTable(val) { var q = val.toLowerCase(); renderTableAdmin(STATE.allMedia.filter(i => (i[5]||"").toLowerCase().includes(q) || (i[1]||"").toLowerCase().includes(q))); }
@@ -915,202 +769,108 @@
     function bukaKurasi(id,st,fb) { document.getElementById('kurasiId').value=id; document.getElementById('kurasiStatus').value=st; document.getElementById('kurasiFeedback').value=fb; new bootstrap.Modal('#modalKurasi').show(); }
     function simpanKurasi() { callApi('updateKurasi', { id: document.getElementById('kurasiId').value, status: document.getElementById('kurasiStatus').value, feedback: document.getElementById('kurasiFeedback').value }).then(function(){ Swal.fire('Sukses','','success');loadData();bootstrap.Modal.getInstance(document.getElementById('modalKurasi')).hide(); }); }
     
-    // Fungsi Setujui Semua (NEW)
     async function setujuiSemua() {
         var pending = STATE.allMedia.filter(m => m[9] === 'BARU');
-        if(pending.length === 0) { Swal.fire('Info', 'Tidak ada karya status BARU.', 'info'); return; }
-        
-        var result = await Swal.fire({title: `Setujui ${pending.length} Karya?`, text: "Semua karya status BARU akan diubah menjadi DISETUJUI.", icon: 'question', showCancelButton: true});
-        if(result.isConfirmed) {
-            Swal.fire({title: 'Memproses...', didOpen:()=>{Swal.showLoading()}});
-            // Client-side batch loop because backend might not handle array payload
-            for (let i = 0; i < pending.length; i++) {
-                await callApi('updateKurasi', { id: pending[i][13], status: 'DISETUJUI', feedback: '' });
-            }
-            Swal.fire('Sukses', 'Semua karya pending telah disetujui.', 'success');
-            loadData();
+        if(pending.length === 0) { Swal.fire('Info', 'Tidak ada karya pending.', 'info'); return; }
+        if((await Swal.fire({title: 'Setujui Semua?', showCancelButton: true})).isConfirmed) {
+            Swal.fire({title: 'Proses...', didOpen:()=>{Swal.showLoading()}});
+            for (let i = 0; i < pending.length; i++) await callApi('updateKurasi', { id: pending[i][13], status: 'DISETUJUI', feedback: '' });
+            Swal.fire('Sukses', '', 'success'); loadData();
         }
     }
 
-    // --- FUNGSI ADMIN: USER, SEKOLAH, GURU ---
-
+    function resetUserForm() { document.getElementById('formUser').reset(); document.getElementById('userMode').value="ADD"; }
     function showModalInputUser() { new bootstrap.Modal(document.getElementById('modalUser')).show(); }
-
+    function bukaEditUser(pin) { var u=STATE.users.find(x=>x[2].toString()===pin.toString()); if(!u)return; document.getElementById('userMode').value="EDIT"; document.getElementById('oldPin').value=pin; document.getElementById('userName').value=u[0]; document.getElementById('userSchool').value=u[1]; document.getElementById('userPin').value=u[2]; document.getElementById('userRole').value=u[3]; new bootstrap.Modal('#modalUser').show(); }
+    function prosesSimpanUser() { var p={nama:document.getElementById('userName').value,sekolah:document.getElementById('userSchool').value,pin:document.getElementById('userPin').value,role:document.getElementById('userRole').value,oldPin:document.getElementById('oldPin').value}; callApi('simpanUser', p).then(function(res){ if(res.status==='success'){ Swal.fire('Sukses','','success'); loadUserList(); bootstrap.Modal.getInstance(document.getElementById('modalUser')).hide(); } else { Swal.fire('Error',res.message,'error'); } }); }
+    function hapusUser(p) { Swal.fire({title:'Hapus User?',icon:'warning',showCancelButton:true}).then(r=>{if(r.isConfirmed) callApi('hapusUser', {pin: p}).then(function(){ loadUserList() }); });}
+    
     function loadUserList() { 
-        if(STATE.user.role!=='ADMIN') return; 
-        var karyaCount = {};
-        STATE.allMedia.forEach(m => { var n = m[1]; karyaCount[n] = (karyaCount[n] || 0) + 1; });
-
+        // Allow KEPSEK/OPS to access but filter content
+        if(!['ADMIN', 'KEPSEK', 'OPS'].includes(STATE.user.role)) return; 
+        
+        var karyaCount = {}; STATE.allMedia.forEach(m => { var n = m[1]; karyaCount[n] = (karyaCount[n] || 0) + 1; });
         callApi('users').then(function(res){
             STATE.users=res.data; 
             var h=''; 
-            document.getElementById('statUsers').innerText = STATE.users.length;
-            STATE.users.forEach(u=>{ 
-                var nama = u[0], jml = karyaCount[nama] || 0, badgeRole = u[3]==='ADMIN'?'bg-danger':'bg-secondary';
+            var isSchoolAdmin = ['KEPSEK', 'OPS'].includes(STATE.user.role);
+            
+            // Filter users based on role
+            var displayUsers = STATE.users;
+            if(isSchoolAdmin) {
+                displayUsers = STATE.users.filter(u => u[1] === STATE.user.school);
+                document.getElementById('statUsers').innerText = displayUsers.length; // Update stat
+            } else {
+                document.getElementById('statUsers').innerText = STATE.users.length;
+            }
+
+            displayUsers.forEach(u=>{ 
+                var nama = u[0], jml = karyaCount[nama] || 0;
+                var badgeRole = u[3]==='ADMIN'?'bg-danger': (u[3]==='OPS'?'bg-purple': (u[3]==='KEPSEK'?'bg-indigo':'bg-secondary'));
+                
+                // Allow edit/delete if Admin OR if School Admin editing regular Teacher (not Admin)
+                var canEdit = STATE.user.role === 'ADMIN' || (isSchoolAdmin && u[3] === 'GURU');
+                var btns = canEdit ? `<button onclick="bukaEditUser('${u[2]}')" class="btn-soft btn-soft-primary"><i class="fas fa-edit"></i></button><button onclick="hapusUser('${u[2]}')" class="btn-soft btn-soft-danger"><i class="fas fa-trash"></i></button>` : `<small class="text-muted">No Action</small>`;
+
                 h+=`<tr>
                 <td><div class="d-flex align-items-center"><div class="avatar-circle me-3">${nama.charAt(0)}</div><div><div class="fw-bold">${cleanStr(nama)}</div><small class="text-muted">${cleanStr(u[1])}</small></div></div></td>
                 <td class="text-center"><span class="badge bg-light text-dark border px-3">${jml} Karya</span></td>
                 <td class="font-monospace fw-bold text-muted">${u[2]}</td>
                 <td><span class="badge ${badgeRole}">${u[3]}</span></td>
-                <td class="text-center"><div class="d-flex justify-content-center gap-1"><button onclick="bukaEditUser('${u[2]}')" class="btn-soft btn-soft-primary"><i class="fas fa-edit"></i></button><button onclick="hapusUser('${u[2]}')" class="btn-soft btn-soft-danger"><i class="fas fa-trash"></i></button></div></td>
+                <td class="text-center"><div class="d-flex justify-content-center gap-1">${btns}</div></td>
                 </tr>`; 
             }); 
             document.getElementById('tableUsers').innerHTML=h; 
         });
     }
     
-    // 1. STATISTIK TOP SEKOLAH
-    function loadSchoolStats() {
-        if(!STATE.users || STATE.users.length === 0) { callApi('users').then(function(res){ STATE.users = res.data; processSchoolStats(); }); } else { processSchoolStats(); }
-    }
-
-    function processSchoolStats() {
-        var stats = {}; var totalKaryaSemua = STATE.allMedia.length;
-        STATE.users.forEach(u => { var s = u[1] || "Tanpa Satuan Pendidikan"; if(!stats[s]) stats[s] = { guru: 0, karya: 0 }; stats[s].guru++; });
-        STATE.allMedia.forEach(m => { var s = m[2] || "Tanpa Satuan Pendidikan"; if(!stats[s]) stats[s] = { guru: 0, karya: 0 }; stats[s].karya++; });
-
-        var arr = Object.keys(stats).map(k => { return { nama: k, guru: stats[k].guru, karya: stats[k].karya, persen: totalKaryaSemua > 0 ? ((stats[k].karya / totalKaryaSemua) * 100).toFixed(1) : 0 }; });
-        arr.sort((a, b) => b.karya - a.karya || b.guru - a.guru);
-
-        var h = '';
-        arr.forEach((x, idx) => {
-            var barColor = x.persen > 50 ? 'bg-success' : (x.persen > 20 ? 'bg-primary' : 'bg-warning');
-            var badgeRank = idx < 3 ? `<div class="rank-badge rank-${idx+1}">${idx+1}</div>` : `<div class="rank-badge rank-other">${idx+1}</div>`;
-            h += `<tr>
-                <td class="text-center align-middle">${badgeRank}</td>
-                <td class="ps-3 fw-bold text-dark">${cleanStr(x.nama)}</td>
-                <td class="text-center"><span class="badge bg-soft-blue text-dark fw-bold" style="font-size:0.9rem">${x.guru}</span></td>
-                <td class="text-center"><span class="badge bg-soft-teal text-dark fw-bold" style="font-size:0.9rem">${x.karya}</span></td>
-                <td class="text-center" style="width:20%"><div class="d-flex align-items-center gap-2"><div class="progress flex-grow-1" style="height: 6px;"><div class="progress-bar ${barColor}" role="progressbar" style="width: ${x.persen}%"></div></div><small class="fw-bold text-muted">${x.persen}%</small></div></td>
-            </tr>`;
-        });
-        if(arr.length === 0) h = `<tr><td colspan="5" class="text-center py-4 text-muted">Belum ada data statistik.</td></tr>`;
-        document.getElementById('tableRankSchool').innerHTML = h;
-    }
-
-    // 2. STATISTIK TOP GURU
-    function loadTeacherStats() {
-        // Hitung karya per guru
-        var teacherCounts = {};
-        STATE.allMedia.forEach(m => { var n = m[1]; var s = m[2]; if(!teacherCounts[n]) teacherCounts[n] = {name: n, school: s, count: 0}; teacherCounts[n].count++; });
-        
-        var arr = Object.values(teacherCounts);
-        arr.sort((a, b) => b.count - a.count);
-        
-        var h = '';
-        arr.slice(0, 100).forEach((t, idx) => {
-            var medal = idx === 0 ? '🥇' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : ''));
-            var badgeRank = idx < 3 ? `<div class="rank-badge rank-${idx+1}">${idx+1}</div>` : `<div class="rank-badge rank-other">${idx+1}</div>`;
-            h += `<tr>
-                <td class="text-center align-middle">${badgeRank}</td>
-                <td class="ps-3 fw-bold text-dark">${cleanStr(t.name)} ${medal}</td>
-                <td class="ps-3 text-muted small">${cleanStr(t.school)}</td>
-                <td class="text-center"><span class="badge bg-soft-teal text-dark fw-bold" style="font-size:0.9rem">${t.count}</span></td>
-                <td class="text-center" style="font-size:1.2rem;">${medal}</td>
-            </tr>`;
-        });
-        if(arr.length === 0) h = `<tr><td colspan="5" class="text-center py-4 text-muted">Belum ada data guru.</td></tr>`;
-        document.getElementById('tableRankTeacher').innerHTML = h;
-    }
-    
-    // --- PROFILE ---
     function loadProfile() {
-        if(!STATE.user || STATE.user.role === 'GUEST') return;
-        
-        document.getElementById('prof-avatar').innerText = STATE.user.name.charAt(0);
-        document.getElementById('prof-name').innerText = STATE.user.name;
-        document.getElementById('prof-school').innerText = STATE.user.school;
-        document.getElementById('prof-role').innerText = STATE.user.role;
-        
-        // 1. CALCULATE STATS
-        var myMedia = STATE.allMedia.filter(m => m[1] === STATE.user.name);
-        var totalKarya = myMedia.length;
-        var pendingKarya = myMedia.filter(m => m[9] === 'BARU').length;
-        var totalViews = myMedia.reduce((acc, curr) => acc + (parseInt(curr[14]) || 0), 0);
-        var totalLikes = 0; // Currently API doesn't return likes count per item separately in array, assuming not implemented fully yet or implicit.
+      // Fix: Direct DOM manipulation, no recursive call
+      var user = STATE.user;
+      document.getElementById('prof-name').innerText = user.name;
+      document.getElementById('prof-school').innerText = user.school;
+      document.getElementById('prof-role').innerText = user.role;
+      document.getElementById('prof-avatar').innerText = user.name.charAt(0);
+      
+      var myMedia = STATE.allMedia.filter(m => m[1] === user.name);
+      document.getElementById('prof-stat-karya').innerText = myMedia.length;
+      document.getElementById('prof-stat-views').innerText = myMedia.reduce((a, b) => a + (b[14] || 0), 0);
+      document.getElementById('prof-stat-likes').innerText = 0; // Likes not implemented in API yet
 
-        document.getElementById('prof-stat-karya').innerText = totalKarya;
-        document.getElementById('prof-stat-views').innerText = totalViews;
-        document.getElementById('prof-stat-likes').innerText = "-"; // Placeholder
+      // Rank Logic
+      var teacherCounts = {}; 
+      STATE.allMedia.forEach(m => { var n = m[1]; teacherCounts[n] = (teacherCounts[n] || 0) + 1; });
+      var sorted = Object.entries(teacherCounts).sort((a,b) => b[1] - a[1]);
+      var rank = sorted.findIndex(x => x[0] === user.name) + 1;
+      document.getElementById('prof-rank').innerText = rank > 0 ? `#${rank}` : '-';
+      document.getElementById('prof-total-user').innerText = Object.keys(teacherCounts).length;
 
-        // 2. CALCULATE RANK & MEDAL
-        // We need all users for rank. If STATE.users is empty, rank will be accurate only if we fetch users first.
-        // For performance, we calculate roughly based on media owners if STATE.users is empty
-        var allTeachers = {};
-        STATE.allMedia.forEach(m => { var n = m[1]; allTeachers[n] = (allTeachers[n] || 0) + 1; });
-        var ranked = Object.entries(allTeachers).sort((a,b) => b[1] - a[1]);
-        var myRank = ranked.findIndex(r => r[0] === STATE.user.name) + 1;
-        var totalTeachers = Object.keys(allTeachers).length;
-        
-        document.getElementById('prof-rank').innerText = myRank > 0 ? `#${myRank}` : "-";
-        document.getElementById('prof-total-user').innerText = totalTeachers;
+      // Badges
+      var cnt = myMedia.length, medal='';
+      if(cnt>=50) medal='<span class="medal-badge bg-warning text-dark"><i class="fas fa-crown"></i> SUHU</span>'; 
+      else if(cnt>=20) medal='<span class="medal-badge bg-secondary text-white"><i class="fas fa-medal"></i> SENIOR</span>'; 
+      else if(cnt>=5) medal='<span class="medal-badge bg-primary text-white"><i class="fas fa-star"></i> AKTIF</span>'; 
+      else medal='<span class="medal-badge bg-light text-muted border"><i class="fas fa-seedling"></i> PEMULA</span>';
+      document.getElementById('prof-medal').innerHTML = medal;
 
-        // Medal Logic
-        var medalHtml = '';
-        if (totalKarya >= 50) medalHtml = '<span class="medal-badge bg-warning text-dark"><i class="fas fa-crown"></i> SUHU</span>';
-        else if (totalKarya >= 20) medalHtml = '<span class="medal-badge bg-secondary text-white"><i class="fas fa-medal"></i> SENIOR</span>';
-        else if (totalKarya >= 5) medalHtml = '<span class="medal-badge bg-info text-white"><i class="fas fa-star"></i> AKTIF</span>';
-        else medalHtml = '<span class="medal-badge bg-light text-muted"><i class="fas fa-seedling"></i> PEMULA</span>';
-        document.getElementById('prof-medal').innerHTML = medalHtml;
-
-        // 3. RENDER WORK LIST
-        var listHtml = '';
-        if(myMedia.length === 0) {
-            document.getElementById('prof-empty-works').classList.remove('d-none');
-            document.getElementById('prof-works-list').innerHTML = '';
-        } else {
-            document.getElementById('prof-empty-works').classList.add('d-none');
-            myMedia.forEach((m) => {
-                var realIndex = STATE.allMedia.indexOf(m);
-                var statusBadge = m[9] === 'DISETUJUI' ? '<span class="badge bg-success">Tayang</span>' : (m[9] === 'REVISI' ? '<span class="badge bg-danger">Revisi</span>' : '<span class="badge bg-warning text-dark">Pending</span>');
-                listHtml += `
-                <tr>
-                    <td class="ps-4">
-                        <div class="fw-bold text-dark text-truncate" style="max-width: 200px;">${cleanStr(m[5])}</div>
-                        <div class="small text-muted">${cleanStr(m[6])} • ${cleanStr(m[11])}</div>
-                    </td>
-                    <td class="text-center small text-muted">
-                        <div><i class="fas fa-eye me-1"></i> ${m[14]||0}</div>
-                    </td>
-                    <td class="text-center">${statusBadge}</td>
-                    <td class="text-center pe-4">
-                        <button onclick="bukaEdit(${realIndex})" class="btn btn-sm btn-light border text-primary" title="Edit"><i class="fas fa-pencil-alt"></i></button>
-                        <button onclick="hapusKarya(${realIndex})" class="btn btn-sm btn-light border text-danger ms-1" title="Hapus"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>`;
-            });
-            document.getElementById('prof-works-list').innerHTML = listHtml;
-        }
+      // List
+      var list = document.getElementById('prof-works-list');
+      var empty = document.getElementById('prof-empty-works');
+      if(myMedia.length === 0) { list.innerHTML = ''; empty.classList.remove('d-none'); }
+      else {
+          empty.classList.add('d-none');
+          var h = '';
+          myMedia.forEach(m => {
+              var st = m[9], badge = st==='DISETUJUI'?'bg-success':(st==='REVISI'?'bg-danger':'bg-warning text-dark');
+              h += `<tr><td class="ps-4"><div class="fw-bold">${cleanStr(m[5])}</div><div class="small text-muted">${cleanStr(m[6])}</div></td>
+              <td class="text-center small text-muted"><i class="fas fa-eye me-1"></i>${m[14]||0}</td>
+              <td class="text-center"><span class="badge ${badge}">${st}</span></td>
+              <td class="text-center pe-4"><button onclick="bukaEdit('${m[13]}')" class="btn btn-sm btn-light border text-primary"><i class="fas fa-pen"></i></button></td></tr>`;
+          });
+          list.innerHTML = h;
+      }
     }
 
-    function simpanProfile() {
-        var p = {
-            nama: document.getElementById('pName').value,
-            sekolah: document.getElementById('pSchool').value,
-            pin: document.getElementById('pPin').value,
-            role: STATE.user.role, // Role tidak berubah
-            oldPin: document.getElementById('pOldPin').value
-        };
-        
-        Swal.fire({title: 'Menyimpan Profil...', didOpen:()=>{Swal.showLoading()}});
-        callApi('simpanUser', p).then(function(res){ 
-            if(res.status==='success'){ 
-                Swal.fire('Sukses','Profil diperbarui. Silakan login ulang.','success').then(() => {
-                    logout();
-                }); 
-            } else { 
-                Swal.fire('Error',res.message,'error'); 
-            } 
-        });
-    }
-
-    function resetUserForm() { document.getElementById('formUser').reset(); document.getElementById('userMode').value="ADD"; }
-    function bukaEditUser(pin) { var u=STATE.users.find(x=>x[2].toString()===pin.toString()); if(!u)return; document.getElementById('userMode').value="EDIT"; document.getElementById('oldPin').value=pin; document.getElementById('userName').value=u[0]; document.getElementById('userSchool').value=u[1]; document.getElementById('userPin').value=u[2]; document.getElementById('userRole').value=u[3]; new bootstrap.Modal('#modalUser').show(); }
-    function prosesSimpanUser() { 
-        var p={nama:document.getElementById('userName').value,sekolah:document.getElementById('userSchool').value,pin:document.getElementById('userPin').value,role:document.getElementById('userRole').value,oldPin:document.getElementById('oldPin').value}; 
-        callApi('simpanUser', p).then(function(res){ if(res.status==='success'){ Swal.fire('Sukses','','success'); loadUserList(); bootstrap.Modal.getInstance(document.getElementById('modalUser')).hide(); } else { Swal.fire('Error',res.message,'error'); } });
-    }
-    function hapusUser(p) { Swal.fire({title:'Hapus User?',icon:'warning',showCancelButton:true}).then(r=>{if(r.isConfirmed) callApi('hapusUser', {pin: p}).then(function(){ loadUserList() }); });}
   </script>
 </body>
 </html>
