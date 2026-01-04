@@ -163,6 +163,11 @@
     /* Role Badges */
     .bg-purple { background-color: #9333ea !important; color: white; }
     .bg-indigo { background-color: #4f46e5 !important; color: white; }
+    
+    /* PROFILE TABS */
+    .nav-tabs-profile .nav-link { color: #64748b; font-weight: 600; padding: 12px 16px; transition: all 0.2s; }
+    .nav-tabs-profile .nav-link.active { color: var(--primary) !important; border-bottom: 2px solid var(--primary) !important; background: transparent; }
+    .nav-tabs-profile .nav-link:hover { color: var(--primary); }
   </style>
 </head>
 <body>
@@ -196,7 +201,7 @@
 
       <div class="d-flex align-items-center gap-2">
         <button id="btnHome" class="btn btn-outline-secondary btn-sm rounded-pill fw-bold px-3 d-none" onclick="switchView('GALERI')">Kembali</button>
-        <button id="btnDashboard" class="btn btn-warning btn-sm rounded-pill fw-bold d-none shadow-sm text-dark" onclick="switchView('ADMIN')"><i class="fas fa-chart-pie me-1"></i> Dashboard</button>
+        <button id="btnDashboard" class="btn btn-warning btn-sm rounded-pill fw-bold px-3 d-none" onclick="switchView('ADMIN')"><i class="fas fa-chart-pie me-1"></i> Dashboard Pusat</button>
         <button id="btnLogin" class="btn btn-outline-primary btn-sm rounded-pill fw-bold px-4" onclick="loginModal()">Login Guru</button>
         <div id="userPanel" class="d-none d-flex align-items-center gap-3">
           <div class="text-end lh-1 cursor-pointer" onclick="switchView('PROFILE')">
@@ -288,101 +293,116 @@
              </div>
 
              <div class="profile-card">
-                 <div class="p-3 border-bottom bg-white fw-bold text-dark">
-                     <i class="fas fa-folder-open me-2 text-primary"></i>Daftar Karya Saya
-                 </div>
+                 <!-- PROFILE TABS -->
+                 <ul class="nav nav-tabs nav-tabs-profile mb-0 border-bottom-0 px-2 pt-2" id="profileTabs" role="tablist">
+                   <li class="nav-item" role="presentation">
+                     <button class="nav-link active fw-bold border-0 bg-transparent" id="tab-karya-link" data-bs-toggle="tab" data-bs-target="#tab-content-karya" type="button">
+                         <i class="fas fa-folder-open me-2"></i>Karya Saya
+                     </button>
+                   </li>
+                   <li class="nav-item" role="presentation" id="tab-dashboard-li" style="display:none;">
+                     <button class="nav-link fw-bold border-0 bg-transparent" id="tab-dashboard-link" data-bs-toggle="tab" data-bs-target="#tab-content-dashboard" type="button" onclick="updateDashboardStats()">
+                         <i class="fas fa-chart-line me-2"></i>Monitoring Sekolah
+                     </button>
+                   </li>
+                 </ul>
                  
-                 <div class="p-0">
-                     <div id="prof-works-container">
-                         <div class="table-responsive">
-                             <table class="table table-hover align-middle mb-0">
-                                 <thead class="bg-light"><tr><th class="ps-4 py-3 small text-muted">DETAIL KARYA</th><th class="text-center small text-muted">STATS</th><th class="text-center small text-muted">STATUS</th><th class="text-center small text-muted pe-4">AKSI</th></tr></thead>
-                                 <tbody id="prof-works-list"></tbody>
-                             </table>
+                 <div class="tab-content border-top">
+                     <!-- TAB: KARYA SAYA -->
+                     <div class="tab-pane fade show active p-0" id="tab-content-karya">
+                         <div id="prof-works-container">
+                             <div class="table-responsive">
+                                 <table class="table table-hover align-middle mb-0">
+                                     <thead class="bg-light"><tr><th class="ps-4 py-3 small text-muted">DETAIL KARYA</th><th class="text-center small text-muted">STATS</th><th class="text-center small text-muted">STATUS</th><th class="text-center small text-muted pe-4">AKSI</th></tr></thead>
+                                     <tbody id="prof-works-list"></tbody>
+                                 </table>
+                             </div>
+                             <div id="prof-empty-works" class="text-center py-5 d-none">
+                                 <i class="fas fa-cloud-upload-alt fa-3x text-muted opacity-25 mb-3"></i>
+                                 <p class="text-muted fw-bold">Belum ada karya yang diupload.</p>
+                                 <button onclick="resetForm(); showModalInput()" class="btn btn-sm btn-primary rounded-pill fw-bold px-4">Upload Sekarang</button>
+                             </div>
                          </div>
-                         <div id="prof-empty-works" class="text-center py-5 d-none">
-                             <i class="fas fa-cloud-upload-alt fa-3x text-muted opacity-25 mb-3"></i>
-                             <p class="text-muted fw-bold">Belum ada karya yang diupload.</p>
-                             <button onclick="resetForm(); showModalInput()" class="btn btn-sm btn-primary rounded-pill fw-bold px-4">Upload Sekarang</button>
+                     </div>
+
+                     <!-- TAB: DASHBOARD MONITORING -->
+                     <div class="tab-pane fade" id="tab-content-dashboard">
+                         <div class="p-4 bg-light">
+                            <div class="dashboard-header py-3 px-4 mb-3">
+                              <div><h5 class="fw-800 mb-0 text-dark">Monitoring</h5><small class="text-muted" id="dashSubTitle">Pantau data dan aktivitas karya</small></div>
+                              <div id="adminRoleBadge" class="badge bg-primary px-3 py-2 rounded-pill">ROLE</div>
+                            </div>
+                            
+                            <div class="stat-grid mb-4">
+                              <div class="stat-widget stat-total p-3"><div class="stat-val fs-3" id="statTotal">0</div><div class="stat-label small">Total Karya</div></div>
+                              <div class="stat-widget stat-approved p-3"><div class="stat-val fs-3" id="statApproved">0</div><div class="stat-label small">Disetujui</div></div>
+                              <div class="stat-widget stat-pending p-3"><div class="stat-val fs-3" id="statPending">0</div><div class="stat-label small">Menunggu</div></div>
+                              <div class="stat-widget stat-users admin-only p-3"><div class="stat-val fs-3" id="statUsers">0</div><div class="stat-label small">Guru Terdaftar</div></div>
+                            </div>
+
+                            <div class="bg-white p-3 border rounded-3 shadow-sm">
+                              <ul class="nav nav-tabs mb-3 border-bottom" id="adminTabs">
+                                <li class="nav-item"><button class="nav-link active fw-bold small" data-bs-toggle="tab" data-bs-target="#tab-media">Monitoring Karya</button></li>
+                                <li class="nav-item admin-only ms-1"><button class="nav-link fw-bold small" data-bs-toggle="tab" data-bs-target="#tab-users" onclick="loadUserList()">Manajemen Akun</button></li>
+                                <li class="nav-item global-only ms-1"><button class="nav-link fw-bold small" data-bs-toggle="tab" data-bs-target="#tab-rank-school" onclick="loadSchoolStats()">Top Sekolah</button></li>
+                                <li class="nav-item global-only ms-1"><button class="nav-link fw-bold small" data-bs-toggle="tab" data-bs-target="#tab-rank-teacher" onclick="loadTeacherStats()">Top Guru</button></li>
+                              </ul>
+
+                              <div class="tab-content">
+                                <div class="tab-pane fade show active" id="tab-media">
+                                  <div class="d-flex flex-column flex-md-row gap-2 justify-content-between mb-3">
+                                     <input type="text" class="form-control form-control-sm rounded-pill px-3 bg-light" placeholder="Cari karya..." oninput="searchAdminTable(this.value)">
+                                     <button onclick="setujuiSemua()" class="btn btn-sm btn-success rounded-pill fw-bold text-nowrap px-3 admin-only"><i class="fas fa-check-double me-1"></i> Setujui Semua</button>
+                                  </div>
+                                  <div class="table-responsive rounded-3 border">
+                                    <table class="table pretty-table table-hover align-middle mb-0">
+                                      <thead><tr><th class="ps-3">INFO KARYA</th><th>GURU</th><th class="text-center">STATUS</th><th class="text-center">AKSI</th></tr></thead>
+                                      <tbody id="tableMedia"></tbody>
+                                    </table>
+                                  </div>
+                                </div>
+                                
+                                <div class="tab-pane fade" id="tab-users">
+                                  <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h6 class="fw-bold text-muted mb-0 ps-2">Guru Terdaftar</h6>
+                                    <button class="btn btn-primary btn-sm rounded-pill fw-bold px-3 shadow-sm" onclick="resetUserForm(); showModalInputUser()"><i class="fas fa-plus me-1"></i>Tambah</button>
+                                  </div>
+                                  <div class="table-container table-responsive rounded-3 border">
+                                    <table class="table pretty-table table-hover align-middle mb-0">
+                                      <thead><tr><th class="ps-4">NAMA</th><th class="text-center">KARYA</th><th>PIN</th><th>PERAN</th><th class="text-center">AKSI</th></tr></thead>
+                                      <tbody id="tableUsers"></tbody>
+                                    </table>
+                                  </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="tab-rank-school">
+                                   <div class="d-flex justify-content-between align-items-center mb-3">
+                                      <h6 class="fw-bold text-muted mb-0 ps-2">Peringkat Sekolah</h6>
+                                      <button class="btn btn-outline-success btn-sm rounded-pill fw-bold px-3" onclick="loadSchoolStats()"><i class="fas fa-sync-alt"></i></button>
+                                   </div>
+                                   <div class="table-responsive rounded-3 border">
+                                      <table class="table pretty-table table-hover align-middle mb-0"><thead class="bg-light"><tr><th class="text-center" style="width: 50px;">#</th><th class="ps-3">SEKOLAH</th><th class="text-center">GURU</th><th class="text-center">KARYA</th></tr></thead><tbody id="tableRankSchool"></tbody></table>
+                                   </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="tab-rank-teacher">
+                                   <div class="d-flex justify-content-between align-items-center mb-3">
+                                      <h6 class="fw-bold text-muted mb-0 ps-2">Top Guru</h6>
+                                      <button class="btn btn-outline-success btn-sm rounded-pill fw-bold px-3" onclick="loadTeacherStats()"><i class="fas fa-sync-alt"></i></button>
+                                   </div>
+                                   <div class="table-responsive rounded-3 border">
+                                      <table class="table pretty-table table-hover align-middle mb-0"><thead class="bg-light"><tr><th class="text-center" style="width: 50px;">#</th><th class="ps-3">NAMA</th><th class="ps-3">UNIT</th><th class="text-center">KARYA</th></tr></thead><tbody id="tableRankTeacher"></tbody></table>
+                                   </div>
+                                </div>
+
+                              </div>
+                            </div>
                          </div>
                      </div>
                  </div>
              </div>
          </div>
      </div>
-  </div>
-
-  <!-- VIEW: ADMIN DASHBOARD -->
-  <div id="view-admin" class="container mt-4 d-none">
-    <div class="dashboard-header">
-      <div><h4 class="fw-800 mb-0 text-dark">Dashboard Monitoring</h4><small class="text-muted" id="dashSubTitle">Pantau data dan aktivitas karya</small></div>
-      <div id="adminRoleBadge" class="badge bg-primary px-3 py-2 rounded-pill">ROLE</div>
-    </div>
-    
-    <div class="stat-grid">
-      <div class="stat-widget stat-total"><div class="stat-val" id="statTotal">0</div><div class="stat-label">Total Karya</div><i class="fas fa-layer-group stat-icon-bg"></i></div>
-      <div class="stat-widget stat-approved"><div class="stat-val" id="statApproved">0</div><div class="stat-label">Disetujui</div><i class="fas fa-check-double stat-icon-bg"></i></div>
-      <div class="stat-widget stat-pending"><div class="stat-val" id="statPending">0</div><div class="stat-label">Menunggu</div><i class="fas fa-clock stat-icon-bg"></i></div>
-      <div class="stat-widget stat-users admin-only"><div class="stat-val" id="statUsers">0</div><div class="stat-label">Guru Terdaftar</div><i class="fas fa-users stat-icon-bg"></i></div>
-    </div>
-    
-    <div class="bg-white p-4 border rounded-4 shadow-sm">
-      <ul class="nav nav-tabs mb-4 border-bottom-0" id="adminTabs">
-        <li class="nav-item"><button class="nav-link active fw-bold border" data-bs-toggle="tab" data-bs-target="#tab-media">Monitoring Karya</button></li>
-        <li class="nav-item admin-only ms-2"><button class="nav-link fw-bold border" data-bs-toggle="tab" data-bs-target="#tab-users" onclick="loadUserList()">Manajemen Akun</button></li>
-        <li class="nav-item global-only ms-2"><button class="nav-link fw-bold border" data-bs-toggle="tab" data-bs-target="#tab-rank-school" onclick="loadSchoolStats()">Top Sekolah</button></li>
-        <li class="nav-item global-only ms-2"><button class="nav-link fw-bold border" data-bs-toggle="tab" data-bs-target="#tab-rank-teacher" onclick="loadTeacherStats()">Top Guru</button></li>
-      </ul>
-
-      <div class="tab-content">
-        <div class="tab-pane fade show active" id="tab-media">
-          <div class="d-flex flex-column flex-md-row gap-3 justify-content-between mb-3">
-             <input type="text" class="form-control rounded-pill px-4 border-secondary bg-light" placeholder="Cari karya di database..." oninput="searchAdminTable(this.value)">
-             <button onclick="setujuiSemua()" class="btn btn-success rounded-pill fw-bold text-nowrap px-4 shadow-sm admin-only"><i class="fas fa-check-double me-2"></i> Setujui Semua Pending</button>
-          </div>
-          <div class="table-responsive rounded-3 border">
-            <table class="table pretty-table table-hover align-middle mb-0">
-              <thead><tr><th class="ps-3">INFO KARYA</th><th>GURU</th><th class="text-center">STATUS</th><th class="text-center">AKSI</th></tr></thead>
-              <tbody id="tableMedia"></tbody>
-            </table>
-          </div>
-        </div>
-        
-        <div class="tab-pane fade" id="tab-users">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="fw-bold text-muted mb-0 ps-2">Daftar Guru Terdaftar</h6>
-            <button class="btn btn-primary btn-sm rounded-pill fw-bold px-4 shadow-sm" onclick="resetUserForm(); showModalInputUser()"><i class="fas fa-plus me-2"></i>Tambah User</button>
-          </div>
-          <div class="table-container table-responsive rounded-3 border">
-            <table class="table pretty-table table-hover align-middle mb-0">
-              <thead><tr><th class="ps-4">NAMA PENGGUNA</th><th class="text-center">PRODUKTIVITAS</th><th>PIN AKSES</th><th>PERAN</th><th class="text-center">AKSI</th></tr></thead>
-              <tbody id="tableUsers"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <div class="tab-pane fade" id="tab-rank-school">
-           <div class="d-flex justify-content-between align-items-center mb-3">
-              <h6 class="fw-bold text-muted mb-0 ps-2">🏆 Peringkat Satuan Pendidikan</h6>
-              <button class="btn btn-outline-success btn-sm rounded-pill fw-bold px-3" onclick="loadSchoolStats()"><i class="fas fa-sync-alt me-1"></i> Refresh</button>
-           </div>
-           <div class="table-responsive rounded-3 border">
-              <table class="table pretty-table table-hover align-middle mb-0"><thead class="bg-light"><tr><th class="text-center" style="width: 50px;">#</th><th class="ps-3">SATUAN PENDIDIKAN</th><th class="text-center">JML GURU</th><th class="text-center">TOTAL KARYA</th><th class="text-center">PERSENTASE</th></tr></thead><tbody id="tableRankSchool"></tbody></table>
-           </div>
-        </div>
-
-        <div class="tab-pane fade" id="tab-rank-teacher">
-           <div class="d-flex justify-content-between align-items-center mb-3">
-              <h6 class="fw-bold text-muted mb-0 ps-2">🥇 Top Kontributor Guru (100 Teratas)</h6>
-              <button class="btn btn-outline-success btn-sm rounded-pill fw-bold px-3" onclick="loadTeacherStats()"><i class="fas fa-sync-alt me-1"></i> Refresh</button>
-           </div>
-           <div class="table-responsive rounded-3 border">
-              <table class="table pretty-table table-hover align-middle mb-0"><thead class="bg-light"><tr><th class="text-center" style="width: 50px;">#</th><th class="ps-3">NAMA GURU</th><th class="ps-3">UNIT KERJA</th><th class="text-center">TOTAL KARYA</th><th class="text-center">MEDALI</th></tr></thead><tbody id="tableRankTeacher"></tbody></table>
-           </div>
-        </div>
-
-      </div>
-    </div>
   </div>
 
   <button id="btnAdd" class="fab-add d-none" onclick="resetForm(); showModalInput()"><i class="fas fa-plus"></i></button>
@@ -514,8 +534,6 @@
       document.getElementById('btnLogin').classList.toggle('d-none', !isGuest);
       document.getElementById('userPanel').classList.toggle('d-none', isGuest);
       
-      var btnDash = document.getElementById('btnDashboard');
-      btnDash.classList.add('d-none');
       document.getElementById('btnAdd').classList.add('d-none');
       document.getElementById('btnFilterMy').classList.add('d-none');
       
@@ -524,27 +542,49 @@
         document.getElementById('btnFilterMy').classList.remove('d-none');
       }
       
-      // Update Dashboard Access: Admin, Moderator, Kepsek, Ops
-      var allowedRoles = ['ADMIN', 'MODERATOR', 'KEPSEK', 'OPS'];
-      if (allowedRoles.includes(STATE.user.role)) {
-        btnDash.classList.remove('d-none');
-        document.getElementById('adminRoleBadge').innerText = STATE.user.role;
-        
-        // Atur warna badge role
-        var badge = document.getElementById('adminRoleBadge');
-        badge.className = 'badge px-3 py-2 rounded-pill ' + (STATE.user.role === 'OPS' ? 'bg-purple' : (STATE.user.role === 'KEPSEK' ? 'bg-indigo' : 'bg-primary'));
-        
-        // Visibility Logic for Dashboard Tabs
-        var isAdminOrMod = ['ADMIN', 'MODERATOR'].includes(STATE.user.role);
-        var isSchoolAdmin = ['KEPSEK', 'OPS'].includes(STATE.user.role);
+      // FLEXIBLE ROLE DETECTION (Contains Logic)
+      var role = (STATE.user.role || "").toUpperCase();
+      var isAdmin = role.includes('ADMIN');
+      var isModerator = role.includes('MODERATOR');
+      var isKepala = role.includes('KEPALA');
+      var isOperator = role.includes('OPERATOR') || role.includes('OPS');
+      
+      var isGlobalAdmin = isAdmin || isModerator;
+      var isSchoolAdmin = isKepala || isOperator;
+      var showDashboard = isGlobalAdmin || isSchoolAdmin;
+      
+      // 1. Dashboard Tab Visibility in Profile (For All Management Roles)
+      document.getElementById('tab-dashboard-li').style.setProperty('display', showDashboard ? 'block' : 'none', 'important');
 
-        document.querySelectorAll('.admin-only').forEach(el => el.style.setProperty('display', STATE.user.role === 'ADMIN' ? 'block' : 'none', 'important'));
-        document.querySelectorAll('.global-only').forEach(el => el.style.setProperty('display', isAdminOrMod ? 'block' : 'none', 'important'));
+      // 2. Navbar Dashboard Button (RESTORED: Khusus Admin & Moderator)
+      var btnDash = document.getElementById('btnDashboard');
+      if (isGlobalAdmin) {
+          btnDash.classList.remove('d-none');
+          btnDash.innerHTML = '<i class="fas fa-chart-pie me-1"></i> Dashboard Pusat';
+      } else {
+          btnDash.classList.add('d-none');
+      }
+
+      if (showDashboard) {
+        document.getElementById('adminRoleBadge').innerText = STATE.user.role;
+        var badge = document.getElementById('adminRoleBadge');
+        // Dynamic Badge Color
+        if(isOperator) badge.className = 'badge px-3 py-2 rounded-pill bg-purple';
+        else if(isKepala) badge.className = 'badge px-3 py-2 rounded-pill bg-indigo';
+        else badge.className = 'badge px-3 py-2 rounded-pill bg-primary';
         
-        if(isSchoolAdmin) {
+        // Tab Visibility Logic
+        var canManageUsers = isAdmin || isKepala || isOperator;
+
+        document.querySelectorAll('.admin-only').forEach(el => el.style.setProperty('display', isAdmin ? 'block' : 'none', 'important'));
+        document.querySelectorAll('.global-only').forEach(el => el.style.setProperty('display', isGlobalAdmin ? 'block' : 'none', 'important'));
+        
+        // Tab User Management Visibility
+        var tabUsers = document.querySelector('[data-bs-target="#tab-users"]');
+        if(tabUsers) tabUsers.parentElement.style.display = canManageUsers ? 'block' : 'none';
+
+        if(isSchoolAdmin && !isGlobalAdmin) {
              document.getElementById('dashSubTitle').innerText = "Pantau aktivitas di " + STATE.user.school;
-             // Tab Users ditampilkan untuk Kepsek/Ops
-             document.querySelector('[data-bs-target="#tab-users"]').parentElement.style.display = 'block'; 
         } else {
              document.getElementById('dashSubTitle').innerText = "Pantau data dan aktivitas karya";
         }
@@ -552,17 +592,23 @@
     }
 
     function switchView(viewName) {
-      var g = document.getElementById('view-galeri'), a = document.getElementById('view-admin'), p = document.getElementById('view-profile'), s = document.getElementById('searchWrapper');
-      g.classList.add('d-none'); a.classList.add('d-none'); p.classList.add('d-none');
+      // Redirect ADMIN view request to PROFILE view with Dashboard tab active
+      if (viewName === 'ADMIN') {
+          viewName = 'PROFILE';
+          setTimeout(() => {
+              var tabEl = document.getElementById('tab-dashboard-link');
+              var tab = new bootstrap.Tab(tabEl);
+              tab.show();
+              updateDashboardStats();
+          }, 100);
+      }
+      
+      var g = document.getElementById('view-galeri'), p = document.getElementById('view-profile'), s = document.getElementById('searchWrapper');
+      g.classList.add('d-none'); p.classList.add('d-none');
       document.getElementById('btnHome').classList.remove('d-none');
-      document.getElementById('btnDashboard').classList.toggle('d-none', !(['ADMIN','MODERATOR','KEPSEK','OPS'].includes(STATE.user.role)));
       document.getElementById('btnAdd').classList.add('d-none');
       
-      if (viewName === 'ADMIN') {
-        a.classList.remove('d-none'); document.getElementById('btnDashboard').classList.add('d-none'); s.style.visibility = 'hidden';
-        renderTableAdmin(STATE.allMedia);
-        updateDashboardStats(); 
-      } else if (viewName === 'PROFILE') {
+      if (viewName === 'PROFILE') {
         p.classList.remove('d-none'); s.style.visibility = 'hidden'; loadProfile();
       } else {
         g.classList.remove('d-none'); document.getElementById('btnHome').classList.add('d-none');
@@ -575,7 +621,13 @@
       callApi('read').then(function(res) {
         if(res && res.status === "success") {
           STATE.allMedia = res.media; STATE.settings = res.settings;
-          populateDropdowns(); applyFilters(); updateDashboardStats();
+          populateDropdowns(); applyFilters(); 
+          
+          // Check role flexibly
+          var role = (STATE.user.role || "").toUpperCase();
+          if(role.includes('ADMIN') || role.includes('MODERATOR') || role.includes('KEPALA') || role.includes('OPERATOR') || role.includes('OPS')) {
+              updateDashboardStats();
+          }
         }
         document.getElementById('loader').style.display = 'none';
       });
@@ -583,11 +635,18 @@
     
     function updateDashboardStats() {
         var data = STATE.allMedia;
-        var role = STATE.user.role;
+        var role = (STATE.user.role || "").toUpperCase();
+        
+        var isAdmin = role.includes('ADMIN');
+        var isModerator = role.includes('MODERATOR');
+        var isKepala = role.includes('KEPALA');
+        var isOperator = role.includes('OPERATOR') || role.includes('OPS');
+
+        if(!isAdmin && !isModerator && !isKepala && !isOperator) return;
+
         // Filter data for KEPSEK/OPS
-        if (['KEPSEK', 'OPS'].includes(role)) {
+        if (isKepala || isOperator) {
             data = data.filter(m => m[2] === STATE.user.school);
-            // Fetch users immediately to show count on dashboard
             if(STATE.users.length === 0) {
                 callApi('users').then(res => { 
                     STATE.users = res.data;
@@ -597,10 +656,10 @@
                 document.getElementById('statUsers').innerText = STATE.users.filter(u => u[1] === STATE.user.school).length;
             }
         } else {
-             // For Admin, fetch all users count if not already fetched
-             if(role === 'ADMIN' && STATE.users.length === 0) {
+             // For Global Admin
+             if(isAdmin && STATE.users.length === 0) {
                  callApi('users').then(res => { STATE.users = res.data; document.getElementById('statUsers').innerText = res.data.length; });
-             } else if (role === 'ADMIN') {
+             } else if (isAdmin) {
                  document.getElementById('statUsers').innerText = STATE.users.length;
              }
         }
@@ -608,6 +667,8 @@
         document.getElementById('statTotal').innerText = data.length;
         document.getElementById('statPending').innerText = data.filter(i => i[9] === "BARU").length;
         document.getElementById('statApproved').innerText = data.filter(i => i[9] === "DISETUJUI").length;
+        
+        if(document.getElementById('tableMedia').innerHTML === '') renderTableAdmin(STATE.allMedia);
     }
 
     // --- SEARCH & FILTER ---
@@ -631,24 +692,26 @@
       var saved = JSON.parse(localStorage.getItem(favKey) || '[]');
       var dataToShow = STATE.filtered.slice(0, STATE.displayedLimit);
       
+      var role = (STATE.user.role || "").toUpperCase();
+      var isAdminOrMod = role.includes('ADMIN') || role.includes('MODERATOR');
+
       dataToShow.forEach(function(item) {
         var realIndex = STATE.allMedia.indexOf(item);
         var id = cleanStr(item[13]), status = item[9], feedback = cleanStr(item[12]);
         var isApproved = status === "DISETUJUI";
         var isOwner = (STATE.user.name === item[1]);
-        var isAdmin = ['ADMIN','MODERATOR'].includes(STATE.user.role);
         var isSaved = saved.includes(id);
         
-        var checkMark = (isApproved && !isOwner && !isAdmin) ? '<div class="badge-approved"><i class="fas fa-check"></i></div>' : '';
+        var checkMark = (isApproved && !isOwner && !isAdminOrMod) ? '<div class="badge-approved"><i class="fas fa-check"></i></div>' : '';
         var ownerInfoHtml = '', feedbackHtml = '';
 
-        if (isOwner || isAdmin) {
+        if (isOwner || isAdminOrMod) {
              var badgeClass = status === 'DISETUJUI' ? 'bg-success' : (status === 'REVISI' ? 'bg-danger' : 'bg-warning text-dark');
              ownerInfoHtml = `<div class="status-pill ${badgeClass}">${status==='BARU'?'MENUNGGU':status}</div>`;
              if (feedback) feedbackHtml = `<div class="feedback-box"><i class="fas fa-comment-dots"></i> <b>Catatan:</b> ${feedback}</div>`;
         }
 
-        var editBtns = (isOwner || isAdmin) ? `<button onclick="event.stopPropagation(); bukaEdit(${realIndex})" class="btn-icon" title="Edit"><i class="fas fa-pencil-alt"></i></button><button onclick="event.stopPropagation(); hapusKarya(${realIndex})" class="btn-icon danger" title="Hapus"><i class="fas fa-trash"></i></button>` : '';
+        var editBtns = (isOwner || isAdminOrMod) ? `<button onclick="event.stopPropagation(); bukaEdit(${realIndex})" class="btn-icon" title="Edit"><i class="fas fa-pencil-alt"></i></button><button onclick="event.stopPropagation(); hapusKarya(${realIndex})" class="btn-icon danger" title="Hapus"><i class="fas fa-trash"></i></button>` : '';
         var html = '<div class="col-6 col-md-4 col-lg-3 d-flex"><div class="card-karya w-100"><div class="card-thumb">' + getThumbnailHtml(cleanStr(item[11]), item[8]) + checkMark + ownerInfoHtml + '<div class="view-badge"><i class="fas fa-eye me-1"></i> ' + (item[14]||0) + '</div><button onclick="event.stopPropagation(); toggleSimpan(\'' + id + '\')" class="btn-wishlist '+(isSaved?'active':'')+'"><i class="' + (isSaved ? 'fas fa-heart text-danger' : 'far fa-heart') + '"></i></button></div><div class="card-body-mp"><div class="mp-tags"><span class="badge-pill bg-soft-teal">' + cleanStr(item[6]) + '</span><span class="badge-pill bg-soft-blue">' + cleanStr(item[3]) + '</span></div><div class="mp-title" title="'+cleanStr(item[5])+'">' + cleanStr(item[5]) + '</div>' + (item[10] ? '<div class="kaih-compact"><i class="fas fa-star text-warning"></i>'+cleanStr(item[10])+'</div>' : '') + '<div class="guru-info"><div class="guru-avatar">' + cleanStr(item[1]).charAt(0) + '</div><div style="overflow:hidden; line-height:1.2;"><div class="text-truncate fw-bold" style="font-size:0.75rem">' + cleanStr(item[1]) + '</div><div class="text-muted text-truncate" style="font-size:0.65rem">' + cleanStr(item[2]) + '</div></div></div>' + feedbackHtml + '<div class="action-row"><button onclick="bukaPreview(' + realIndex + ')" class="btn-open">BUKA KARYA</button>' + editBtns + '</div></div></div></div>';
         c.insertAdjacentHTML('beforeend', html);
       });
@@ -744,7 +807,8 @@
 
     function renderTableAdmin(data) {
       var html = '';
-      var isSchoolAdmin = ['KEPSEK', 'OPS'].includes(STATE.user.role);
+      var role = (STATE.user.role || "").toUpperCase();
+      var isSchoolAdmin = role.includes('KEPALA') || role.includes('OPERATOR') || role.includes('OPS');
       
       // Filter data for school admins
       if (isSchoolAdmin) {
@@ -786,30 +850,31 @@
     function hapusUser(p) { Swal.fire({title:'Hapus User?',icon:'warning',showCancelButton:true}).then(r=>{if(r.isConfirmed) callApi('hapusUser', {pin: p}).then(function(){ loadUserList() }); });}
     
     function loadUserList() { 
-        // Allow KEPSEK/OPS to access but filter content
-        if(!['ADMIN', 'KEPSEK', 'OPS'].includes(STATE.user.role)) return; 
+        var role = (STATE.user.role || "").toUpperCase();
+        var canManage = role.includes('ADMIN') || role.includes('KEPALA') || role.includes('OPERATOR') || role.includes('OPS');
+        if(!canManage) return; 
         
         var karyaCount = {}; STATE.allMedia.forEach(m => { var n = m[1]; karyaCount[n] = (karyaCount[n] || 0) + 1; });
         callApi('users').then(function(res){
             STATE.users=res.data; 
             var h=''; 
-            var isSchoolAdmin = ['KEPSEK', 'OPS'].includes(STATE.user.role);
+            var isSchoolAdmin = role.includes('KEPALA') || role.includes('OPERATOR') || role.includes('OPS');
             
             // Filter users based on role
             var displayUsers = STATE.users;
             if(isSchoolAdmin) {
                 displayUsers = STATE.users.filter(u => u[1] === STATE.user.school);
-                document.getElementById('statUsers').innerText = displayUsers.length; // Update stat
+                document.getElementById('statUsers').innerText = displayUsers.length; 
             } else {
                 document.getElementById('statUsers').innerText = STATE.users.length;
             }
 
             displayUsers.forEach(u=>{ 
                 var nama = u[0], jml = karyaCount[nama] || 0;
-                var badgeRole = u[3]==='ADMIN'?'bg-danger': (u[3]==='OPS'?'bg-purple': (u[3]==='KEPSEK'?'bg-indigo':'bg-secondary'));
+                var uRoleUpper = (u[3]||"").toUpperCase();
+                var badgeRole = uRoleUpper.includes('ADMIN')?'bg-danger': (uRoleUpper.includes('OPERATOR')?'bg-purple': (uRoleUpper.includes('KEPALA')?'bg-indigo':'bg-secondary'));
                 
-                // Allow edit/delete if Admin OR if School Admin editing regular Teacher (not Admin)
-                var canEdit = STATE.user.role === 'ADMIN' || (isSchoolAdmin && u[3] === 'GURU');
+                var canEdit = role.includes('ADMIN') || (isSchoolAdmin && uRoleUpper === 'GURU');
                 var btns = canEdit ? `<button onclick="bukaEditUser('${u[2]}')" class="btn-soft btn-soft-primary"><i class="fas fa-edit"></i></button><button onclick="hapusUser('${u[2]}')" class="btn-soft btn-soft-danger"><i class="fas fa-trash"></i></button>` : `<small class="text-muted">No Action</small>`;
 
                 h+=`<tr>
@@ -834,8 +899,12 @@
       
       var myMedia = STATE.allMedia.filter(m => m[1] === user.name);
       document.getElementById('prof-stat-karya').innerText = myMedia.length;
-      document.getElementById('prof-stat-views').innerText = myMedia.reduce((a, b) => a + (b[14] || 0), 0);
-      document.getElementById('prof-stat-likes').innerText = 0; // Likes not implemented in API yet
+      
+      // FIX VIEW COUNT: Parse Int to avoid string concatenation
+      var totalViews = myMedia.reduce((a, b) => a + (parseInt(b[14]) || 0), 0);
+      document.getElementById('prof-stat-views').innerText = totalViews;
+      
+      document.getElementById('prof-stat-likes').innerText = 0; 
 
       // Rank Logic
       var teacherCounts = {}; 
@@ -869,6 +938,30 @@
           });
           list.innerHTML = h;
       }
+      
+      // Default Tab reset if not coming from Dashboard redirect
+      var activeTab = document.querySelector('#profileTabs .nav-link.active');
+      if(!activeTab) {
+          var tab = new bootstrap.Tab(document.getElementById('tab-karya-link'));
+          tab.show();
+      }
+    }
+    
+    function loadSchoolStats() { if(!APP.users) APP.users=[]; if(!APP.users.length) callApi('users').then(res => { STATE.users = res.data; calcSchool(); }); else calcSchool(); }
+    function calcSchool() {
+        let stats = {}; STATE.users.forEach(u => { let s=u[1]||"Tanpa Sekolah"; if(!stats[s]) stats[s]={g:0,k:0}; stats[s].g++; });
+        STATE.allMedia.forEach(m => { let s=m[2]||"Tanpa Sekolah"; if(!stats[s]) stats[s]={g:0,k:0}; stats[s].k++; });
+        let arr = Object.keys(stats).map(k => ({n:k, g:stats[k].g, k:stats[k].k})).sort((a,b) => b.k - a.k);
+        let h = '';
+        arr.forEach((x,i) => { let rank = i<3 ? `<span class="rank-badge rank-${i+1}">${i+1}</span>` : `<span class="rank-badge rank-other">${i+1}</span>`; h += `<tr><td>${rank}</td><td>${x.n}</td><td class="text-center">${x.g}</td><td class="text-center fw-bold">${x.k}</td></tr>`; });
+        document.getElementById('tableRankSchool').innerHTML = h;
+    }
+    function loadTeacherStats() {
+        let counts = {}; STATE.allMedia.forEach(m => { let n=m[1]; if(!counts[n]) counts[n]={n:n,s:m[2],c:0}; counts[n].c++; });
+        let arr = Object.values(counts).sort((a,b) => b.c - a.c).slice(0, 50);
+        let h = '';
+        arr.forEach((x,i) => { let rank = i<3 ? `<span class="rank-badge rank-${i+1}">${i+1}</span>` : `<span class="rank-badge rank-other">${i+1}</span>`; h += `<tr><td>${rank}</td><td><div class="fw-bold">${x.n}</div><small class="text-muted">${x.s}</small></td><td class="text-center fw-bold text-primary">${x.c}</td></tr>`; });
+        document.getElementById('tableRankTeacher').innerHTML = h;
     }
 
   </script>
