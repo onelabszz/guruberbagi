@@ -226,8 +226,8 @@
         </div>
         
         <!-- RESTORED: Admin Dashboard Button in Menu -->
-        <button id="menuDashboardItem" class="btn btn-warning w-100 rounded-pill fw-bold mb-4 d-none" onclick="switchTab('ADMIN'); hideMenu();">
-           <i class="fas fa-chart-pie me-2"></i> Dashboard Pusat
+        <button id="menuDashboardItem" class="btn btn-warning w-100 rounded-pill fw-bold mb-4 d-none" onclick="switchTab('DASHBOARD'); hideMenu();">
+           <i class="fas fa-chart-pie me-2"></i> Dashboard
         </button>
 
         <h6 class="fw-bold text-muted small mt-3">FILTER TAMBAHAN</h6>
@@ -250,6 +250,57 @@
       <div class="text-center mt-4 mb-5">
         <button id="btnLoadMore" onclick="loadMore()" class="btn btn-sm btn-outline-secondary rounded-pill px-4 d-none">Muat Lebih Banyak</button>
       </div>
+    </div>
+
+    <!-- VIEW: DASHBOARD (STANDALONE) -->
+    <div id="view-dashboard" class="d-none">
+       <div class="bg-white rounded-3 border p-3">
+         <div class="d-flex justify-content-between align-items-center mb-3">
+           <h5 class="fw-bold mb-0">Monitoring</h5>
+           <span class="badge bg-warning text-dark" id="admRoleBadge">ADMIN</span>
+         </div>
+         <div class="row g-2 mb-4">
+           <div class="col-6"><div class="stat-card flex-column align-items-start"><div class="stat-label">Total Karya</div><div class="stat-val" id="statTotal">0</div></div></div>
+           <div class="col-6"><div class="stat-card flex-column align-items-start border-warning"><div class="stat-label text-warning">Menunggu</div><div class="stat-val text-warning" id="statPending">0</div></div></div>
+           <div class="col-6"><div class="stat-card flex-column align-items-start border-success"><div class="stat-label text-success">Disetujui</div><div class="stat-val text-success" id="statApproved">0</div></div></div>
+           <div class="col-6"><div class="stat-card flex-column align-items-start"><div class="stat-label">Total Guru</div><div class="stat-val" id="statUsers">0</div></div></div>
+         </div>
+         <div class="bg-light rounded-3 border p-1 mb-3">
+           <div class="nav nav-pills nav-fill" style="font-size:0.75rem;">
+              <button class="nav-link active btn-sm" data-bs-toggle="tab" data-bs-target="#adm-karya">Karya</button>
+              <button id="tabLinkUsers" class="nav-link btn-sm" data-bs-toggle="tab" data-bs-target="#adm-user" onclick="loadUserList()">Guru</button>
+              <button class="nav-link btn-sm global-only" data-bs-toggle="tab" data-bs-target="#adm-rank-school" onclick="loadSchoolStats()">Sekolah</button>
+              <button class="nav-link btn-sm global-only" data-bs-toggle="tab" data-bs-target="#adm-rank-teacher" onclick="loadTeacherStats()">Top Guru</button>
+           </div>
+         </div>
+         <div class="tab-content">
+           <div class="tab-pane fade show active" id="adm-karya">
+              <div class="d-flex gap-2 mb-2">
+                  <input type="text" class="form-control form-control-sm" placeholder="Cari..." id="searchAdmKarya" oninput="adminFilter()">
+                  <button class="btn btn-sm btn-secondary" onclick="fetchData()"><i class="fas fa-sync-alt"></i></button>
+              </div>
+              <div class="d-flex gap-2 mb-3">
+                  <select id="admFilterStatus" class="form-select form-select-sm" onchange="adminFilter()"><option value="">Status</option><option value="BARU">Menunggu</option><option value="DISETUJUI">Tayang</option><option value="REVISI">Revisi</option></select>
+                  <select id="admFilterMapel" class="form-select form-select-sm" onchange="adminFilter()"><option value="">Mapel</option></select>
+              </div>
+              <div class="d-grid mb-3"><button onclick="setujuiSemua()" class="btn btn-success btn-sm fw-bold admin-only">SETUJUI SEMUA PENDING</button></div>
+              <div id="admin-list-container"></div>
+           </div>
+           <div class="tab-pane fade" id="adm-user">
+              <button class="btn btn-primary w-100 rounded-pill mb-3 fw-bold btn-press-effect" onclick="showUserModal('ADD')"><i class="fas fa-plus me-2"></i> Tambah User</button>
+              <input type="text" class="form-control mb-3 form-control-sm" placeholder="Cari nama..." oninput="loadUserList(this.value)">
+              <div id="user-list-container"></div>
+           </div>
+           <div class="tab-pane fade" id="adm-rank-school">
+              <button class="btn btn-outline-success w-100 rounded-pill mb-3" onclick="loadSchoolStats()"><i class="fas fa-sync-alt me-2"></i> Refresh</button>
+              <div id="school-rank-container"></div>
+           </div>
+           <div class="tab-pane fade" id="adm-rank-teacher">
+              <button class="btn btn-outline-success w-100 rounded-pill mb-3" onclick="loadTeacherStats()"><i class="fas fa-sync-alt me-2"></i> Refresh</button>
+              <div id="teacher-rank-container"></div>
+           </div>
+         </div>
+       </div>
     </div>
 
     <!-- VIEW: PROFILE DASHBOARD -->
@@ -302,9 +353,6 @@
          <li class="nav-item" role="presentation">
            <button class="nav-link active" id="pills-karya-tab" data-bs-toggle="pill" data-bs-target="#pills-karya" type="button">Karya Saya</button>
          </li>
-         <li class="nav-item" role="presentation" id="tab-dashboard-li" style="display:none;">
-           <button class="nav-link" id="pills-dashboard-tab" data-bs-toggle="pill" data-bs-target="#pills-dashboard" type="button" onclick="updateStats()">Monitoring</button>
-         </li>
        </ul>
 
        <div class="tab-content" id="pills-tabContent">
@@ -316,57 +364,6 @@
                    <p class="text-muted fw-bold small">Belum ada karya yang diupload.</p>
                    <button onclick="openInputModal()" class="btn btn-sm btn-primary rounded-pill fw-bold px-4 btn-press-effect">Upload Sekarang</button>
                </div>
-          </div>
-
-          <!-- TAB: DASHBOARD -->
-          <div class="tab-pane fade" id="pills-dashboard">
-             <div class="bg-white rounded-3 border p-3">
-               <div class="d-flex justify-content-between align-items-center mb-3">
-                 <h5 class="fw-bold mb-0">Monitoring</h5>
-                 <span class="badge bg-warning text-dark" id="admRoleBadge">ADMIN</span>
-               </div>
-               <div class="row g-2 mb-4">
-                 <div class="col-6"><div class="stat-card flex-column align-items-start"><div class="stat-label">Total Karya</div><div class="stat-val" id="statTotal">0</div></div></div>
-                 <div class="col-6"><div class="stat-card flex-column align-items-start border-warning"><div class="stat-label text-warning">Menunggu</div><div class="stat-val text-warning" id="statPending">0</div></div></div>
-                 <div class="col-6"><div class="stat-card flex-column align-items-start border-success"><div class="stat-label text-success">Disetujui</div><div class="stat-val text-success" id="statApproved">0</div></div></div>
-                 <div class="col-6"><div class="stat-card flex-column align-items-start"><div class="stat-label">Total Guru</div><div class="stat-val" id="statUsers">0</div></div></div>
-               </div>
-               <div class="bg-light rounded-3 border p-1 mb-3">
-                 <div class="nav nav-pills nav-fill" style="font-size:0.75rem;">
-                    <button class="nav-link active btn-sm" data-bs-toggle="tab" data-bs-target="#adm-karya">Karya</button>
-                    <button id="tabLinkUsers" class="nav-link btn-sm" data-bs-toggle="tab" data-bs-target="#adm-user" onclick="loadUserList()">Guru</button>
-                    <button class="nav-link btn-sm global-only" data-bs-toggle="tab" data-bs-target="#adm-rank-school" onclick="loadSchoolStats()">Sekolah</button>
-                    <button class="nav-link btn-sm global-only" data-bs-toggle="tab" data-bs-target="#adm-rank-teacher" onclick="loadTeacherStats()">Top Guru</button>
-                 </div>
-               </div>
-               <div class="tab-content">
-                 <div class="tab-pane fade show active" id="adm-karya">
-                    <div class="d-flex gap-2 mb-2">
-                        <input type="text" class="form-control form-control-sm" placeholder="Cari..." id="searchAdmKarya" oninput="adminFilter()">
-                        <button class="btn btn-sm btn-secondary" onclick="fetchData()"><i class="fas fa-sync-alt"></i></button>
-                    </div>
-                    <div class="d-flex gap-2 mb-3">
-                        <select id="admFilterStatus" class="form-select form-select-sm" onchange="adminFilter()"><option value="">Status</option><option value="BARU">Menunggu</option><option value="DISETUJUI">Tayang</option><option value="REVISI">Revisi</option></select>
-                        <select id="admFilterMapel" class="form-select form-select-sm" onchange="adminFilter()"><option value="">Mapel</option></select>
-                    </div>
-                    <div class="d-grid mb-3"><button onclick="setujuiSemua()" class="btn btn-success btn-sm fw-bold admin-only">SETUJUI SEMUA PENDING</button></div>
-                    <div id="admin-list-container"></div>
-                 </div>
-                 <div class="tab-pane fade" id="adm-user">
-                    <button class="btn btn-primary w-100 rounded-pill mb-3 fw-bold btn-press-effect" onclick="showUserModal('ADD')"><i class="fas fa-plus me-2"></i> Tambah User</button>
-                    <input type="text" class="form-control mb-3 form-control-sm" placeholder="Cari nama..." oninput="loadUserList(this.value)">
-                    <div id="user-list-container"></div>
-                 </div>
-                 <div class="tab-pane fade" id="adm-rank-school">
-                    <button class="btn btn-outline-success w-100 rounded-pill mb-3" onclick="loadSchoolStats()"><i class="fas fa-sync-alt me-2"></i> Refresh</button>
-                    <div id="school-rank-container"></div>
-                 </div>
-                 <div class="tab-pane fade" id="adm-rank-teacher">
-                    <button class="btn btn-outline-success w-100 rounded-pill mb-3" onclick="loadTeacherStats()"><i class="fas fa-sync-alt me-2"></i> Refresh</button>
-                    <div id="teacher-rank-container"></div>
-                 </div>
-               </div>
-             </div>
           </div>
        </div>
     </div>
@@ -516,22 +513,17 @@
           const hasDashboardAccess = isAdmin || isModerator || isKepala || isOperator;
           const isGlobalAdmin = isAdmin || isModerator;
 
+          // Admin Dashboard Button in Menu
+          var menuDash = document.getElementById('menuDashboardItem');
+          if(menuDash) menuDash.classList.toggle('d-none', !hasDashboardAccess);
+
+          // Role Badge in Dashboard
           if(hasDashboardAccess) {
               document.getElementById('admRoleBadge').innerText = APP.user.role;
-              
-              // Handle Dashboard Tab Visibility
-              document.getElementById('tab-dashboard-li').style.display = 'block';
-
               // Toggle elements based on role scope
               document.querySelectorAll('.admin-only').forEach(el => el.style.setProperty('display', isAdmin ? 'block' : 'none', 'important'));
               document.querySelectorAll('.global-only').forEach(el => el.style.setProperty('display', isGlobalAdmin ? 'block' : 'none', 'important'));
-          } else {
-              document.getElementById('tab-dashboard-li').style.display = 'none';
-          }
-          
-          // RESTORED: Admin Dashboard Button in Menu
-          var menuDash = document.getElementById('menuDashboardItem');
-          if(menuDash) menuDash.classList.toggle('d-none', !isGlobalAdmin);
+          } 
        }
        
        // Handle "Guru" tab visibility in Admin Panel
@@ -541,21 +533,24 @@
     }
 
     function switchView(viewName) {
-       // Support 'ADMIN' view alias for Mobile (redirects to Profile -> Dashboard Tab)
-       if(viewName === 'ADMIN') {
-           viewName = 'PROFILE';
-           // Activate Dashboard Tab
-           setTimeout(() => {
-               document.getElementById('pills-dashboard-tab').click();
-               updateStats();
-           }, 100);
-       }
-
-       document.getElementById('view-galeri').classList.toggle('d-none', !(viewName === 'GALERI' || viewName === 'FAV'));
-       document.getElementById('view-profile').classList.toggle('d-none', viewName !== 'PROFILE');
-       document.getElementById('fabAdd').classList.toggle('d-none', APP.user.role === 'GUEST' || viewName === 'PROFILE');
-       if(viewName === 'PROFILE') loadProfile();
+       document.getElementById('view-galeri').classList.add('d-none');
+       document.getElementById('view-profile').classList.add('d-none');
+       document.getElementById('view-dashboard').classList.add('d-none');
+       
+       document.getElementById('fabAdd').classList.add('d-none');
        document.getElementById('searchBar').classList.add('d-none'); 
+
+       if(viewName === 'PROFILE') {
+           document.getElementById('view-profile').classList.remove('d-none');
+           document.getElementById('fabAdd').classList.toggle('d-none', APP.user.role === 'GUEST');
+           loadProfile();
+       } else if (viewName === 'DASHBOARD') {
+           document.getElementById('view-dashboard').classList.remove('d-none');
+           updateStats();
+       } else if (viewName === 'GALERI' || viewName === 'FAV') {
+           document.getElementById('view-galeri').classList.remove('d-none');
+           document.getElementById('fabAdd').classList.toggle('d-none', APP.user.role === 'GUEST');
+       }
     }
     
     function switchTab(tab) {
@@ -565,8 +560,8 @@
         if(tab === 'PROFILE') { if(APP.user.role === 'GUEST') { loginModal(); return; } document.getElementById('tab-mine').classList.add('active'); switchView('PROFILE'); }
         if(tab === 'FAV') { document.getElementById('tab-fav').classList.add('active'); switchView('GALERI'); applyFilters(); }
         
-        // Custom: Admin tab click (handled by button directly, but if needed via logic)
-        if(tab === 'ADMIN') { if(APP.user.role === 'GUEST') return; document.getElementById('tab-mine').classList.add('active'); switchView('ADMIN'); }
+        // Custom: Dashboard view
+        if(tab === 'DASHBOARD') { if(APP.user.role === 'GUEST') return; document.getElementById('tab-mine').classList.add('active'); switchView('DASHBOARD'); }
         
         if(tab === 'ALL') applyFilters();
     }
