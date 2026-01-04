@@ -201,7 +201,7 @@
 
       <div class="d-flex align-items-center gap-2">
         <button id="btnHome" class="btn btn-outline-secondary btn-sm rounded-pill fw-bold px-3 d-none" onclick="switchView('GALERI')">Kembali</button>
-        <button id="btnDashboard" class="btn btn-warning btn-sm rounded-pill fw-bold px-3 d-none" onclick="switchView('ADMIN')"><i class="fas fa-chart-pie me-1"></i> Dashboard Pusat</button>
+        <button id="btnDashboard" class="btn btn-warning btn-sm rounded-pill fw-bold px-3 d-none" onclick="switchView('DASHBOARD')"><i class="fas fa-chart-pie me-1"></i> Dashboard</button>
         <button id="btnLogin" class="btn btn-outline-primary btn-sm rounded-pill fw-bold px-4" onclick="loginModal()">Login Guru</button>
         <div id="userPanel" class="d-none d-flex align-items-center gap-3">
           <div class="text-end lh-1 cursor-pointer" onclick="switchView('PROFILE')">
@@ -255,7 +255,82 @@
     </div>
   </div>
   
-  <!-- VIEW: PROFILE DASHBOARD -->
+  <!-- VIEW: DASHBOARD (ADMIN/OPS/KS) -->
+  <div id="view-dashboard" class="container mt-4 d-none">
+     <div class="bg-white p-4 rounded-3 border shadow-sm">
+        <div class="dashboard-header py-3 px-4 mb-3">
+          <div><h5 class="fw-800 mb-0 text-dark">Dashboard Monitoring</h5><small class="text-muted" id="dashSubTitle">Pantau data dan aktivitas karya</small></div>
+          <div id="adminRoleBadge" class="badge bg-primary px-3 py-2 rounded-pill">ROLE</div>
+        </div>
+        
+        <div class="stat-grid mb-4">
+          <div class="stat-widget stat-total p-3"><div class="stat-val fs-3" id="statTotal">0</div><div class="stat-label small">Total Karya</div></div>
+          <div class="stat-widget stat-approved p-3"><div class="stat-val fs-3" id="statApproved">0</div><div class="stat-label small">Disetujui</div></div>
+          <div class="stat-widget stat-pending p-3"><div class="stat-val fs-3" id="statPending">0</div><div class="stat-label small">Menunggu</div></div>
+          <div class="stat-widget stat-users admin-only p-3"><div class="stat-val fs-3" id="statUsers">0</div><div class="stat-label small">Guru Terdaftar</div></div>
+        </div>
+
+        <div class="bg-light p-3 border rounded-3">
+          <ul class="nav nav-tabs mb-3 border-bottom" id="adminTabs">
+            <li class="nav-item"><button class="nav-link active fw-bold small" data-bs-toggle="tab" data-bs-target="#tab-media">Monitoring Karya</button></li>
+            <li class="nav-item admin-only ms-1"><button class="nav-link fw-bold small" data-bs-toggle="tab" data-bs-target="#tab-users" onclick="loadUserList()">Manajemen Akun</button></li>
+            <li class="nav-item global-only ms-1"><button class="nav-link fw-bold small" data-bs-toggle="tab" data-bs-target="#tab-rank-school" onclick="loadSchoolStats()">Top Sekolah</button></li>
+            <li class="nav-item global-only ms-1"><button class="nav-link fw-bold small" data-bs-toggle="tab" data-bs-target="#tab-rank-teacher" onclick="loadTeacherStats()">Top Guru</button></li>
+          </ul>
+
+          <div class="tab-content bg-white p-3 border rounded-bottom">
+            <div class="tab-pane fade show active" id="tab-media">
+              <div class="d-flex flex-column flex-md-row gap-2 justify-content-between mb-3">
+                 <input type="text" class="form-control form-control-sm rounded-pill px-3 bg-light" placeholder="Cari karya..." oninput="searchAdminTable(this.value)">
+                 <button onclick="setujuiSemua()" class="btn btn-sm btn-success rounded-pill fw-bold text-nowrap px-3 admin-only"><i class="fas fa-check-double me-1"></i> Setujui Semua</button>
+              </div>
+              <div class="table-responsive rounded-3 border">
+                <table class="table pretty-table table-hover align-middle mb-0">
+                  <thead><tr><th class="ps-3">INFO KARYA</th><th>GURU</th><th class="text-center">STATUS</th><th class="text-center">AKSI</th></tr></thead>
+                  <tbody id="tableMedia"></tbody>
+                </table>
+              </div>
+            </div>
+            
+            <div class="tab-pane fade" id="tab-users">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold text-muted mb-0 ps-2">Guru Terdaftar</h6>
+                <button class="btn btn-primary btn-sm rounded-pill fw-bold px-3 shadow-sm" onclick="resetUserForm(); showModalInputUser()"><i class="fas fa-plus me-1"></i>Tambah</button>
+              </div>
+              <div class="table-container table-responsive rounded-3 border">
+                <table class="table pretty-table table-hover align-middle mb-0">
+                  <thead><tr><th class="ps-4">NAMA</th><th class="text-center">KARYA</th><th>PIN</th><th>PERAN</th><th class="text-center">AKSI</th></tr></thead>
+                  <tbody id="tableUsers"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-rank-school">
+               <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h6 class="fw-bold text-muted mb-0 ps-2">Peringkat Sekolah</h6>
+                  <button class="btn btn-outline-success btn-sm rounded-pill fw-bold px-3" onclick="loadSchoolStats()"><i class="fas fa-sync-alt"></i></button>
+               </div>
+               <div class="table-responsive rounded-3 border">
+                  <table class="table pretty-table table-hover align-middle mb-0"><thead class="bg-light"><tr><th class="text-center" style="width: 50px;">#</th><th class="ps-3">SEKOLAH</th><th class="text-center">GURU</th><th class="text-center">KARYA</th></tr></thead><tbody id="tableRankSchool"></tbody></table>
+               </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-rank-teacher">
+               <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h6 class="fw-bold text-muted mb-0 ps-2">Top Guru</h6>
+                  <button class="btn btn-outline-success btn-sm rounded-pill fw-bold px-3" onclick="loadTeacherStats()"><i class="fas fa-sync-alt"></i></button>
+               </div>
+               <div class="table-responsive rounded-3 border">
+                  <table class="table pretty-table table-hover align-middle mb-0"><thead class="bg-light"><tr><th class="text-center" style="width: 50px;">#</th><th class="ps-3">NAMA</th><th class="ps-3">UNIT</th><th class="text-center">KARYA</th></tr></thead><tbody id="tableRankTeacher"></tbody></table>
+               </div>
+            </div>
+
+          </div>
+        </div>
+     </div>
+  </div>
+
+  <!-- VIEW: PROFILE (PURE) -->
   <div id="view-profile" class="container mt-4 d-none">
      <div class="row g-4">
          <div class="col-lg-4">
@@ -300,11 +375,6 @@
                          <i class="fas fa-folder-open me-2"></i>Karya Saya
                      </button>
                    </li>
-                   <li class="nav-item" role="presentation" id="tab-dashboard-li" style="display:none;">
-                     <button class="nav-link fw-bold border-0 bg-transparent" id="tab-dashboard-link" data-bs-toggle="tab" data-bs-target="#tab-content-dashboard" type="button" onclick="updateDashboardStats()">
-                         <i class="fas fa-chart-line me-2"></i>Monitoring Sekolah
-                     </button>
-                   </li>
                  </ul>
                  
                  <div class="tab-content border-top">
@@ -322,81 +392,6 @@
                                  <p class="text-muted fw-bold">Belum ada karya yang diupload.</p>
                                  <button onclick="resetForm(); showModalInput()" class="btn btn-sm btn-primary rounded-pill fw-bold px-4">Upload Sekarang</button>
                              </div>
-                         </div>
-                     </div>
-
-                     <!-- TAB: DASHBOARD MONITORING -->
-                     <div class="tab-pane fade" id="tab-content-dashboard">
-                         <div class="p-4 bg-light">
-                            <div class="dashboard-header py-3 px-4 mb-3">
-                              <div><h5 class="fw-800 mb-0 text-dark">Monitoring</h5><small class="text-muted" id="dashSubTitle">Pantau data dan aktivitas karya</small></div>
-                              <div id="adminRoleBadge" class="badge bg-primary px-3 py-2 rounded-pill">ROLE</div>
-                            </div>
-                            
-                            <div class="stat-grid mb-4">
-                              <div class="stat-widget stat-total p-3"><div class="stat-val fs-3" id="statTotal">0</div><div class="stat-label small">Total Karya</div></div>
-                              <div class="stat-widget stat-approved p-3"><div class="stat-val fs-3" id="statApproved">0</div><div class="stat-label small">Disetujui</div></div>
-                              <div class="stat-widget stat-pending p-3"><div class="stat-val fs-3" id="statPending">0</div><div class="stat-label small">Menunggu</div></div>
-                              <div class="stat-widget stat-users admin-only p-3"><div class="stat-val fs-3" id="statUsers">0</div><div class="stat-label small">Guru Terdaftar</div></div>
-                            </div>
-
-                            <div class="bg-white p-3 border rounded-3 shadow-sm">
-                              <ul class="nav nav-tabs mb-3 border-bottom" id="adminTabs">
-                                <li class="nav-item"><button class="nav-link active fw-bold small" data-bs-toggle="tab" data-bs-target="#tab-media">Monitoring Karya</button></li>
-                                <li class="nav-item admin-only ms-1"><button class="nav-link fw-bold small" data-bs-toggle="tab" data-bs-target="#tab-users" onclick="loadUserList()">Manajemen Akun</button></li>
-                                <li class="nav-item global-only ms-1"><button class="nav-link fw-bold small" data-bs-toggle="tab" data-bs-target="#tab-rank-school" onclick="loadSchoolStats()">Top Sekolah</button></li>
-                                <li class="nav-item global-only ms-1"><button class="nav-link fw-bold small" data-bs-toggle="tab" data-bs-target="#tab-rank-teacher" onclick="loadTeacherStats()">Top Guru</button></li>
-                              </ul>
-
-                              <div class="tab-content">
-                                <div class="tab-pane fade show active" id="tab-media">
-                                  <div class="d-flex flex-column flex-md-row gap-2 justify-content-between mb-3">
-                                     <input type="text" class="form-control form-control-sm rounded-pill px-3 bg-light" placeholder="Cari karya..." oninput="searchAdminTable(this.value)">
-                                     <button onclick="setujuiSemua()" class="btn btn-sm btn-success rounded-pill fw-bold text-nowrap px-3 admin-only"><i class="fas fa-check-double me-1"></i> Setujui Semua</button>
-                                  </div>
-                                  <div class="table-responsive rounded-3 border">
-                                    <table class="table pretty-table table-hover align-middle mb-0">
-                                      <thead><tr><th class="ps-3">INFO KARYA</th><th>GURU</th><th class="text-center">STATUS</th><th class="text-center">AKSI</th></tr></thead>
-                                      <tbody id="tableMedia"></tbody>
-                                    </table>
-                                  </div>
-                                </div>
-                                
-                                <div class="tab-pane fade" id="tab-users">
-                                  <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h6 class="fw-bold text-muted mb-0 ps-2">Guru Terdaftar</h6>
-                                    <button class="btn btn-primary btn-sm rounded-pill fw-bold px-3 shadow-sm" onclick="resetUserForm(); showModalInputUser()"><i class="fas fa-plus me-1"></i>Tambah</button>
-                                  </div>
-                                  <div class="table-container table-responsive rounded-3 border">
-                                    <table class="table pretty-table table-hover align-middle mb-0">
-                                      <thead><tr><th class="ps-4">NAMA</th><th class="text-center">KARYA</th><th>PIN</th><th>PERAN</th><th class="text-center">AKSI</th></tr></thead>
-                                      <tbody id="tableUsers"></tbody>
-                                    </table>
-                                  </div>
-                                </div>
-
-                                <div class="tab-pane fade" id="tab-rank-school">
-                                   <div class="d-flex justify-content-between align-items-center mb-3">
-                                      <h6 class="fw-bold text-muted mb-0 ps-2">Peringkat Sekolah</h6>
-                                      <button class="btn btn-outline-success btn-sm rounded-pill fw-bold px-3" onclick="loadSchoolStats()"><i class="fas fa-sync-alt"></i></button>
-                                   </div>
-                                   <div class="table-responsive rounded-3 border">
-                                      <table class="table pretty-table table-hover align-middle mb-0"><thead class="bg-light"><tr><th class="text-center" style="width: 50px;">#</th><th class="ps-3">SEKOLAH</th><th class="text-center">GURU</th><th class="text-center">KARYA</th></tr></thead><tbody id="tableRankSchool"></tbody></table>
-                                   </div>
-                                </div>
-
-                                <div class="tab-pane fade" id="tab-rank-teacher">
-                                   <div class="d-flex justify-content-between align-items-center mb-3">
-                                      <h6 class="fw-bold text-muted mb-0 ps-2">Top Guru</h6>
-                                      <button class="btn btn-outline-success btn-sm rounded-pill fw-bold px-3" onclick="loadTeacherStats()"><i class="fas fa-sync-alt"></i></button>
-                                   </div>
-                                   <div class="table-responsive rounded-3 border">
-                                      <table class="table pretty-table table-hover align-middle mb-0"><thead class="bg-light"><tr><th class="text-center" style="width: 50px;">#</th><th class="ps-3">NAMA</th><th class="ps-3">UNIT</th><th class="text-center">KARYA</th></tr></thead><tbody id="tableRankTeacher"></tbody></table>
-                                   </div>
-                                </div>
-
-                              </div>
-                            </div>
                          </div>
                      </div>
                  </div>
@@ -551,21 +546,17 @@
       
       var isGlobalAdmin = isAdmin || isModerator;
       var isSchoolAdmin = isKepala || isOperator;
-      var showDashboard = isGlobalAdmin || isSchoolAdmin;
+      var hasDashboard = isGlobalAdmin || isSchoolAdmin;
       
-      // 1. Dashboard Tab Visibility in Profile (For All Management Roles)
-      document.getElementById('tab-dashboard-li').style.setProperty('display', showDashboard ? 'block' : 'none', 'important');
-
-      // 2. Navbar Dashboard Button (RESTORED: Khusus Admin & Moderator)
+      // Navbar Dashboard Button
       var btnDash = document.getElementById('btnDashboard');
-      if (isGlobalAdmin) {
+      if (hasDashboard) {
           btnDash.classList.remove('d-none');
-          btnDash.innerHTML = '<i class="fas fa-chart-pie me-1"></i> Dashboard Pusat';
       } else {
           btnDash.classList.add('d-none');
       }
 
-      if (showDashboard) {
+      if (hasDashboard) {
         document.getElementById('adminRoleBadge').innerText = STATE.user.role;
         var badge = document.getElementById('adminRoleBadge');
         // Dynamic Badge Color
@@ -592,25 +583,26 @@
     }
 
     function switchView(viewName) {
-      // Redirect ADMIN view request to PROFILE view with Dashboard tab active
-      if (viewName === 'ADMIN') {
-          viewName = 'PROFILE';
-          setTimeout(() => {
-              var tabEl = document.getElementById('tab-dashboard-link');
-              var tab = new bootstrap.Tab(tabEl);
-              tab.show();
-              updateDashboardStats();
-          }, 100);
-      }
+      var g = document.getElementById('view-galeri');
+      var p = document.getElementById('view-profile');
+      var d = document.getElementById('view-dashboard');
+      var s = document.getElementById('searchWrapper');
       
-      var g = document.getElementById('view-galeri'), p = document.getElementById('view-profile'), s = document.getElementById('searchWrapper');
-      g.classList.add('d-none'); p.classList.add('d-none');
+      g.classList.add('d-none'); 
+      p.classList.add('d-none');
+      d.classList.add('d-none');
+      
       document.getElementById('btnHome').classList.remove('d-none');
       document.getElementById('btnAdd').classList.add('d-none');
-      
+      s.style.visibility = 'hidden';
+
       if (viewName === 'PROFILE') {
-        p.classList.remove('d-none'); s.style.visibility = 'hidden'; loadProfile();
-      } else {
+        p.classList.remove('d-none'); loadProfile();
+      } 
+      else if (viewName === 'DASHBOARD') {
+        d.classList.remove('d-none'); updateDashboardStats();
+      }
+      else { // GALERI
         g.classList.remove('d-none'); document.getElementById('btnHome').classList.add('d-none');
         if(STATE.user.role !== 'GUEST') document.getElementById('btnAdd').classList.remove('d-none');
         s.style.visibility = 'visible';
@@ -937,13 +929,6 @@
               <td class="text-center pe-4"><button onclick="bukaEdit('${m[13]}')" class="btn btn-sm btn-light border text-primary"><i class="fas fa-pen"></i></button></td></tr>`;
           });
           list.innerHTML = h;
-      }
-      
-      // Default Tab reset if not coming from Dashboard redirect
-      var activeTab = document.querySelector('#profileTabs .nav-link.active');
-      if(!activeTab) {
-          var tab = new bootstrap.Tab(document.getElementById('tab-karya-link'));
-          tab.show();
       }
     }
     
