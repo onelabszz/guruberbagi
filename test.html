@@ -1057,7 +1057,16 @@
       }
     }
     
-    function loadSchoolStats() { if(!APP.users) APP.users=[]; if(!APP.users.length) callApi('users').then(res => { STATE.users = res.data; calcSchool(); }); else calcSchool(); }
+    function loadSchoolStats() { 
+        if(STATE.users.length === 0) {
+            callApi('users').then(res => { 
+                STATE.users = res.data; 
+                calcSchool(); 
+            }); 
+        } else {
+            calcSchool(); 
+        }
+    }
     function calcSchool() {
         let stats = {}; 
         
