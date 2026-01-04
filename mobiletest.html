@@ -287,7 +287,7 @@
               <div id="admin-list-container"></div>
            </div>
            <div class="tab-pane fade" id="adm-user">
-              <button class="btn btn-primary w-100 rounded-pill mb-3 fw-bold btn-press-effect" onclick="showUserModal('ADD')"><i class="fas fa-plus me-2"></i> Tambah User</button>
+              <button id="btnAddUser" class="btn btn-primary w-100 rounded-pill mb-3 fw-bold btn-press-effect" onclick="showUserModal('ADD')"><i class="fas fa-plus me-2"></i> Tambah User</button>
               <input type="text" class="form-control mb-3 form-control-sm" placeholder="Cari nama..." oninput="loadUserList(this.value)">
               <div id="user-list-container"></div>
            </div>
@@ -732,12 +732,16 @@
         var data = APP.data;
         const role = (APP.user.role || "").toUpperCase();
         
+        var isAdmin = role.includes('ADMIN');
+        var isModerator = role.includes('MODERATOR');
+        var isSchoolAdmin = role.includes('KEPALA') || role.includes('OPERATOR') || role.includes('OPS');
+
         // Filter stats if KEPSEK/OPS
-        if(role.includes('KEPALA') || role.includes('OPERATOR') || role.includes('OPS')) {
+        if(isSchoolAdmin) {
             data = data.filter(m => m[2] === APP.user.school);
             if(APP.users.length === 0) api('users').then(res => { APP.users = res.data; document.getElementById('statUsers').innerText = APP.users.filter(u => u[1] === APP.user.school).length; });
             else document.getElementById('statUsers').innerText = APP.users.filter(u => u[1] === APP.user.school).length;
-        } else if (role.includes('ADMIN')) {
+        } else if (isAdmin || isModerator) {
              if(APP.users.length === 0) api('users').then(res => { APP.users = res.data; document.getElementById('statUsers').innerText = res.data.length; });
              else document.getElementById('statUsers').innerText = APP.users.length;
         }
@@ -751,11 +755,24 @@
     }
     function loadSchoolStats() { if(!APP.users.length) api('users').then(res => { APP.users = res.data; calcSchool(); }); else calcSchool(); }
     function calcSchool() {
-        let stats = {}; APP.users.forEach(u => { let s=u[1]||"Tanpa Sekolah"; if(!stats[s]) stats[s]={g:0,k:0}; stats[s].g++; });
-        APP.data.forEach(m => { let s=m[2]||"Tanpa Sekolah"; if(!stats[s]) stats[s]={g:0,k:0}; stats[s].k++; });
-        let arr = Object.keys(stats).map(k => ({n:k, g:stats[k].g, k:stats[k].k})).sort((a,b) => b.k - a.k);
+        let stats = {};
+        const norm = (s) => (s || "TANPA SEKOLAH").toString().trim().toUpperCase();
+        
+        APP.users.forEach(u => { 
+            let rawS = u[1] || "Tanpa Sekolah";
+            let s = norm(rawS); 
+            if(!stats[s]) stats[s]={name:rawS, g:0, k:0}; 
+            stats[s].g++; 
+        });
+        APP.data.forEach(m => { 
+            let rawS = m[2] || "Tanpa Sekolah";
+            let s = norm(rawS); 
+            if(!stats[s]) stats[s]={name:rawS, g:0, k:0}; 
+            stats[s].k++; 
+        });
+        let arr = Object.values(stats).sort((a,b) => b.k - a.k);
         let h = '<table class="table table-sm table-striped"><thead><tr><th>#</th><th>Sekolah</th><th class="text-center">Guru</th><th class="text-center">Karya</th></tr></thead><tbody>';
-        arr.forEach((x,i) => { let rank = i<3 ? `<span class="rank-badge rank-${i+1}">${i+1}</span>` : `<span class="rank-badge rank-other">${i+1}</span>`; h += `<tr><td>${rank}</td><td>${x.n}</td><td class="text-center">${x.g}</td><td class="text-center fw-bold">${x.k}</td></tr>`; });
+        arr.forEach((x,i) => { let rank = i<3 ? `<span class="rank-badge rank-${i+1}">${i+1}</span>` : `<span class="rank-badge rank-other">${i+1}</span>`; h += `<tr><td>${rank}</td><td>${x.name}</td><td class="text-center">${x.g}</td><td class="text-center fw-bold">${x.k}</td></tr>`; });
         document.getElementById('school-rank-container').innerHTML = h + '</tbody></table>';
     }
     function loadTeacherStats() {
@@ -773,19 +790,37 @@
        let list = APP.data;
        const role = (APP.user.role || "").toUpperCase();
        
+       const isSchoolAdmin = role.includes('KEPALA') || role.includes('OPERATOR') || role.includes('OPS');
+       const isAdmin = role.includes('ADMIN');
+
        // Filter list if KEPSEK/OPS
-       if(role.includes('KEPALA') || role.includes('OPERATOR') || role.includes('OPS')) {
+       if(isSchoolAdmin) {
            list = list.filter(m => m[2] === APP.user.school);
        }
 
        list = list.filter(i => (i[5]+' '+i[1]).toLowerCase().includes(q) && (fStat?i[9]===fStat:true) && (fMapel?i[6]===fMapel:true));
        let html = '';
-       const canDelete = !(role.includes('KEPALA') || role.includes('OPERATOR') || role.includes('OPS'));
+       
+       // Tombol Hapus hanya untuk Admin
+       const canDelete = isAdmin;
+       // Tombol Kurasi untuk Admin/Moderator. KS/OPS Read Only.
+       const canEditStatus = !isSchoolAdmin;
 
        list.forEach(i => { 
            let badge = i[9]==='DISETUJUI'?'bg-success':(i[9]==='REVISI'?'bg-danger':'bg-warning text-dark'); 
-           let delBtn = canDelete ? `<button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${i[13]}')"><i class="fas fa-trash"></i></button>` : '';
-           html += `<div class="m-card flex-column align-items-stretch"><div class="d-flex justify-content-between"><div class="fw-bold text-truncate">${i[5]}</div><span class="badge ${badge}">${i[9]}</span></div><div class="small text-muted">${i[1]}</div><div class="d-flex gap-2 mt-2"><button class="btn btn-sm btn-outline-primary flex-grow-1" onclick="openKurasi('${i[13]}','${i[9]}','${i[12]||""}')">Kurasi</button>${delBtn}</div></div>`; 
+           
+           let btns = '';
+           if (canEditStatus) {
+               btns += `<button class="btn btn-sm btn-outline-primary flex-grow-1" onclick="openKurasi('${i[13]}','${i[9]}','${i[12]||""}')">Kurasi</button>`;
+           }
+           if (canDelete) {
+               btns += `<button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${i[13]}')"><i class="fas fa-trash"></i></button>`;
+           }
+           if (!canEditStatus && !canDelete) {
+               btns = '<small class="text-muted w-100 text-center py-1">View Only</small>';
+           }
+
+           html += `<div class="m-card flex-column align-items-stretch"><div class="d-flex justify-content-between"><div class="fw-bold text-truncate">${i[5]}</div><span class="badge ${badge}">${i[9]}</span></div><div class="small text-muted">${i[1]}</div><div class="d-flex gap-2 mt-2">${btns}</div></div>`; 
        });
        if(list.length === 0) html = '<div class="text-center text-muted py-4 small">Tidak ada data karya sekolah Anda.</div>';
        document.getElementById('admin-list-container').innerHTML = html;
@@ -800,16 +835,26 @@
        // Filter list if KEPSEK/OPS
        let list = APP.users;
        const role = (APP.user.role || "").toUpperCase();
-       if(role.includes('KEPALA') || role.includes('OPERATOR') || role.includes('OPS')) {
+       
+       const isSchoolAdmin = role.includes('KEPALA') || role.includes('OPERATOR') || role.includes('OPS');
+       const isAdmin = role.includes('ADMIN');
+
+       if(isSchoolAdmin) {
            list = list.filter(u => u[1] === APP.user.school);
            document.getElementById('statUsers').innerText = list.length;
        } else {
            document.getElementById('statUsers').innerText = APP.users.length;
        }
+       
+       // Hide Add Button for Monitoring roles
+       const btnAdd = document.getElementById('btnAddUser');
+       if(btnAdd) btnAdd.style.display = isAdmin ? 'block' : 'none';
 
        list = list.filter(u => (u[0]+' '+u[1]).toLowerCase().includes(q.toLowerCase()));
        let html = ''; 
-       const canEdit = role.includes('ADMIN') || role.includes('KEPALA') || role.includes('OPERATOR') || role.includes('OPS');
+       
+       // Only ADMIN can edit/delete users
+       const canEdit = isAdmin;
 
        list.forEach((u, idx) => { 
            let btns = canEdit ? `<button class="btn btn-sm btn-light border text-warning" onclick="showUserModal('EDIT', '${u[2]}')"><i class="fas fa-pen"></i></button><button class="btn btn-sm btn-light border text-danger" onclick="deleteUser('${u[2]}', '${u[0]}')"><i class="fas fa-trash"></i></button>` : '';
