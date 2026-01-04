@@ -565,7 +565,7 @@
         else badge.className = 'badge px-3 py-2 rounded-pill bg-primary';
         
         // Tab Visibility Logic
-        // Tab User Management only for Admin, Kepsek, Operator
+        // Tab User Management only for Admin, Kepsek, Operator (NOT Moderator)
         var canManageUsers = isAdmin || isKepala || isOperator;
 
         document.querySelectorAll('.admin-only').forEach(el => el.style.setProperty('display', isAdmin ? 'block' : 'none', 'important'));
