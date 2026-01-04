@@ -650,8 +650,9 @@
         if(myMedia.length === 0) { listContainer.innerHTML = ''; emptyState.classList.remove('d-none'); } else {
             emptyState.classList.add('d-none'); let html = '';
             myMedia.forEach(m => {
+                const id = m[13]; // ID Unik
                 const statusBadge = m[9] === 'DISETUJUI' ? '<span class="badge bg-success">Tayang</span>' : (m[9] === 'REVISI' ? '<span class="badge bg-danger">Revisi</span>' : '<span class="badge bg-warning text-dark">Pending</span>');
-                html += `<div class="m-card align-items-center"><div class="flex-grow-1 min-w-0"><div class="fw-bold text-dark text-truncate" style="font-size:0.85rem">${m[5]}</div><div class="small text-muted" style="font-size:0.7rem">${m[6]} • ${m[14]||0} Views</div></div><div class="text-end">${statusBadge}<div class="mt-2"><button onclick="editItem('${m[13]}')" class="btn btn-sm btn-light border text-primary py-0 px-2"><i class="fas fa-pen" style="font-size:0.7rem"></i></button><button onclick="deleteItem('${m[13]}')" class="btn btn-sm btn-light border text-danger py-0 px-2 ms-1"><i class="fas fa-trash" style="font-size:0.7rem"></i></button></div></div></div>`;
+                html += `<div class="m-card align-items-center"><div class="flex-grow-1 min-w-0"><div class="fw-bold text-dark text-truncate" style="font-size:0.85rem">${m[5]}</div><div class="small text-muted" style="font-size:0.7rem">${m[6]} • ${m[14]||0} Views</div></div><div class="text-end">${statusBadge}<div class="mt-2"><button onclick="editItem('${id}')" class="btn btn-sm btn-light border text-primary py-0 px-2"><i class="fas fa-pen" style="font-size:0.7rem"></i></button><button onclick="deleteItem('${id}')" class="btn btn-sm btn-light border text-danger py-0 px-2 ms-1"><i class="fas fa-trash" style="font-size:0.7rem"></i></button></div></div></div>`;
             });
             listContainer.innerHTML = html;
         }
