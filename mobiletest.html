@@ -25,7 +25,7 @@
       background-color: var(--bg-body); 
       font-family: 'Plus Jakarta Sans', sans-serif; 
       color: var(--text-main); 
-      padding-top: 115px; /* Adjusted for Header (60) + Tabs (45-ish) */
+      padding-top: 115px; 
       padding-bottom: 90px;
     }
 
@@ -62,10 +62,12 @@
     .m-card {
       background: white; border-radius: 12px; padding: 12px; margin-bottom: 12px;
       border: 1px solid #f1f5f9; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-      display: flex; gap: 12px; align-items: start; position: relative;
+      display: flex; gap: 12px; align-items: start; position: relative; flex-wrap: wrap;
     }
     .m-card:active { background-color: #f8fafc; }
     
+    .m-card-inner { display: flex; width: 100%; gap: 12px; align-items: start; }
+
     .m-thumb {
       width: 70px; height: 70px; border-radius: 8px; background: #e2e8f0;
       flex-shrink: 0; overflow: hidden; display: flex; align-items: center; justify-content: center;
@@ -89,12 +91,11 @@
     }
     .btn-fav.is-fav { color: #ef4444; }
 
-    /* STATUS BADGES */
+    /* STATUS BADGES & FEEDBACK */
     .m-status { position: absolute; bottom: 12px; right: 12px; font-size: 0.65rem; font-weight: 800; padding: 2px 8px; border-radius: 10px; }
     .st-baru { background: #fef3c7; color: #b45309; }
     .st-rev { background: #fee2e2; color: #b91c1c; }
     
-    /* Soft Blue Checkmark for Approved */
     .badge-approved-soft { 
         position: absolute; bottom: 10px; right: 10px; 
         color: #0288d1; background: #e1f5fe; border: 1px solid #b3e5fc;
@@ -103,8 +104,11 @@
         box-shadow: 0 2px 5px rgba(0,0,0,0.05); z-index: 6; 
     }
     
-    /* Feedback Box for Owner */
-    .feedback-box-mini { background: #fff1f2; border: 1px solid #fecdd3; border-radius: 6px; padding: 6px; margin-top: 6px; font-size: 0.7rem; color: #9f1239; line-height: 1.2; width: 100%; }
+    .feedback-box-mini { 
+        background: #fff1f2; border: 1px solid #fecdd3; border-radius: 6px; 
+        padding: 6px 10px; margin-top: 8px; width: 100%;
+        font-size: 0.75rem; color: #9f1239; line-height: 1.3; display: flex; align-items: flex-start; gap: 6px;
+    }
 
     /* --- PROFILE DASHBOARD STYLES --- */
     .profile-card { background: white; border-radius: 16px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02); position: relative; margin-bottom: 16px; }
@@ -117,7 +121,7 @@
     /* --- BUTTON EFFECT --- */
     .btn-press-effect:active { transform: scale(0.95); transition: transform 0.1s; }
 
-    /* --- UI ELEMENTS --- */
+    /* --- FAB --- */
     .fab {
       position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px;
       background: var(--primary); color: white; border-radius: 50%; border: none;
@@ -142,11 +146,14 @@
     .modal-fullscreen-mobile .modal-body { overflow-y: auto; padding: 16px; }
     .preview-box { width: 100%; height: 200px; border: 2px dashed #cbd5e1; border-radius: 12px; overflow: hidden; background: #e2e8f0; position: relative; margin-top: 8px; }
     .preview-placeholder { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #94a3b8; font-weight: 700; text-align: center; font-size: 0.8rem; }
+    
     #previewOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none; flex-direction: column; z-index: 20000; }
     .preview-head { background: #111; padding: 12px; display: flex; justify-content: space-between; align-items: center; color: white; border-bottom: 1px solid #333; flex-shrink: 0; }
     #previewFrame { flex-grow: 1; width: 100%; height: 100%; border: none; background: #fff; }
     
     .d-none { display: none !important; }
+    .bg-purple { background-color: #9333ea !important; color: white; }
+    .bg-indigo { background-color: #4f46e5 !important; color: white; }
   </style>
 </head>
 <body>
@@ -155,7 +162,10 @@
   <div id="previewOverlay">
     <div class="preview-head">
       <div class="fw-bold text-truncate pe-2 text-white" id="previewTitle">Preview</div>
-      <button class="btn btn-sm btn-danger rounded-pill px-3 fw-bold" onclick="tutupPreview()">TUTUP</button>
+      <div class="d-flex gap-2">
+        <button class="btn btn-sm btn-outline-light rounded-pill px-3" onclick="shareContent()"><i class="fas fa-share-alt"></i></button>
+        <button class="btn btn-sm btn-danger rounded-pill px-3 fw-bold" onclick="tutupPreview()">TUTUP</button>
+      </div>
     </div>
     <iframe id="previewFrame" allowfullscreen></iframe>
   </div>
@@ -211,9 +221,9 @@
           </div>
         </div>
         
-        <h6 class="fw-bold text-muted small mt-4">NAVIGASI ADMIN</h6>
+        <h6 class="fw-bold text-muted small mt-4">NAVIGASI</h6>
         <div class="list-group list-group-flush mb-3">
-           <button id="menuDashboard" onclick="switchView('ADMIN'); hideMenu();" class="list-group-item list-group-item-action border-0 px-0 d-none"><i class="fas fa-chart-pie me-2 text-warning"></i> Dashboard Admin</button>
+           <button id="menuDashboard" onclick="switchView('ADMIN'); hideMenu();" class="list-group-item list-group-item-action border-0 px-0 d-none"><i class="fas fa-chart-pie me-2 text-warning"></i> Dashboard Monitoring</button>
         </div>
 
         <h6 class="fw-bold text-muted small mt-3">FILTER TAMBAHAN</h6>
@@ -295,7 +305,7 @@
     <div id="view-admin" class="d-none">
        <button onclick="switchView('GALERI')" class="btn btn-sm btn-light mb-3"><i class="fas fa-arrow-left"></i> Kembali</button>
        <div class="d-flex justify-content-between align-items-center mb-3">
-         <h5 class="fw-bold mb-0">Dashboard Admin</h5>
+         <h5 class="fw-bold mb-0">Monitoring</h5>
          <span class="badge bg-warning text-dark" id="admRoleBadge">ADMIN</span>
        </div>
        <div class="row g-2 mb-4">
@@ -308,8 +318,8 @@
          <div class="nav nav-pills nav-fill" style="font-size:0.8rem;">
             <button class="nav-link active btn-sm" data-bs-toggle="tab" data-bs-target="#adm-karya">Karya</button>
             <button id="tabLinkUsers" class="nav-link btn-sm" data-bs-toggle="tab" data-bs-target="#adm-user" onclick="loadUserList()">Guru</button>
-            <button class="nav-link btn-sm" data-bs-toggle="tab" data-bs-target="#adm-rank-school" onclick="loadSchoolStats()">Sekolah</button>
-            <button class="nav-link btn-sm" data-bs-toggle="tab" data-bs-target="#adm-rank-teacher" onclick="loadTeacherStats()">Top Guru</button>
+            <button class="nav-link btn-sm global-only" data-bs-toggle="tab" data-bs-target="#adm-rank-school" onclick="loadSchoolStats()">Sekolah</button>
+            <button class="nav-link btn-sm global-only" data-bs-toggle="tab" data-bs-target="#adm-rank-teacher" onclick="loadTeacherStats()">Top Guru</button>
          </div>
        </div>
        <div class="tab-content">
@@ -322,11 +332,11 @@
                 <select id="admFilterStatus" class="form-select form-select-sm" onchange="adminFilter()"><option value="">Status</option><option value="BARU">Menunggu</option><option value="DISETUJUI">Tayang</option><option value="REVISI">Revisi</option></select>
                 <select id="admFilterMapel" class="form-select form-select-sm" onchange="adminFilter()"><option value="">Mapel</option></select>
             </div>
-            <div class="d-grid mb-3"><button onclick="setujuiSemua()" class="btn btn-success btn-sm fw-bold">SETUJUI SEMUA PENDING</button></div>
+            <div class="d-grid mb-3"><button onclick="setujuiSemua()" class="btn btn-success btn-sm fw-bold admin-only">SETUJUI SEMUA PENDING</button></div>
             <div id="admin-list-container"></div>
          </div>
          <div class="tab-pane fade" id="adm-user">
-            <button class="btn btn-primary w-100 rounded-pill mb-3 fw-bold btn-press-effect" onclick="showUserModal('ADD')"><i class="fas fa-plus me-2"></i> Tambah Guru Baru</button>
+            <button class="btn btn-primary w-100 rounded-pill mb-3 fw-bold btn-press-effect" onclick="showUserModal('ADD')"><i class="fas fa-plus me-2"></i> Tambah User</button>
             <input type="text" class="form-control mb-3" placeholder="Cari nama..." oninput="loadUserList(this.value)">
             <div id="user-list-container"></div>
          </div>
@@ -394,7 +404,7 @@
   <!-- MODAL: DETAIL, KURASI, USER -->
   <div class="modal fade" id="modalDetail" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content rounded-4 border-0"><div class="modal-body text-center p-4"><h5 class="fw-bold mb-2" id="detTitle">Judul</h5><p class="text-muted small mb-4" id="detGuru">Oleh: Guru</p><div class="d-grid gap-2"><button type="button" onclick="openFullscreenPreview()" class="btn btn-primary rounded-pill fw-bold py-2 btn-press-effect">BUKA KARYA</button><button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Tutup</button></div><div id="ownerActions" class="mt-3 pt-3 border-top d-none"><div class="d-flex justify-content-center gap-2"><button id="btnEdit" class="btn btn-sm btn-warning rounded-pill px-3"><i class="fas fa-edit"></i> Edit</button><button id="btnDelete" class="btn btn-sm btn-danger rounded-pill px-3"><i class="fas fa-trash"></i> Hapus</button></div></div></div></div></div></div>
   <div class="modal fade" id="modalKurasi" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0"><div class="modal-header border-0"><h5 class="modal-title fw-bold">Kurasi Karya</h5></div><div class="modal-body"><input type="hidden" id="kurId"><label class="small fw-bold">Status</label><select id="kurStatus" class="form-select mb-3"><option value="BARU">BARU</option><option value="DISETUJUI">DISETUJUI</option><option value="REVISI">REVISI</option></select><label class="small fw-bold">Catatan Moderator</label><textarea id="kurNote" class="form-control" rows="3"></textarea></div><div class="modal-footer border-0"><button onclick="saveKurasi()" class="btn btn-primary w-100 rounded-pill btn-press-effect">Update Status</button></div></div></div></div>
-  <div class="modal fade" id="modalUser" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0"><div class="modal-header"><h5 class="fw-bold" id="userModalTitle">Data Guru</h5></div><div class="modal-body"><form id="formUser"><input type="hidden" id="uMode" value="ADD"><input type="hidden" id="uOldPin"><label class="small text-muted fw-bold">Nama</label><input type="text" id="uInputName" class="form-control mb-2"><label class="small text-muted fw-bold">Sekolah</label><input type="text" id="uInputSchool" class="form-control mb-2"><div class="row g-2"><div class="col-6"><label class="small text-muted fw-bold">PIN</label><input type="text" id="uInputPin" class="form-control"></div><div class="col-6"><label class="small text-muted fw-bold">Role</label><select id="uInputRole" class="form-select"><option value="GURU">GURU</option><option value="ADMIN">ADMIN</option></select></div></div></form></div><div class="modal-footer"><button onclick="saveUser()" class="btn btn-primary w-100 rounded-pill btn-press-effect">Simpan Data</button></div></div></div></div>
+  <div class="modal fade" id="modalUser" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0"><div class="modal-header"><h5 class="fw-bold" id="userModalTitle">Data Guru</h5></div><div class="modal-body"><form id="formUser"><input type="hidden" id="uMode" value="ADD"><input type="hidden" id="uOldPin"><label class="small text-muted fw-bold">Nama</label><input type="text" id="uInputName" class="form-control mb-2"><label class="small text-muted fw-bold">Sekolah</label><input type="text" id="uInputSchool" class="form-control mb-2"><div class="row g-2"><div class="col-6"><label class="small text-muted fw-bold">PIN</label><input type="text" id="uInputPin" class="form-control"></div><div class="col-6"><label class="small text-muted fw-bold">Role</label><select id="uInputRole" class="form-select"><option value="GURU">GURU</option><option value="KEPSEK">KEPALA SEKOLAH</option><option value="OPS">OPERATOR SEKOLAH</option><option value="MODERATOR">MODERATOR</option><option value="ADMIN">ADMIN</option></select></div></div></form></div><div class="modal-footer"><button onclick="saveUser()" class="btn btn-primary w-100 rounded-pill btn-press-effect">Simpan Data</button></div></div></div></div>
 
   <!-- JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -402,7 +412,9 @@
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxCTYyM2VjFQzfLKKIcYevkivH4TerMrU7jYakvJxR75_yXULW_YmKFy7nYrdBhnOAq/exec";
-    
+    const CACHE_KEY = 'gb_cache_data'; // Kunci Cache yang konsisten
+    const CACHE_DURATION = 5 * 60 * 1000; // 5 Menit Cache
+
     let APP = {
        data: [], filtered: [], users: [], settings: [],
        user: { name: "Tamu", role: "GUEST", school: "-" },
@@ -417,13 +429,34 @@
     };
 
     async function api(action, payload=null) {
-       if(action==='read'){ const c=localStorage.getItem('gb_cache'); if(c){const j=JSON.parse(c);if(Date.now()-j.ts<300000)return j.data;} }
-       if(['simpan','hapus','updateKurasi','simpanUser','hapusUser'].includes(action)) localStorage.removeItem('gb_cache');
+       // Caching Logic: Jika action READ, cek LocalStorage
+       if(action==='read'){ 
+           try {
+               const c=localStorage.getItem(CACHE_KEY); 
+               if(c){
+                   const j=JSON.parse(c);
+                   // Jika cache masih valid (< 5 menit), pakai data cache
+                   if(Date.now()-j.ts < CACHE_DURATION) return j.data;
+               } 
+           } catch(e) { console.log("Cache read error", e); }
+       }
+       
+       // Jika ada aksi tulis (Simpan/Hapus), hapus cache agar data terupdate
+       if(['simpan','hapus','updateKurasi','simpanUser','hapusUser'].includes(action)) localStorage.removeItem(CACHE_KEY);
+       
        try {
          let url=API_URL; let opts={};
          if(action==='read') url+="?action=read"; else opts={method:"POST",body:JSON.stringify({action,payload})};
          const req=await fetch(url,opts); const res=await req.json();
-         if(action==='read'&&res.status==='success') localStorage.setItem('gb_cache',JSON.stringify({ts:Date.now(),data:res}));
+         
+         // Jika berhasil baca data baru, simpan ke cache
+         if(action==='read'&&res.status==='success') {
+             try {
+                localStorage.setItem(CACHE_KEY, JSON.stringify({ts:Date.now(),data:res}));
+             } catch (quotaErr) {
+                console.warn("LocalStorage penuh, cache dinonaktifkan sementara.");
+             }
+         }
          return res;
        } catch(e) { console.error(e); return {status:'error',message:e.toString()}; }
     }
@@ -441,16 +474,29 @@
 
     function updateUI() {
        const isGuest = APP.user.role === 'GUEST'; 
-       const isAdmin = ['ADMIN','MODERATOR'].includes(APP.user.role);
+       const allowedRoles = ['ADMIN','MODERATOR','KEPSEK','OPS'];
+       
        document.getElementById('guestPanel').classList.toggle('d-none', !isGuest);
        document.getElementById('userPanel').classList.toggle('d-none', isGuest);
        document.getElementById('fabAdd').classList.toggle('d-none', isGuest);
+       
        if(!isGuest) {
-          document.getElementById('uName').innerText = APP.user.name; document.getElementById('uAvatar').innerText = APP.user.name.charAt(0);
-          document.getElementById('uRole').innerText = APP.user.role; document.getElementById('menuDashboard').classList.toggle('d-none', !isAdmin);
-          document.getElementById('admRoleBadge').innerText = APP.user.role;
+          document.getElementById('uName').innerText = APP.user.name; 
+          document.getElementById('uAvatar').innerText = APP.user.name.charAt(0);
+          document.getElementById('uRole').innerText = APP.user.role; 
+          
+          if(allowedRoles.includes(APP.user.role)) {
+              document.getElementById('menuDashboard').classList.remove('d-none');
+              document.getElementById('admRoleBadge').innerText = APP.user.role;
+              // Toggle elements based on role scope
+              const isGlobalAdmin = ['ADMIN', 'MODERATOR'].includes(APP.user.role);
+              document.querySelectorAll('.admin-only').forEach(el => el.style.setProperty('display', APP.user.role === 'ADMIN' ? 'block' : 'none', 'important'));
+              document.querySelectorAll('.global-only').forEach(el => el.style.setProperty('display', isGlobalAdmin ? 'block' : 'none', 'important'));
+          } else {
+              document.getElementById('menuDashboard').classList.add('d-none');
+          }
        }
-       document.getElementById('tabLinkUsers').classList.toggle('d-none', APP.user.role !== 'ADMIN');
+       document.getElementById('tabLinkUsers').classList.toggle('d-none', !allowedRoles.includes(APP.user.role));
     }
 
     function switchView(viewName) {
@@ -459,7 +505,8 @@
        document.getElementById('view-profile').classList.toggle('d-none', viewName !== 'PROFILE');
        document.getElementById('fabAdd').classList.toggle('d-none', viewName === 'ADMIN' || APP.user.role === 'GUEST' || viewName === 'PROFILE');
        if(viewName === 'PROFILE') loadProfile();
-       document.getElementById('searchBar').classList.add('d-none'); // Auto hide search on switch
+       if(viewName === 'ADMIN') updateStats(); // Refresh stats for dashboard
+       document.getElementById('searchBar').classList.add('d-none'); 
     }
     
     function switchTab(tab) {
@@ -570,6 +617,20 @@
        if(isMy || isAdmin) { document.getElementById('btnEdit').onclick = () => { bootstrap.Modal.getInstance(document.getElementById('modalDetail')).hide(); editItem(id); }; document.getElementById('btnDelete').onclick = () => { deleteItem(id); }; }
        new bootstrap.Modal(document.getElementById('modalDetail')).show();
     }
+    
+    function shareContent() {
+        if(!APP.currentDetailId) return;
+        const item = APP.data.find(i => i[13] === APP.currentDetailId);
+        const url = item[8] && item[8].includes('http') ? item[8] : window.location.href;
+        const text = `Cek karya "${item[5]}" oleh ${item[1]} di Guru Berbagi!`;
+        if (navigator.share) {
+            navigator.share({ title: item[5], text: text, url: url }).catch(console.error);
+        } else {
+            navigator.clipboard.writeText(url);
+            Swal.fire({icon:'success', title:'Link Disalin', text:url, timer:1500, showConfirmButton:false});
+        }
+    }
+
     function openFullscreenPreview() {
         if(!APP.currentDetailId) return; const item = APP.data.find(i => i[13] === APP.currentDetailId);
         bootstrap.Modal.getInstance(document.getElementById('modalDetail')).hide();
@@ -618,7 +679,16 @@
        api('simpan', payload).then(res => { if(res.status === 'success') { Swal.fire('Berhasil', 'Tersimpan', 'success'); bootstrap.Modal.getInstance(document.getElementById('modalInput')).hide(); fetchData(); } else { Swal.fire('Gagal', res.message, 'error'); } });
     }
 
-    function updateStats() { document.getElementById('statTotal').innerText = APP.data.length; document.getElementById('statPending').innerText = APP.data.filter(i => i[9] === 'BARU').length; document.getElementById('statApproved').innerText = APP.data.filter(i => i[9] === 'DISETUJUI').length; }
+    function updateStats() { 
+        var data = APP.data;
+        // Filter stats if KEPSEK/OPS
+        if(['KEPSEK','OPS'].includes(APP.user.role)) {
+            data = data.filter(m => m[2] === APP.user.school);
+        }
+        document.getElementById('statTotal').innerText = data.length; 
+        document.getElementById('statPending').innerText = data.filter(i => i[9] === 'BARU').length; 
+        document.getElementById('statApproved').innerText = data.filter(i => i[9] === 'DISETUJUI').length; 
+    }
     function loadSchoolStats() { if(!APP.users.length) api('users').then(res => { APP.users = res.data; calcSchool(); }); else calcSchool(); }
     function calcSchool() {
         let stats = {}; APP.users.forEach(u => { let s=u[1]||"Tanpa Sekolah"; if(!stats[s]) stats[s]={g:0,k:0}; stats[s].g++; });
@@ -639,9 +709,23 @@
     function deleteItem(id) { Swal.fire({title:'Hapus?', icon:'warning', showCancelButton:true}).then(r => { if(r.isConfirmed) { bootstrap.Modal.getInstance(document.getElementById('modalDetail'))?.hide(); api('hapus', {id}).then(() => { Swal.fire('Terhapus','','success'); fetchData(); }); }}); }
     function adminFilter() {
        const q = document.getElementById('searchAdmKarya').value.toLowerCase(); const fStat = document.getElementById('admFilterStatus').value; const fMapel = document.getElementById('admFilterMapel').value;
-       const list = APP.data.filter(i => (i[5]+' '+i[1]).toLowerCase().includes(q) && (fStat?i[9]===fStat:true) && (fMapel?i[6]===fMapel:true));
+       
+       let list = APP.data;
+       // Filter list if KEPSEK/OPS
+       if(['KEPSEK','OPS'].includes(APP.user.role)) {
+           list = list.filter(m => m[2] === APP.user.school);
+       }
+
+       list = list.filter(i => (i[5]+' '+i[1]).toLowerCase().includes(q) && (fStat?i[9]===fStat:true) && (fMapel?i[6]===fMapel:true));
        let html = '';
-       list.forEach(i => { let badge = i[9]==='DISETUJUI'?'bg-success':(i[9]==='REVISI'?'bg-danger':'bg-warning text-dark'); html += `<div class="m-card flex-column align-items-stretch"><div class="d-flex justify-content-between"><div class="fw-bold text-truncate">${i[5]}</div><span class="badge ${badge}">${i[9]}</span></div><div class="small text-muted">${i[1]}</div><div class="d-flex gap-2 mt-2"><button class="btn btn-sm btn-outline-primary flex-grow-1" onclick="openKurasi('${i[13]}','${i[9]}','${i[12]||""}')">Kurasi</button><button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${i[13]}')"><i class="fas fa-trash"></i></button></div></div>`; });
+       const canDelete = !['KEPSEK','OPS'].includes(APP.user.role);
+
+       list.forEach(i => { 
+           let badge = i[9]==='DISETUJUI'?'bg-success':(i[9]==='REVISI'?'bg-danger':'bg-warning text-dark'); 
+           let delBtn = canDelete ? `<button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${i[13]}')"><i class="fas fa-trash"></i></button>` : '';
+           html += `<div class="m-card flex-column align-items-stretch"><div class="d-flex justify-content-between"><div class="fw-bold text-truncate">${i[5]}</div><span class="badge ${badge}">${i[9]}</span></div><div class="small text-muted">${i[1]}</div><div class="d-flex gap-2 mt-2"><button class="btn btn-sm btn-outline-primary flex-grow-1" onclick="openKurasi('${i[13]}','${i[9]}','${i[12]||""}')">Kurasi</button>${delBtn}</div></div>`; 
+       });
+       if(list.length === 0) html = '<div class="text-center text-muted py-4 small">Tidak ada data karya sekolah Anda.</div>';
        document.getElementById('admin-list-container').innerHTML = html;
     }
     
@@ -651,11 +735,35 @@
     
     function loadUserList(q='') { if(!APP.users.length) api('users').then(res=>{APP.users=res.data; renderUsers(q)}); else renderUsers(q); }
     function renderUsers(q='') {
-       const list = APP.users.filter(u => (u[0]+' '+u[1]).toLowerCase().includes(q.toLowerCase()));
-       let html = ''; list.forEach((u, idx) => { html += `<div class="d-flex justify-content-between align-items-center border-bottom py-2"><div><div class="fw-bold">${u[0]}</div><div class="small text-muted">${u[1]} (${u[3]})</div><div class="small text-primary font-monospace">PIN: ${u[2]}</div></div><div class="d-flex gap-2"><button class="btn btn-sm btn-light border text-warning" onclick="showUserModal('EDIT', ${idx})"><i class="fas fa-pen"></i></button><button class="btn btn-sm btn-light border text-danger" onclick="deleteUser('${u[2]}', '${u[0]}')"><i class="fas fa-trash"></i></button></div></div>`; });
-       document.getElementById('user-list-container').innerHTML = html; document.getElementById('statUsers').innerText = APP.users.length;
+       // Filter list if KEPSEK/OPS
+       let list = APP.users;
+       if(['KEPSEK','OPS'].includes(APP.user.role)) {
+           list = list.filter(u => u[1] === APP.user.school);
+           document.getElementById('statUsers').innerText = list.length;
+       } else {
+           document.getElementById('statUsers').innerText = APP.users.length;
+       }
+
+       list = list.filter(u => (u[0]+' '+u[1]).toLowerCase().includes(q.toLowerCase()));
+       let html = ''; 
+       const canEdit = APP.user.role === 'ADMIN' || ['KEPSEK','OPS'].includes(APP.user.role);
+
+       list.forEach((u, idx) => { 
+           let btns = canEdit ? `<button class="btn btn-sm btn-light border text-warning" onclick="showUserModal('EDIT', '${u[2]}')"><i class="fas fa-pen"></i></button><button class="btn btn-sm btn-light border text-danger" onclick="deleteUser('${u[2]}', '${u[0]}')"><i class="fas fa-trash"></i></button>` : '';
+           html += `<div class="d-flex justify-content-between align-items-center border-bottom py-2"><div><div class="fw-bold">${u[0]}</div><div class="small text-muted">${u[1]} (${u[3]})</div><div class="small text-primary font-monospace">PIN: ${u[2]}</div></div><div class="d-flex gap-2">${btns}</div></div>`; 
+       });
+       document.getElementById('user-list-container').innerHTML = html; 
     }
-    function showUserModal(mode, idx=null) { document.getElementById('formUser').reset(); document.getElementById('uMode').value = mode; if(mode === 'EDIT'){ const u=APP.users[idx]; document.getElementById('uInputName').value=u[0]; document.getElementById('uInputSchool').value=u[1]; document.getElementById('uInputPin').value=u[2]; document.getElementById('uOldPin').value=u[2]; document.getElementById('uInputRole').value=u[3]; } new bootstrap.Modal(document.getElementById('modalUser')).show(); }
+    function showUserModal(mode, pin=null) { 
+        document.getElementById('formUser').reset(); document.getElementById('uMode').value = mode; 
+        if(mode === 'EDIT'){ 
+            const u=APP.users.find(x=>x[2]===pin); 
+            if(u) {
+                document.getElementById('uInputName').value=u[0]; document.getElementById('uInputSchool').value=u[1]; document.getElementById('uInputPin').value=u[2]; document.getElementById('uOldPin').value=u[2]; document.getElementById('uInputRole').value=u[3]; 
+            }
+        } 
+        new bootstrap.Modal(document.getElementById('modalUser')).show(); 
+    }
     function saveUser() { api('simpanUser', {nama:document.getElementById('uInputName').value, sekolah:document.getElementById('uInputSchool').value, pin:document.getElementById('uInputPin').value, role:document.getElementById('uInputRole').value, mode:document.getElementById('uMode').value, oldPin:document.getElementById('uOldPin').value}).then(()=>{ bootstrap.Modal.getInstance(document.getElementById('modalUser')).hide(); APP.users=[]; loadUserList(); Swal.fire('Success','','success'); }); }
     function deleteUser(pin, name) { Swal.fire({title:`Hapus ${name}?`,icon:'warning',showCancelButton:true}).then(r=>{if(r.isConfirmed) api('hapusUser',{pin}).then(()=>{APP.users=[]; loadUserList();});}); }
 
